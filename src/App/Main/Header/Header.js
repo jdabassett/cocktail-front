@@ -14,7 +14,7 @@ export default function Header () {
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto nav-container">
   
-                  <NavItem><Link to="/landing">ABOUT</Link></NavItem>
+                  <NavItem><Link to="/">ABOUT</Link></NavItem>
                   <NavItem><Link to="/search">SEARCH</Link></NavItem>
                   <NavItem><Link to="/review">REVIEW</Link></NavItem>
                   <NavItem><Link to="/update">UPDATE</Link></NavItem>
