@@ -1,7 +1,7 @@
-import "./App.css";
 import React from "react";
 import Login from './Login/Login.js';
 import Main from "./Main/Main.js";
+import {useAuth0} from '@auth0/auth0-react';
 
 // const ACTIONS = {
 //   addAttribution: "addAttribution",
@@ -25,10 +25,11 @@ export default function App() {
   //   error: null,
   // });
 
+  let {isAuthenticated}=useAuth0();
+  console.log(isAuthenticated);
   return (
     <div className="app-container">
-      <Login/>
-      <Main />
+      {isAuthenticated?<Main/>:<Login/>}
     </div>
   );
 }
