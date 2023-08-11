@@ -2,14 +2,19 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import uniqueObject from "../../../Data/UniqueArrays.js";
 import { Typeahead } from "react-bootstrap-typeahead";
+import Button from "react-bootstrap/Button";
+import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Search() {
+  let { getIdTokenClaims } = useAuth0();
   let [searchState, setSearchState] = React.useState({
     selectedName: [],
     selectedIngredient: [],
     selectedGlass: [],
     selectedCategory: [],
     selectedRandom: [],
+    searchResults: [],
     searchType: {
       name: false,
       category: false,
@@ -22,7 +27,6 @@ export default function Search() {
 
   const handlerSearchType = (e) => {
     e.persist();
-    // console.log(e.target.value);
     switch (e.target.value) {
       case "name":
         return setSearchState((prevState) => ({
@@ -112,110 +116,137 @@ export default function Search() {
     }
   };
 
-  // const handleSubmit = e => {
-  //   e.preventDefault();
-  //   alert(`${kindOfStand}`);
-  // };
+  const configureConfigObject = (searchType) => {};
 
-  console.log([searchState.selectedName[0], searchState.selectedCategory[0],searchState.selectedIngredient[0],searchState.selectedGlass[0],searchState.selectedRandom[0]]);
+  const handlerOnSubmit = () => {
+    getIdTokenClaims().then((res) => {
+      let jwt = res.__raw;
+      let config = {
+        headers: { Authorization: `Bearer ${jwt}` },
+        method: "get",
+        baseURL: process.env.REACT_APP_SERVER,
+        url: "/",
+      };
+      axios(config)
+        .then((res) => {
+          let searchResults = res.data.drinks;
+          setSearchState((prevState) => ({
+            ...prevState,
+            searchResults: searchResults,
+          }));
+          console.log(searchResults);
+        })
+        .catch((err) => console.log(err));
+    });
+  };
 
   return (
     <div className="search-container">
-      <p>
-        Search advise: Start with one criteria. If no results, check spelling
-        and unselect one or more criteria.
-      </p>
+      <p>How do you want to search for your next cocktail?</p>
       <Form>
-        {Object.entries(searchState.searchType).map((pair, idx) => {
-          return (
-            <Form.Check
-              key={idx}
-              type="radio"
-              id="default-radio"
-              label={`${pair[0]}`}
-              onClick={handlerSearchType}
-              value={`${pair[0]}`}
-              checked={pair[1]}
-              inline
-            />
-          );
-        })}
+        <Form.Group>
+          {Object.entries(searchState.searchType).map((pair, idx) => {
+            return (
+              <Form.Check
+                key={idx}
+                type="radio"
+                id="default-radio"
+                label={`${pair[0]}`}
+                onClick={handlerSearchType}
+                value={`${pair[0]}`}
+                checked={pair[1]}
+                inline
+              />
+            );
+          })}
+        </Form.Group>
 
         {searchState.searchType.name && (
-          <Typeahead
-            placeholder="Cocktail name?"
-            id="name-search"
-            onChange={(selected) => {
-              setSearchState((prevState) => ({
-                ...prevState,
-                selectedName: selected,
-              }));
-            }}
-            options={uniqueObject.uniqueNames}
-            selected={searchState.selectedName}
-          />
+          <Form.Group>
+            <Typeahead
+              placeholder="Cocktail name?"
+              id="name-search"
+              onChange={(selected) => {
+                setSearchState((prevState) => ({
+                  ...prevState,
+                  selectedName: selected,
+                }));
+              }}
+              options={uniqueObject.uniqueNames}
+              selected={searchState.selectedName}
+            />
+          </Form.Group>
         )}
 
         {searchState.searchType.category && (
-          <Typeahead
-            placeholder="Cocktail category?"
-            id="cocktail-search"
-            onChange={(selected) => {
-              setSearchState((prevState) => ({
-                ...prevState,
-                selectedCategory: selected,
-              }));
-            }}
-            options={uniqueObject.uniqueCategories}
-            selected={searchState.selectedCategory}
-          />
+          <Form.Group>
+            <Typeahead
+              placeholder="Cocktail category?"
+              id="cocktail-search"
+              onChange={(selected) => {
+                setSearchState((prevState) => ({
+                  ...prevState,
+                  selectedCategory: selected,
+                }));
+              }}
+              options={uniqueObject.uniqueCategories}
+              selected={searchState.selectedCategory}
+            />
+          </Form.Group>
         )}
 
         {searchState.searchType.ingredient && (
-          <Typeahead
-            placeholder="Cocktail ingredient?"
-            id="ingredient-search"
-            onChange={(selected) => {
-              setSearchState((prevState) => ({
-                ...prevState,
-                selectedIngredient: selected,
-              }));
-            }}
-            options={uniqueObject.uniqueIngredients}
-            selected={searchState.selectedIngredient}
-          />
+          <Form.Group>
+            <Typeahead
+              placeholder="Cocktail ingredient?"
+              id="ingredient-search"
+              onChange={(selected) => {
+                setSearchState((prevState) => ({
+                  ...prevState,
+                  selectedIngredient: selected,
+                }));
+              }}
+              options={uniqueObject.uniqueIngredients}
+              selected={searchState.selectedIngredient}
+            />
+          </Form.Group>
         )}
 
         {searchState.searchType.glass && (
-          <Typeahead
-            placeholder="Glass type?"
-            id="glass-search"
-            onChange={(selected) => {
-              setSearchState((prevState) => ({
-                ...prevState,
-                selectedGlass: selected,
-              }));
-            }}
-            options={uniqueObject.uniqueGlasses}
-            selected={searchState.selectedGlass}
-          />
+          <Form.Group>
+            <Typeahead
+              placeholder="Glass type?"
+              id="glass-search"
+              onChange={(selected) => {
+                setSearchState((prevState) => ({
+                  ...prevState,
+                  selectedGlass: selected,
+                }));
+              }}
+              options={uniqueObject.uniqueGlasses}
+              selected={searchState.selectedGlass}
+            />
+          </Form.Group>
         )}
 
         {searchState.searchType.random && (
-          <Typeahead
-            placeholder="How many?"
-            id="random-search"
-            onChange={(selected) => {
-              setSearchState((prevState) => ({
-                ...prevState,
-                selectedRandom: selected,
-              }));
-            }}
-            options={uniqueObject.uniqueRandom}
-            selected={searchState.selectedRandom}
-          />
+          <Form.Group>
+            <Typeahead
+              placeholder="How many?"
+              id="random-search"
+              onChange={(selected) => {
+                setSearchState((prevState) => ({
+                  ...prevState,
+                  selectedRandom: selected,
+                }));
+              }}
+              options={uniqueObject.uniqueRandom}
+              selected={searchState.selectedRandom}
+            />
+          </Form.Group>
         )}
       </Form>
+      <Button onClick={handlerOnSubmit}>Submit</Button>
     </div>
   );
 }
