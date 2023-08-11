@@ -1,11 +1,15 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
-import uniqueObject from '../../../Data/UniqueArrays.js';
-
-
+import uniqueObject from "../../../Data/UniqueArrays.js";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 export default function Search() {
   let [searchState, setSearchState] = React.useState({
+    selectedName: [],
+    selectedIngredient: [],
+    selectedGlass: [],
+    selectedCategory: [],
+    selectedRandom: [],
     searchType: {
       name: false,
       category: false,
@@ -19,21 +23,92 @@ export default function Search() {
   const handlerSearchType = (e) => {
     e.persist();
     // console.log(e.target.value);
-    switch (e.target.value){
+    switch (e.target.value) {
+      case "name":
+        return setSearchState((prevState) => ({
+          ...prevState,
+          searchType: {
+            name: true,
+            category: false,
+            ingredient: false,
+            glass: false,
+            random: false,
+            clear: false,
+          },
+        }));
 
-      case 'name': return setSearchState(prevState=>({...prevState,searchType:{name: true,category: false,ingredient: false,glass: false,random: false,clear: false}}));
+      case "ingredient":
+        return setSearchState((prevState) => ({
+          ...prevState,
+          searchType: {
+            ...prevState.searchType,
+            ingredient: !prevState.searchType.ingredient,
+            name: false,
+            category: false,
+            random: false,
+            clear: false,
+          },
+        }));
 
-      case 'ingredient': return setSearchState(prevState=>({...prevState,searchType:{...prevState.searchType,ingredient:!prevState.searchType['ingredient'],name:false,category:false,random:false,clear:false}}));
+      case "glass":
+        return setSearchState((prevState) => ({
+          ...prevState,
+          searchType: {
+            ...prevState.searchType,
+            glass: !prevState.searchType.glass,
+            name: false,
+            category: false,
+            random: false,
+            clear: false,
+          },
+        }));
 
-      case 'glass': return setSearchState(prevState=>({...prevState,searchType:{...prevState.searchType,glass:!prevState.searchType['glass'],name:false,category:false,random:false,clear:false}}));
+      case "category":
+        return setSearchState((prevState) => ({
+          ...prevState,
+          searchType: {
+            name: false,
+            category: true,
+            ingredient: false,
+            glass: false,
+            random: false,
+            clear: false,
+          },
+        }));
 
-      case 'category': return setSearchState(prevState=>({...prevState,searchType:{name: false,category: true,ingredient: false,glass: false,random: false,clear: false}}));
+      case "random":
+        return setSearchState((prevState) => ({
+          ...prevState,
+          searchType: {
+            name: false,
+            category: false,
+            ingredient: false,
+            glass: false,
+            random: true,
+            clear: false,
+          },
+        }));
 
-      case 'random': return setSearchState(prevState=>({...prevState,searchType:{name: false,category: false,ingredient: false,glass: false,random: true,clear: false}}));
+      case "clear":
+        return setSearchState((prevState) => ({
+          ...prevState,
+          selectedName: [],
+          selectedIngredient: [],
+          selectedGlass: [],
+          selectedCategory: [],
+          selectedRandom: [],
+          searchType: {
+            name: false,
+            category: false,
+            ingredient: false,
+            glass: false,
+            random: false,
+            clear: true,
+          },
+        }));
 
-      case 'clear': return setSearchState(prevState=>({...prevState,searchType:{name: false,category: false,ingredient: false,glass: false,random: false,clear: true}}));
-
-      default: return;
+      default:
+        return;
     }
   };
 
@@ -42,11 +117,14 @@ export default function Search() {
   //   alert(`${kindOfStand}`);
   // };
 
-  // console.log(uniqueObject.uniqueGlasses);
+  console.log([searchState.selectedName[0], searchState.selectedCategory[0],searchState.selectedIngredient[0],searchState.selectedGlass[0],searchState.selectedRandom[0]]);
 
   return (
     <div className="search-container">
-      <p>Search advise: Start with one criteria. If no results, check spelling and unselect one or more criteria.</p>
+      <p>
+        Search advise: Start with one criteria. If no results, check spelling
+        and unselect one or more criteria.
+      </p>
       <Form>
         {Object.entries(searchState.searchType).map((pair, idx) => {
           return (
@@ -55,7 +133,7 @@ export default function Search() {
               type="radio"
               id="default-radio"
               label={`${pair[0]}`}
-              onChange={handlerSearchType}
+              onClick={handlerSearchType}
               value={`${pair[0]}`}
               checked={pair[1]}
               inline
@@ -63,52 +141,80 @@ export default function Search() {
           );
         })}
 
-        {searchState.searchType['name'] && 
-                <Form.Control
-                  type="text"
-                  id="name"
-                  aria-describedby="name"
-                  placeholder="What is it's name?"
-                />}
+        {searchState.searchType.name && (
+          <Typeahead
+            placeholder="Cocktail name?"
+            id="name-search"
+            onChange={(selected) => {
+              setSearchState((prevState) => ({
+                ...prevState,
+                selectedName: selected,
+              }));
+            }}
+            options={uniqueObject.uniqueNames}
+            selected={searchState.selectedName}
+          />
+        )}
 
-        {searchState.searchType['category'] &&
-            <Form.Select aria-label="Default select example">
-              <option>What category is it in?</option>
-              {uniqueObject.uniqueCategories.map((item,idx)=>{
-                return(<option key={idx} value={item.searchValue}>{item.displayValue}</option>)
-              })}
-            </Form.Select>
-        }
+        {searchState.searchType.category && (
+          <Typeahead
+            placeholder="Cocktail category?"
+            id="cocktail-search"
+            onChange={(selected) => {
+              setSearchState((prevState) => ({
+                ...prevState,
+                selectedCategory: selected,
+              }));
+            }}
+            options={uniqueObject.uniqueCategories}
+            selected={searchState.selectedCategory}
+          />
+        )}
 
-        {searchState.searchType['ingredient'] &&
-            <Form.Select aria-label="Default select example">
-              <option>What is one ingredient it will contain?</option>
-              {uniqueObject.uniqueIngredients.map((item,idx)=>{
-                return(<option key={idx} value={item.searchValue}>{item.displayValue}</option>)
-              })}
-            </Form.Select>
-        }
+        {searchState.searchType.ingredient && (
+          <Typeahead
+            placeholder="Cocktail ingredient?"
+            id="ingredient-search"
+            onChange={(selected) => {
+              setSearchState((prevState) => ({
+                ...prevState,
+                selectedIngredient: selected,
+              }));
+            }}
+            options={uniqueObject.uniqueIngredients}
+            selected={searchState.selectedIngredient}
+          />
+        )}
 
-        {searchState.searchType['glass'] &&
-            <Form.Select aria-label="Default select example">
-              <option>What glass will it be served in?</option>
-              {uniqueObject.uniqueGlasses.map((item,idx)=>{
-                return(<option key={idx} value={item.searchValue}>{item.displayValue}</option>)
-              })}
-            </Form.Select>
-        }
+        {searchState.searchType.glass && (
+          <Typeahead
+            placeholder="Glass type?"
+            id="glass-search"
+            onChange={(selected) => {
+              setSearchState((prevState) => ({
+                ...prevState,
+                selectedGlass: selected,
+              }));
+            }}
+            options={uniqueObject.uniqueGlasses}
+            selected={searchState.selectedGlass}
+          />
+        )}
 
-        {searchState.searchType['random'] &&
-            <Form.Select aria-label="Default select example">
-              <option>How many random cocktails?</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-              <option value="4">Four</option>
-              <option value="5">Five</option>
-            </Form.Select>
-        }
-
+        {searchState.searchType.random && (
+          <Typeahead
+            placeholder="How many?"
+            id="random-search"
+            onChange={(selected) => {
+              setSearchState((prevState) => ({
+                ...prevState,
+                selectedRandom: selected,
+              }));
+            }}
+            options={uniqueObject.uniqueRandom}
+            selected={searchState.selectedRandom}
+          />
+        )}
       </Form>
     </div>
   );
