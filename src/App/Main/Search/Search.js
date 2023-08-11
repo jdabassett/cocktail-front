@@ -5,6 +5,8 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
+import Accordion from 'react-bootstrap/Accordion';
+import Image from 'react-bootstrap/Image';
 
 export default function Search() {
   let { getIdTokenClaims } = useAuth0();
@@ -15,6 +17,7 @@ export default function Search() {
     selectedCategory: [],
     selectedRandom: [],
     searchResults: [],
+    activeKey:null,
     searchType: {
       name: false,
       category: false,
@@ -134,12 +137,13 @@ export default function Search() {
             ...prevState,
             searchResults: searchResults,
           }));
-          console.log(searchResults);
+          // console.log(searchResults);
         })
         .catch((err) => console.log(err));
     });
   };
 
+  console.log(searchState.searchResults);
   return (
     <div className="search-container">
       <p>How do you want to search for your next cocktail?</p>
@@ -247,6 +251,23 @@ export default function Search() {
         )}
       </Form>
       <Button onClick={handlerOnSubmit}>Submit</Button>
+
+      <Accordion defaultActiveKey="null">
+        {searchState.searchResults.map((cocktail,idx)=>{
+          return <Accordion.Item 
+                    key={idx} 
+                    eventKey={idx} 
+                    onClick={()=>setSearchState(prevState=>({...prevState,activeKey:prevState.activeKey===idx?null:idx}))}>
+            <Accordion.Header>
+              {cocktail.strDrink}
+              </Accordion.Header>
+            <Accordion.Body>
+              <Image src={cocktail.strDrinkThumb} thumbnail />
+              <Button>View In Detail</Button>
+            </Accordion.Body>
+          </Accordion.Item>
+        })}
+      </Accordion>
     </div>
   );
 }
