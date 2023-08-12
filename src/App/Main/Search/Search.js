@@ -5,11 +5,12 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
-import Accordion from 'react-bootstrap/Accordion';
-import Image from 'react-bootstrap/Image';
+import Accordion from "react-bootstrap/Accordion";
+import Image from "react-bootstrap/Image";
+import { configure } from "@testing-library/react";
 
 export default function Search() {
-  let { getIdTokenClaims } = useAuth0();
+  let { isAuthenticated, getIdTokenClaims } = useAuth0();
   let [searchState, setSearchState] = React.useState({
     selectedName: [],
     selectedIngredient: [],
@@ -17,7 +18,7 @@ export default function Search() {
     selectedCategory: [],
     selectedRandom: [],
     searchResults: [],
-    activeKey:null,
+    activeKey: null,
     searchType: {
       name: false,
       category: false,
@@ -119,31 +120,75 @@ export default function Search() {
     }
   };
 
-  const configureConfigObject = (searchType) => {};
-
-  const handlerOnSubmit = () => {
-    getIdTokenClaims().then((res) => {
-      let jwt = res.__raw;
-      let config = {
-        headers: { Authorization: `Bearer ${jwt}` },
-        method: "get",
-        baseURL: process.env.REACT_APP_SERVER,
-        url: "/",
-      };
-      axios(config)
-        .then((res) => {
-          let searchResults = res.data.drinks;
-          setSearchState((prevState) => ({
-            ...prevState,
-            searchResults: searchResults,
-          }));
-          // console.log(searchResults);
-        })
-        .catch((err) => console.log(err));
-    });
+  const configureConfigObject = (config) => {
+    let searchType = searchState.searchType;
+    let returnConfig = config;
+    if (searchType.name && searchState.selectedName) {
+      returnConfig["url"] = `/name?name=${searchState.selectedName[0]}`;
+    } else if (searchType.category && searchState.selectedCategory) {
+      returnConfig[
+        "url"
+      ] = `/category?category=${searchState.selectedCategory[0]}`;
+    } else if (searchType.random && searchState.selectedRandom[0]) {
+      returnConfig["url"] = `/random?number=${searchState.selectedRandom[0]}`;
+    } else if (
+      searchType.ingredient &&
+      searchState.selectedIngredient &&
+      searchType.glass &&
+      searchState.selectedGlass
+    ) {
+      returnConfig[
+        "url"
+      ] = `/ingredient?ingredient=${searchState.selectedIngredient[0]}+glass=${searchState.selectedGlass[0]}`;
+    } else if (searchType.ingredient && searchState.selectedIngredient) {
+      returnConfig[
+        "url"
+      ] = `/ingredient?ingredient=${searchState.selectedIngredient[0]}`;
+    } else if (searchType.glass && searchState.selectedGlass) {
+      returnConfig["url"] = `/ingredient?glass=${searchState.selectedGlass[0]}`;
+    }
+    return returnConfig;
   };
 
-  console.log(searchState.searchResults);
+  const handlerOnSubmit = () => {
+    if (
+      (searchState.searchType.name ||
+        searchState.searchType.category ||
+        searchState.searchType.ingredient ||
+        searchState.searchType.glass ||
+        searchState.searchType.random) &&
+      (searchState.selectedName ||
+        searchState.selectedCategor ||
+        searchState.selectedIngredient ||
+        searchState.selectedGlass)
+    ) {
+      getIdTokenClaims().then((res) => {
+        let jwt = res.__raw;
+        let config = {
+          headers: { Authorization: `Bearer ${jwt}` },
+          method: "get",
+          baseURL: process.env.REACT_APP_SERVER,
+        };
+        let newConfig = configureConfigObject(config);
+
+        axios(newConfig)
+          .then((res) => {
+            let searchResults = res.data.drinks;
+            setSearchState((prevState) => ({
+              ...prevState,
+              searchResults: searchResults,
+            }));
+          })
+          //TODO: Handle error
+          .catch((err) => console.log(err));
+      });
+    } else {
+      //TODO: Handle error if search criteria isn't meet.
+      console.log("search criteria wasnt meet");
+    }
+  };
+
+  // console.log(searchState.searchResults);
   return (
     <div className="search-container">
       <p>How do you want to search for your next cocktail?</p>
@@ -253,19 +298,25 @@ export default function Search() {
       <Button onClick={handlerOnSubmit}>Submit</Button>
 
       <Accordion defaultActiveKey="null">
-        {searchState.searchResults.map((cocktail,idx)=>{
-          return <Accordion.Item 
-                    key={idx} 
-                    eventKey={idx} 
-                    onClick={()=>setSearchState(prevState=>({...prevState,activeKey:prevState.activeKey===idx?null:idx}))}>
-            <Accordion.Header>
-              {cocktail.strDrink}
-              </Accordion.Header>
-            <Accordion.Body>
-              <Image src={cocktail.strDrinkThumb} thumbnail />
-              <Button>View In Detail</Button>
-            </Accordion.Body>
-          </Accordion.Item>
+        {searchState.searchResults.map((cocktail, idx) => {
+          return (
+            <Accordion.Item
+              key={idx}
+              eventKey={idx}
+              onClick={() =>
+                setSearchState((prevState) => ({
+                  ...prevState,
+                  activeKey: prevState.activeKey === idx ? null : idx,
+                }))
+              }
+            >
+              <Accordion.Header>{cocktail.strDrink}</Accordion.Header>
+              <Accordion.Body>
+                <Image src={cocktail.strDrinkThumb} thumbnail />
+                <Button>View In Detail</Button>
+              </Accordion.Body>
+            </Accordion.Item>
+          );
         })}
       </Accordion>
     </div>
