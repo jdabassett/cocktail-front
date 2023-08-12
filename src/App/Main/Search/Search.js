@@ -7,10 +7,9 @@ import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 import Accordion from "react-bootstrap/Accordion";
 import Image from "react-bootstrap/Image";
-import { configure } from "@testing-library/react";
 
 export default function Search() {
-  let { isAuthenticated, getIdTokenClaims } = useAuth0();
+  let { getIdTokenClaims } = useAuth0();
   let [searchState, setSearchState] = React.useState({
     selectedName: [],
     selectedIngredient: [],
@@ -36,7 +35,7 @@ export default function Search() {
         return setSearchState((prevState) => ({
           ...prevState,
           searchType: {
-            name: true,
+            name: !prevState.searchType.name,
             category: false,
             ingredient: false,
             glass: false,
@@ -49,10 +48,10 @@ export default function Search() {
         return setSearchState((prevState) => ({
           ...prevState,
           searchType: {
-            ...prevState.searchType,
-            ingredient: !prevState.searchType.ingredient,
             name: false,
             category: false,
+            ingredient: !prevState.searchType.ingredient,
+            glass: false,
             random: false,
             clear: false,
           },
@@ -62,10 +61,10 @@ export default function Search() {
         return setSearchState((prevState) => ({
           ...prevState,
           searchType: {
-            ...prevState.searchType,
-            glass: !prevState.searchType.glass,
             name: false,
             category: false,
+            ingredient: false,
+            glass: !prevState.searchType.glass,
             random: false,
             clear: false,
           },
@@ -76,7 +75,7 @@ export default function Search() {
           ...prevState,
           searchType: {
             name: false,
-            category: true,
+            category: !prevState.searchType.category,
             ingredient: false,
             glass: false,
             random: false,
@@ -92,7 +91,7 @@ export default function Search() {
             category: false,
             ingredient: false,
             glass: false,
-            random: true,
+            random: !prevState.searchType.random,
             clear: false,
           },
         }));
@@ -124,22 +123,30 @@ export default function Search() {
     let searchType = searchState.searchType;
     let returnConfig = config;
     if (searchType.name && searchState.selectedName) {
-      returnConfig["url"] = `/name?name=${searchState.selectedName[0].replace(/\s/g,"_")}`;
-
+      returnConfig["url"] = `/name?name=${searchState.selectedName[0].replace(
+        /\s/g,
+        "_"
+      )}`;
     } else if (searchType.category && searchState.selectedCategory) {
-      returnConfig["url"] = `/category?category=${searchState.selectedCategory[0].replace(/\s/g,"_")}`;
-
+      returnConfig[
+        "url"
+      ] = `/category?category=${searchState.selectedCategory[0].replace(
+        /\s/g,
+        "_"
+      )}`;
     } else if (searchType.random && searchState.selectedRandom[0]) {
       returnConfig["url"] = `/random?number=${searchState.selectedRandom[0]}`;
-
-    } else if (searchType.ingredient&&searchState.selectedIngredient&&searchType.glass&&searchState.selectedGlass) {
-      returnConfig["url"] = `/ingredient?ingredient=${searchState.selectedIngredient[0]}+glass=${searchState.selectedGlass[0].replace(/\s/g,"_")}`;
-
-    } else if (searchType.ingredient&&searchState.selectedIngredient) {
-      returnConfig["url"] = `/ingredient?ingredient=${searchState.selectedIngredient[0].replace(/\s/g,"_")}`;
-      
+    } else if (searchType.ingredient && searchState.selectedIngredient) {
+      returnConfig[
+        "url"
+      ] = `/ingredient?ingredient=${searchState.selectedIngredient[0].replace(
+        /\s/g,
+        "_"
+      )}`;
     } else if (searchType.glass && searchState.selectedGlass) {
-      returnConfig["url"] = `/ingredient?glass=${searchState.selectedGlass[0].replace(/\s/g,"_")}`;
+      returnConfig[
+        "url"
+      ] = `/glass?glass=${searchState.selectedGlass[0].replace(/\s/g, "_")}`;
     }
     return returnConfig;
   };
@@ -152,9 +159,10 @@ export default function Search() {
         searchState.searchType.glass ||
         searchState.searchType.random) &&
       (searchState.selectedName ||
-        searchState.selectedCategor ||
+        searchState.selectedCategory ||
         searchState.selectedIngredient ||
-        searchState.selectedGlass)
+        searchState.selectedGlass ||
+        searchState.selectedRandom)
     ) {
       getIdTokenClaims().then((res) => {
         //get authentication to use in request
@@ -167,16 +175,17 @@ export default function Search() {
         //make new config object with proper url
         let newConfig = configureConfigObject(config);
         console.log(newConfig);
-        // axios(newConfig)
-        //   .then((res) => {
-        //     let searchResults = res.data.drinks;
-        //     setSearchState((prevState) => ({
-        //       ...prevState,
-        //       searchResults: searchResults,
-        //     }));
-        //   })
-        //   //TODO: Handle error
-        //   .catch((err) => console.log(err));
+        
+        axios(newConfig)
+          .then((res) => {
+            let searchResults = res.data.drinks;
+            setSearchState((prevState) => ({
+              ...prevState,
+              searchResults: searchResults,
+            }));
+          })
+          //TODO: Handle error
+          .catch((err) => console.log(err));
       });
     } else {
       //TODO: Handle error if search criteria isn't meet.
