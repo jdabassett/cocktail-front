@@ -124,28 +124,22 @@ export default function Search() {
     let searchType = searchState.searchType;
     let returnConfig = config;
     if (searchType.name && searchState.selectedName) {
-      returnConfig["url"] = `/name?name=${searchState.selectedName[0]}`;
+      returnConfig["url"] = `/name?name=${searchState.selectedName[0].replace(/\s/g,"_")}`;
+
     } else if (searchType.category && searchState.selectedCategory) {
-      returnConfig[
-        "url"
-      ] = `/category?category=${searchState.selectedCategory[0]}`;
+      returnConfig["url"] = `/category?category=${searchState.selectedCategory[0].replace(/\s/g,"_")}`;
+
     } else if (searchType.random && searchState.selectedRandom[0]) {
       returnConfig["url"] = `/random?number=${searchState.selectedRandom[0]}`;
-    } else if (
-      searchType.ingredient &&
-      searchState.selectedIngredient &&
-      searchType.glass &&
-      searchState.selectedGlass
-    ) {
-      returnConfig[
-        "url"
-      ] = `/ingredient?ingredient=${searchState.selectedIngredient[0]}+glass=${searchState.selectedGlass[0]}`;
-    } else if (searchType.ingredient && searchState.selectedIngredient) {
-      returnConfig[
-        "url"
-      ] = `/ingredient?ingredient=${searchState.selectedIngredient[0]}`;
+
+    } else if (searchType.ingredient&&searchState.selectedIngredient&&searchType.glass&&searchState.selectedGlass) {
+      returnConfig["url"] = `/ingredient?ingredient=${searchState.selectedIngredient[0]}+glass=${searchState.selectedGlass[0].replace(/\s/g,"_")}`;
+
+    } else if (searchType.ingredient&&searchState.selectedIngredient) {
+      returnConfig["url"] = `/ingredient?ingredient=${searchState.selectedIngredient[0].replace(/\s/g,"_")}`;
+      
     } else if (searchType.glass && searchState.selectedGlass) {
-      returnConfig["url"] = `/ingredient?glass=${searchState.selectedGlass[0]}`;
+      returnConfig["url"] = `/ingredient?glass=${searchState.selectedGlass[0].replace(/\s/g,"_")}`;
     }
     return returnConfig;
   };
@@ -163,24 +157,26 @@ export default function Search() {
         searchState.selectedGlass)
     ) {
       getIdTokenClaims().then((res) => {
+        //get authentication to use in request
         let jwt = res.__raw;
         let config = {
           headers: { Authorization: `Bearer ${jwt}` },
           method: "get",
           baseURL: process.env.REACT_APP_SERVER,
         };
+        //make new config object with proper url
         let newConfig = configureConfigObject(config);
-
-        axios(newConfig)
-          .then((res) => {
-            let searchResults = res.data.drinks;
-            setSearchState((prevState) => ({
-              ...prevState,
-              searchResults: searchResults,
-            }));
-          })
-          //TODO: Handle error
-          .catch((err) => console.log(err));
+        console.log(newConfig);
+        // axios(newConfig)
+        //   .then((res) => {
+        //     let searchResults = res.data.drinks;
+        //     setSearchState((prevState) => ({
+        //       ...prevState,
+        //       searchResults: searchResults,
+        //     }));
+        //   })
+        //   //TODO: Handle error
+        //   .catch((err) => console.log(err));
       });
     } else {
       //TODO: Handle error if search criteria isn't meet.
