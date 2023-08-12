@@ -134,7 +134,7 @@ export default function Search() {
         /\s/g,
         "_"
       )}`;
-    } else if (searchType.random && searchState.selectedRandom[0]) {
+    } else if (searchType.random && searchState.selectedRandom) {
       returnConfig["url"] = `/random?number=${searchState.selectedRandom[0]}`;
     } else if (searchType.ingredient && searchState.selectedIngredient) {
       returnConfig[
@@ -175,7 +175,7 @@ export default function Search() {
         //make new config object with proper url
         let newConfig = configureConfigObject(config);
         console.log(newConfig);
-        
+
         axios(newConfig)
           .then((res) => {
             let searchResults = res.data.drinks;
