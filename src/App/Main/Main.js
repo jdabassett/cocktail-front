@@ -1,70 +1,123 @@
 import React from "react";
-// import {useAuth0} from '@auth0/auth0-react';
+import { useAuth0 } from "@auth0/auth0-react";
 import Header from "./Header/Header.js";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Search from "./Search/Search.js";
 import Update from "./Update/Update.js";
 import Review from "./Review/Review.js";
 import Landing from "./Landing/Landing.js";
 import Profile from "./Profile/Profile.js";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
+import axios from "axios";
 
-
-function reducer(state, action) {
+function reducer(stateMain, action) {
+  localStorage.setItem("stateMain", JSON.stringify(stateMain));
   switch (action.type) {
-    case 'updateAttribution':
-      return { ...state, attribution: action.payload.value };
-    case 'updateError':
-      return { ...state, error: action.payload.value };
-    case 'updateSearchResults':
-      return { ...state, searchResults: action.payload.value };
-    case 'updateRevewCocktail':
-      return { ...state, reviewCocktail: action.payload.value };
-    case 'updateUserCurrentCocktail':
-      return { ...state, userCurrentCocktail: action.payload.value };
-    case 'updateUserCocktails':
-      return { ...state, userCocktails: action.payload.value };
+    case "updateAttribution":
+      return { ...stateMain, attribution: action.payload.value };
+    case "updateError":
+      return { ...stateMain, error: action.payload.value };
+    case "updateSearchResults":
+      return { ...stateMain, searchResults: action.payload.value };
+    case "updateRevewCocktail":
+      return { ...stateMain, reviewCocktail: action.payload.value };
+    case "updateUserCocktails":
+      return { ...stateMain, userCocktails: action.payload.value };
     default:
-      return state;
+      return stateMain;
   }
 }
 
 function Main() {
-  // let {isAuthenticated,user,getIdTokenClaims}=useAuth0();
-  // getIdTokenClaims().then(res=> console.log(res.__raw))
+  //open tools
+  let { getIdTokenClaims } = useAuth0();
+  let navigate = useNavigate();
 
-  const [state, dispatch] = React.useReducer(reducer, {
-    attribution: null,
-    error: null,
-    searchResults: null,
-    reviewCocktail: null,
-    userCurrentCocktail: null,
-    userCocktails: null,
-  });
+  //set state
+  const [stateMain, dispatch] = React.useReducer(
+    reducer,
+    JSON.parse(localStorage.getItem("stateMain")) || {
+      attribution: null,
+      error: null,
+      searchResults: null,
+      reviewCocktail: null,
+      userCocktails: null,
+    }
+  );
 
-  const handlerUpdateMain = (value) => {
-    dispatch({type:'updateSearchResults',payload:{value:value}})
-    // console.log(value);
-  }
+  //keep local storage up to date
+  React.useEffect(() => {
+    localStorage.setItem("stateMain", JSON.stringify(stateMain));
+  }, [stateMain]);
 
+  //handler get request by id
+  const handlerGetById = (id) => {
+    // console.log(id)
+    getIdTokenClaims().then((res) => {
+      //get authentication to use in request
+      let jwt = res.__raw;
+      let config = {
+        headers: { Authorization: `Bearer ${jwt}` },
+        method: "get",
+        baseURL: process.env.REACT_APP_SERVER,
+        url: `/id?id=${id}`,
+      };
+      // console.log(config);
+      axios(config)
+        .then((res) => {
+          let searchResults = res.data.drinks;
+          // console.log(searchResults[0]);
+          dispatch({
+            type: "updateRevewCocktail",
+            payload: { value: searchResults[0] },
+          });
+          navigate("/review");
+        })
+        //TODO: Handle error
+        .catch((err) => console.log(err));
+    });
+  };
+
+  // console.log(stateMain.reviewCocktail)
 
   return (
     <div className="main-container">
       <Header />
       <Routes>
-        <Route exact path="/" element={
-          <Landing />}></Route>
-        <Route exact path="/search" element={
-          <Search 
-            searchResults={state.searchResults}
-            handlerUpdateMain={handlerUpdateMain}
-            dispatch={dispatch}/>}></Route>
-        <Route exact path="/review" element={
-          <Review />}></Route>
-        <Route exact path="/update" element={
-          <Update />}></Route>
-        <Route exact path="/profile" element={
-          <Profile />}></Route>
+        <Route exact path="/" element={<Landing />}></Route>
+
+        <Route
+          exact
+          path="/search"
+          element={
+            <Search
+              searchResults={stateMain.searchResults}
+              handlerGetById={handlerGetById}
+              dispatch={dispatch}
+            />
+          }
+        ></Route>
+
+        <Route
+          exact
+          path="/review"
+          element={
+            <Review
+              reviewCocktail={stateMain.reviewCocktail}
+            />
+          }
+        ></Route>
+
+        <Route
+          exact
+          path="/update"
+          element={
+            <Update
+              reviewCocktail={stateMain.reviewCocktail}
+            />
+          }
+        ></Route>
+        <Route exact path="/profile" element={<Profile />}></Route>
       </Routes>
     </div>
   );

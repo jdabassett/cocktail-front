@@ -95,8 +95,6 @@ export default function Search(props) {
           },
         }));
 
-
-
       case "clear":
         return setSearchState((prevState) => ({
           ...prevState,
@@ -150,7 +148,7 @@ export default function Search(props) {
       ] = `/glass?glass=${searchState.selectedGlass[0].replace(/\s/g, "_")}`;
     } else {
       //TODO: Handle error when empty  request made.
-      console.log('handling error')
+      console.log("handling error");
     }
     return returnConfig;
   };
@@ -183,7 +181,10 @@ export default function Search(props) {
         axios(newConfig)
           .then((res) => {
             let searchResults = res.data.drinks;
-            props.dispatch({type:'updateSearchResults',payload:{value:searchResults}})
+            props.dispatch({
+              type: "updateSearchResults",
+              payload: { value: searchResults },
+            });
           })
           //TODO: Handle error
           .catch((err) => console.log(err));
@@ -194,28 +195,28 @@ export default function Search(props) {
     }
   };
 
-  console.log(props.searchResults);
+  // console.log(props.reviewCocktail);
   return (
     <div className="search-container">
       <p>How do you want to search for your next cocktail?</p>
       <Form>
         <Form.Group>
           {Object.entries(searchState.searchType)
-            .filter(pair => pair[0]!=='id')
+            .filter((pair) => pair[0] !== "id")
             .map((pair, idx) => {
-            return (
-              <Form.Check
-                key={idx}
-                type="radio"
-                id="default-radio"
-                label={`${pair[0]}`}
-                onChange={handlerSearchType}
-                value={`${pair[0]}`}
-                checked={pair[1]}
-                inline
-              />
-            );
-          })}
+              return (
+                <Form.Check
+                  key={idx}
+                  type="radio"
+                  id="default-radio"
+                  label={`${pair[0]}`}
+                  onChange={handlerSearchType}
+                  value={`${pair[0]}`}
+                  checked={pair[1]}
+                  inline
+                />
+              );
+            })}
         </Form.Group>
 
         {searchState.searchType.name && (
@@ -304,31 +305,41 @@ export default function Search(props) {
         )}
       </Form>
       <Button onClick={handlerOnSubmit}>Submit</Button>
+      <Button
+        onClick={() =>
+          props.dispatch({
+            type: "updateSearchResults",
+            payload: { value: null },
+          })
+        }
+      >
+        Clear Search Results
+      </Button>
 
-      {props.searchResults &&
-        
-      <Accordion defaultActiveKey="null">
-        {props.searchResults.map((cocktail, idx) => {
-          return (
-            <Accordion.Item
-              key={idx}
-              eventKey={idx}
-              onClick={() =>
-                setSearchState((prevState) => ({
-                  ...prevState,
-                  activeKey: prevState.activeKey === idx ? null : idx,
-                }))
-              }
-            >
-              <Accordion.Header>{cocktail.strDrink}</Accordion.Header>
-              <Accordion.Body>
-                <Image src={cocktail.strDrinkThumb} thumbnail />
-                <Button onClick={handlerOnSubmit}>View In Detail</Button>
-              </Accordion.Body>
-            </Accordion.Item>
-          );
-        })}
-      </Accordion>}
+      {props.searchResults && (
+        <Accordion defaultActiveKey="null">
+          {props.searchResults.map((cocktail, idx) => {
+            return (
+              <Accordion.Item
+                key={idx}
+                eventKey={idx}
+                onClick={() =>
+                  setSearchState((prevState) => ({
+                    ...prevState,
+                    activeKey: prevState.activeKey === idx ? null : idx,
+                  }))
+                }
+              >
+                <Accordion.Header>{cocktail.strDrink}</Accordion.Header>
+                <Accordion.Body>
+                  <Image src={cocktail.strDrinkThumb} thumbnail />
+                  <Button onClick={()=>props.handlerGetById(cocktail.idDrink)}>View In Details</Button>
+                </Accordion.Body>
+              </Accordion.Item>
+            );
+          })}
+        </Accordion>
+      )}
     </div>
   );
 }
