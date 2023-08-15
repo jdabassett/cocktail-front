@@ -8,7 +8,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Accordion from "react-bootstrap/Accordion";
 import Image from "react-bootstrap/Image";
 
-export default function Search() {
+export default function Search(props) {
   let { getIdTokenClaims } = useAuth0();
   let [searchState, setSearchState] = React.useState({
     selectedName: [],
@@ -16,7 +16,6 @@ export default function Search() {
     selectedGlass: [],
     selectedCategory: [],
     selectedRandom: [],
-    searchResults: [],
     activeKey: null,
     searchType: {
       name: false,
@@ -96,6 +95,8 @@ export default function Search() {
           },
         }));
 
+
+
       case "clear":
         return setSearchState((prevState) => ({
           ...prevState,
@@ -122,31 +123,34 @@ export default function Search() {
   const configureConfigObject = (config) => {
     let searchType = searchState.searchType;
     let returnConfig = config;
-    if (searchType.name && searchState.selectedName) {
+    if (searchType.name && searchState.selectedName[0]) {
       returnConfig["url"] = `/name?name=${searchState.selectedName[0].replace(
         /\s/g,
         "_"
       )}`;
-    } else if (searchType.category && searchState.selectedCategory) {
+    } else if (searchType.category && searchState.selectedCategory[0]) {
       returnConfig[
         "url"
       ] = `/category?category=${searchState.selectedCategory[0].replace(
         /\s/g,
         "_"
       )}`;
-    } else if (searchType.random && searchState.selectedRandom) {
+    } else if (searchType.random && searchState.selectedRandom[0]) {
       returnConfig["url"] = `/random?number=${searchState.selectedRandom[0]}`;
-    } else if (searchType.ingredient && searchState.selectedIngredient) {
+    } else if (searchType.ingredient && searchState.selectedIngredient[0]) {
       returnConfig[
         "url"
       ] = `/ingredient?ingredient=${searchState.selectedIngredient[0].replace(
         /\s/g,
         "_"
       )}`;
-    } else if (searchType.glass && searchState.selectedGlass) {
+    } else if (searchType.glass && searchState.selectedGlass[0]) {
       returnConfig[
         "url"
       ] = `/glass?glass=${searchState.selectedGlass[0].replace(/\s/g, "_")}`;
+    } else {
+      //TODO: Handle error when empty  request made.
+      console.log('handling error')
     }
     return returnConfig;
   };
@@ -174,15 +178,12 @@ export default function Search() {
         };
         //make new config object with proper url
         let newConfig = configureConfigObject(config);
-        console.log(newConfig);
+        // console.log(newConfig);
 
         axios(newConfig)
           .then((res) => {
             let searchResults = res.data.drinks;
-            setSearchState((prevState) => ({
-              ...prevState,
-              searchResults: searchResults,
-            }));
+            props.dispatch({type:'updateSearchResults',payload:{value:searchResults}})
           })
           //TODO: Handle error
           .catch((err) => console.log(err));
@@ -193,20 +194,22 @@ export default function Search() {
     }
   };
 
-  // console.log(searchState.searchResults);
+  console.log(props.searchResults);
   return (
     <div className="search-container">
       <p>How do you want to search for your next cocktail?</p>
       <Form>
         <Form.Group>
-          {Object.entries(searchState.searchType).map((pair, idx) => {
+          {Object.entries(searchState.searchType)
+            .filter(pair => pair[0]!=='id')
+            .map((pair, idx) => {
             return (
               <Form.Check
                 key={idx}
                 type="radio"
                 id="default-radio"
                 label={`${pair[0]}`}
-                onClick={handlerSearchType}
+                onChange={handlerSearchType}
                 value={`${pair[0]}`}
                 checked={pair[1]}
                 inline
@@ -302,8 +305,10 @@ export default function Search() {
       </Form>
       <Button onClick={handlerOnSubmit}>Submit</Button>
 
+      {props.searchResults &&
+        
       <Accordion defaultActiveKey="null">
-        {searchState.searchResults.map((cocktail, idx) => {
+        {props.searchResults.map((cocktail, idx) => {
           return (
             <Accordion.Item
               key={idx}
@@ -318,12 +323,12 @@ export default function Search() {
               <Accordion.Header>{cocktail.strDrink}</Accordion.Header>
               <Accordion.Body>
                 <Image src={cocktail.strDrinkThumb} thumbnail />
-                <Button>View In Detail</Button>
+                <Button onClick={handlerOnSubmit}>View In Detail</Button>
               </Accordion.Body>
             </Accordion.Item>
           );
         })}
-      </Accordion>
+      </Accordion>}
     </div>
   );
 }
