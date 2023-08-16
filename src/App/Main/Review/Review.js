@@ -3,8 +3,11 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import oneCocktail from '../../../Data/data_one-cocktail.json';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 export default function Review (props) {
+ 
 
   let viewCocktail = props.reviewCocktail || oneCocktail;
   // console.log(props.reviewCocktail);
@@ -50,8 +53,30 @@ export default function Review (props) {
                 </ul>
               </>}
           </div>
-          <Button variant="primary">Save</Button>
-          <Button variant="primary">Edit</Button>
+          <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 400 }}
+              overlay={<Tooltip id="button-tooltip">
+              Click button to save cocktail to your personal records.
+            </Tooltip>}
+            >
+              <Button 
+                variant="primary"
+                onClick={()=>console.log('edit clicked')}
+                >Save</Button>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 400 }}
+              overlay={<Tooltip id="button-tooltip">
+              Click button to edit record before anything else.
+            </Tooltip>}
+            >
+              <Button 
+                variant="primary"
+                onClick={()=>console.log('edit clicked')}
+                >Edit</Button>
+            </OverlayTrigger>
         </Card.Body>
       </Card>
     </div>

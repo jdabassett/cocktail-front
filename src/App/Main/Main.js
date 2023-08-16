@@ -23,6 +23,8 @@ function reducer(stateMain, action) {
       return { ...stateMain, reviewCocktail: action.payload.value };
     case "updateUserCocktails":
       return { ...stateMain, userCocktails: action.payload.value };
+    case "updateDisplayHints":
+      return { ...stateMain, displayHints: {...stateMain.displayHints,...action.payload.value} };
     default:
       return stateMain;
   }
@@ -36,19 +38,21 @@ function Main() {
   //set state
   const [stateMain, dispatch] = React.useReducer(
     reducer,
-    JSON.parse(localStorage.getItem("stateMain")) || {
+    // TODO: JSON.parse(localStorage.getItem("stateMain")) ||
+    {
       attribution: null,
       error: null,
       searchResults: null,
       reviewCocktail: null,
       userCocktails: null,
+      displayHints: {component:"",disable:true},
     }
   );
 
   //keep local storage up to date
   React.useEffect(() => {
     localStorage.setItem("stateMain", JSON.stringify(stateMain));
-  }, [stateMain]);
+  });
 
   //handler get request by id
   const handlerGetById = (id) => {
@@ -78,11 +82,10 @@ function Main() {
     });
   };
 
-  // console.log(stateMain.reviewCocktail)
-
   return (
     <div className="main-container">
-      <Header />
+      <Header dispatch={dispatch} displayHints={stateMain.displayHints} />
+
       <Routes>
         <Route exact path="/" element={<Landing />}></Route>
 
@@ -91,9 +94,10 @@ function Main() {
           path="/search"
           element={
             <Search
-              searchResults={stateMain.searchResults}
-              handlerGetById={handlerGetById}
               dispatch={dispatch}
+              displayHints={stateMain.displayHints}
+              handlerGetById={handlerGetById}
+              searchResults={stateMain.searchResults}
             />
           }
         ></Route>
@@ -103,6 +107,8 @@ function Main() {
           path="/review"
           element={
             <Review
+              dispatch={dispatch}
+              displayHints={stateMain.displayHints}
               reviewCocktail={stateMain.reviewCocktail}
             />
           }
@@ -113,11 +119,22 @@ function Main() {
           path="/update"
           element={
             <Update
+              dispatch={dispatch}
+              displayHints={stateMain.displayHints}
               reviewCocktail={stateMain.reviewCocktail}
             />
           }
         ></Route>
-        <Route exact path="/profile" element={<Profile />}></Route>
+        <Route
+          exact
+          path="/profile"
+          element={
+            <Profile
+              dispatch={dispatch}
+              displayHints={stateMain.displayHints}
+            />
+          }
+        ></Route>
       </Routes>
     </div>
   );

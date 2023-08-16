@@ -7,10 +7,12 @@ import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 import Accordion from "react-bootstrap/Accordion";
 import Image from "react-bootstrap/Image";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 export default function Search(props) {
   let { getIdTokenClaims } = useAuth0();
-  let [searchState, setSearchState] = React.useState({
+  let [stateSearch, setStateSearch] = React.useState({
     selectedName: [],
     selectedIngredient: [],
     selectedGlass: [],
@@ -31,7 +33,7 @@ export default function Search(props) {
     e.persist();
     switch (e.target.value) {
       case "name":
-        return setSearchState((prevState) => ({
+        return setStateSearch((prevState) => ({
           ...prevState,
           searchType: {
             name: !prevState.searchType.name,
@@ -44,7 +46,7 @@ export default function Search(props) {
         }));
 
       case "ingredient":
-        return setSearchState((prevState) => ({
+        return setStateSearch((prevState) => ({
           ...prevState,
           searchType: {
             name: false,
@@ -57,7 +59,7 @@ export default function Search(props) {
         }));
 
       case "glass":
-        return setSearchState((prevState) => ({
+        return setStateSearch((prevState) => ({
           ...prevState,
           searchType: {
             name: false,
@@ -70,7 +72,7 @@ export default function Search(props) {
         }));
 
       case "category":
-        return setSearchState((prevState) => ({
+        return setStateSearch((prevState) => ({
           ...prevState,
           searchType: {
             name: false,
@@ -83,7 +85,7 @@ export default function Search(props) {
         }));
 
       case "random":
-        return setSearchState((prevState) => ({
+        return setStateSearch((prevState) => ({
           ...prevState,
           searchType: {
             name: false,
@@ -96,7 +98,7 @@ export default function Search(props) {
         }));
 
       case "clear":
-        return setSearchState((prevState) => ({
+        return setStateSearch((prevState) => ({
           ...prevState,
           selectedName: [],
           selectedIngredient: [],
@@ -119,33 +121,33 @@ export default function Search(props) {
   };
 
   const configureConfigObject = (config) => {
-    let searchType = searchState.searchType;
+    let searchType = stateSearch.searchType;
     let returnConfig = config;
-    if (searchType.name && searchState.selectedName[0]) {
-      returnConfig["url"] = `/name?name=${searchState.selectedName[0].replace(
+    if (searchType.name && stateSearch.selectedName[0]) {
+      returnConfig["url"] = `/name?name=${stateSearch.selectedName[0].replace(
         /\s/g,
         "_"
       )}`;
-    } else if (searchType.category && searchState.selectedCategory[0]) {
+    } else if (searchType.category && stateSearch.selectedCategory[0]) {
       returnConfig[
         "url"
-      ] = `/category?category=${searchState.selectedCategory[0].replace(
+      ] = `/category?category=${stateSearch.selectedCategory[0].replace(
         /\s/g,
         "_"
       )}`;
-    } else if (searchType.random && searchState.selectedRandom[0]) {
-      returnConfig["url"] = `/random?number=${searchState.selectedRandom[0]}`;
-    } else if (searchType.ingredient && searchState.selectedIngredient[0]) {
+    } else if (searchType.random && stateSearch.selectedRandom[0]) {
+      returnConfig["url"] = `/random?number=${stateSearch.selectedRandom[0]}`;
+    } else if (searchType.ingredient && stateSearch.selectedIngredient[0]) {
       returnConfig[
         "url"
-      ] = `/ingredient?ingredient=${searchState.selectedIngredient[0].replace(
+      ] = `/ingredient?ingredient=${stateSearch.selectedIngredient[0].replace(
         /\s/g,
         "_"
       )}`;
-    } else if (searchType.glass && searchState.selectedGlass[0]) {
+    } else if (searchType.glass && stateSearch.selectedGlass[0]) {
       returnConfig[
         "url"
-      ] = `/glass?glass=${searchState.selectedGlass[0].replace(/\s/g, "_")}`;
+      ] = `/glass?glass=${stateSearch.selectedGlass[0].replace(/\s/g, "_")}`;
     } else {
       //TODO: Handle error when empty  request made.
       console.log("handling error");
@@ -155,16 +157,16 @@ export default function Search(props) {
 
   const handlerOnSubmit = () => {
     if (
-      (searchState.searchType.name ||
-        searchState.searchType.category ||
-        searchState.searchType.ingredient ||
-        searchState.searchType.glass ||
-        searchState.searchType.random) &&
-      (searchState.selectedName ||
-        searchState.selectedCategory ||
-        searchState.selectedIngredient ||
-        searchState.selectedGlass ||
-        searchState.selectedRandom)
+      (stateSearch.searchType.name ||
+        stateSearch.searchType.category ||
+        stateSearch.searchType.ingredient ||
+        stateSearch.searchType.glass ||
+        stateSearch.searchType.random) &&
+      (stateSearch.selectedName ||
+        stateSearch.selectedCategory ||
+        stateSearch.selectedIngredient ||
+        stateSearch.selectedGlass ||
+        stateSearch.selectedRandom)
     ) {
       getIdTokenClaims().then((res) => {
         //get authentication to use in request
@@ -195,13 +197,13 @@ export default function Search(props) {
     }
   };
 
-  // console.log(props.reviewCocktail);
+  console.log(props.displayHints);
   return (
     <div className="search-container">
-      <p>How do you want to search for your next cocktail?</p>
+      <p>Search for cocktails by...?</p>
       <Form>
         <Form.Group>
-          {Object.entries(searchState.searchType)
+          {Object.entries(stateSearch.searchType)
             .filter((pair) => pair[0] !== "id")
             .map((pair, idx) => {
               return (
@@ -219,102 +221,129 @@ export default function Search(props) {
             })}
         </Form.Group>
 
-        {searchState.searchType.name && (
+        {stateSearch.searchType.name && (
           <Form.Group>
             <Typeahead
               placeholder="Cocktail name?"
               id="name-search"
               onChange={(selected) => {
-                setSearchState((prevState) => ({
+                setStateSearch((prevState) => ({
                   ...prevState,
                   selectedName: selected,
                 }));
               }}
               options={uniqueObject.uniqueNames}
-              selected={searchState.selectedName}
+              selected={stateSearch.selectedName}
             />
           </Form.Group>
         )}
 
-        {searchState.searchType.category && (
+        {stateSearch.searchType.category && (
           <Form.Group>
             <Typeahead
               placeholder="Cocktail category?"
               id="cocktail-search"
               onChange={(selected) => {
-                setSearchState((prevState) => ({
+                setStateSearch((prevState) => ({
                   ...prevState,
                   selectedCategory: selected,
                 }));
               }}
               options={uniqueObject.uniqueCategories}
-              selected={searchState.selectedCategory}
+              selected={stateSearch.selectedCategory}
             />
           </Form.Group>
         )}
 
-        {searchState.searchType.ingredient && (
+        {stateSearch.searchType.ingredient && (
           <Form.Group>
             <Typeahead
               placeholder="Cocktail ingredient?"
               id="ingredient-search"
               onChange={(selected) => {
-                setSearchState((prevState) => ({
+                setStateSearch((prevState) => ({
                   ...prevState,
                   selectedIngredient: selected,
                 }));
               }}
               options={uniqueObject.uniqueIngredients}
-              selected={searchState.selectedIngredient}
+              selected={stateSearch.selectedIngredient}
             />
           </Form.Group>
         )}
 
-        {searchState.searchType.glass && (
+        {stateSearch.searchType.glass && (
           <Form.Group>
             <Typeahead
               placeholder="Glass type?"
               id="glass-search"
               onChange={(selected) => {
-                setSearchState((prevState) => ({
+                setStateSearch((prevState) => ({
                   ...prevState,
                   selectedGlass: selected,
                 }));
               }}
               options={uniqueObject.uniqueGlasses}
-              selected={searchState.selectedGlass}
+              selected={stateSearch.selectedGlass}
             />
           </Form.Group>
         )}
 
-        {searchState.searchType.random && (
+        {stateSearch.searchType.random && (
           <Form.Group>
             <Typeahead
               placeholder="How many?"
               id="random-search"
               onChange={(selected) => {
-                setSearchState((prevState) => ({
+                setStateSearch((prevState) => ({
                   ...prevState,
                   selectedRandom: selected,
                 }));
               }}
               options={uniqueObject.uniqueRandom}
-              selected={searchState.selectedRandom}
+              selected={stateSearch.selectedRandom}
             />
           </Form.Group>
         )}
       </Form>
-      <Button onClick={handlerOnSubmit}>Submit</Button>
-      <Button
-        onClick={() =>
-          props.dispatch({
-            type: "updateSearchResults",
-            payload: { value: null },
-          })
+      <OverlayTrigger
+        placement="top"
+        delay={{ show: 250, hide: 400 }}
+        show ={!props.displayHints.disable && props.displayHints.component==="search"}
+        onToggle={()=>{props.dispatch({type:'updateDisplayHints',payload:{value:{component:props.displayHints.component==="search"?"":"search"}}})}}
+        overlay={
+          <Tooltip id="button-tooltip">
+            Click to find a cocktail with the above search criteria.
+          </Tooltip>
         }
       >
-        Clear Search Results
-      </Button>
+        <Button className="button search-buttons" onClick={handlerOnSubmit}>Search</Button>
+      </OverlayTrigger>
+
+
+      <OverlayTrigger
+        placement="top"
+        delay={{ show: 250, hide: 400 }}
+        show ={!props.displayHints.disable && props.displayHints.component==="clear"}
+        onToggle={()=>{props.dispatch({type:'updateDisplayHints',payload:{value:{component:props.displayHints.component==="clear"?"":"clear"}}})}}
+        overlay={
+          <Tooltip className="tooltip" id="button-tooltip">
+            Click to clear all search results below.
+          </Tooltip>
+        }
+      >
+        <Button
+          className="button search-buttons"
+          onClick={() =>
+            props.dispatch({
+              type: "updateSearchResults",
+              payload: { value: null },
+            })
+          }
+        >
+          Clear
+        </Button>
+      </OverlayTrigger>
 
       {props.searchResults && (
         <Accordion defaultActiveKey="null">
@@ -324,7 +353,7 @@ export default function Search(props) {
                 key={idx}
                 eventKey={idx}
                 onClick={() =>
-                  setSearchState((prevState) => ({
+                  setStateSearch((prevState) => ({
                     ...prevState,
                     activeKey: prevState.activeKey === idx ? null : idx,
                   }))
@@ -333,7 +362,11 @@ export default function Search(props) {
                 <Accordion.Header>{cocktail.strDrink}</Accordion.Header>
                 <Accordion.Body>
                   <Image src={cocktail.strDrinkThumb} thumbnail />
-                  <Button onClick={()=>props.handlerGetById(cocktail.idDrink)}>View In Details</Button>
+                  <Button
+                    onClick={() => props.handlerGetById(cocktail.idDrink)}
+                  >
+                    View In Details
+                  </Button>
                 </Accordion.Body>
               </Accordion.Item>
             );

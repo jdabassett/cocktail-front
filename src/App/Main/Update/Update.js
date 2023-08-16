@@ -8,7 +8,7 @@ export default function Update (props) {
   let viewCocktail = props.reviewCocktail || oneCocktail;
   // console.log(props.reviewCocktail);
   return (
-    <div className="review-container">
+    <div className="update-container">
       <Card style={{ width: '30rem' }}>
         <Card.Img variant="top" src={viewCocktail.strDrinkThumb} />
         <Card.Body>
