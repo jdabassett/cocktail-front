@@ -3,7 +3,7 @@ import LogOutButton from './LogOutButton.js';
 import { Navbar, NavItem } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Nav from 'react-bootstrap/Nav';
-import Button from "react-bootstrap/Button";
+// import Button from "react-bootstrap/Button";
 
 export default function Header (props) {
 
@@ -22,9 +22,9 @@ export default function Header (props) {
                   <NavItem><Link to="/review">REVIEW</Link></NavItem>
                   <NavItem><Link to="/update">UPDATE</Link></NavItem>
                   <NavItem><Link to="/profile">PROFILE</Link></NavItem>
-                  <NavItem><Button
+                  {/* <NavItem><Button
                     onClick={()=>{props.dispatch({type:'updateDisplayHints',payload:{value:{component:"",disable:props.displayHints.disable?false:true}}})}}
-                  >{props.displayHints.disable?"Show Hints":"Hide Hints"}</Button></NavItem>
+                  >{props.displayHints.disable?"Show Hints":"Hide Hints"}</Button></NavItem> */}
                   <NavItem><LogOutButton/></NavItem>
                   
                 </Nav>

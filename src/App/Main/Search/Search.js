@@ -309,8 +309,6 @@ export default function Search(props) {
       <OverlayTrigger
         placement="top"
         delay={{ show: 250, hide: 400 }}
-        show ={!props.displayHints.disable && props.displayHints.component==="search"}
-        onToggle={()=>{props.dispatch({type:'updateDisplayHints',payload:{value:{component:props.displayHints.component==="search"?"":"search"}}})}}
         overlay={
           <Tooltip id="button-tooltip">
             Click to find a cocktail with the above search criteria.
@@ -324,8 +322,6 @@ export default function Search(props) {
       <OverlayTrigger
         placement="top"
         delay={{ show: 250, hide: 400 }}
-        show ={!props.displayHints.disable && props.displayHints.component==="clear"}
-        onToggle={()=>{props.dispatch({type:'updateDisplayHints',payload:{value:{component:props.displayHints.component==="clear"?"":"clear"}}})}}
         overlay={
           <Tooltip className="tooltip" id="button-tooltip">
             Click to clear all search results below.

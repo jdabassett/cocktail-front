@@ -5,9 +5,10 @@ import Card from 'react-bootstrap/Card';
 import oneCocktail from '../../../Data/data_one-cocktail.json';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import {useNavigate} from 'react-router-dom';
 
 export default function Review (props) {
- 
+  let navigate = useNavigate();
 
   let viewCocktail = props.reviewCocktail || oneCocktail;
   // console.log(props.reviewCocktail);
@@ -74,7 +75,7 @@ export default function Review (props) {
             >
               <Button 
                 variant="primary"
-                onClick={()=>console.log('edit clicked')}
+                onClick={()=>navigate('/update')}
                 >Edit</Button>
             </OverlayTrigger>
         </Card.Body>

@@ -9,6 +9,7 @@ import Landing from "./Landing/Landing.js";
 import Profile from "./Profile/Profile.js";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import axios from "axios";
+import oneCocktail from "../../Data/data_one-cocktail.json";
 
 function reducer(stateMain, action) {
   localStorage.setItem("stateMain", JSON.stringify(stateMain));
@@ -43,7 +44,7 @@ function Main() {
       attribution: null,
       error: null,
       searchResults: null,
-      reviewCocktail: null,
+      reviewCocktail: null||oneCocktail,
       userCocktails: null,
       displayHints: {component:"",disable:true},
     }
