@@ -83,6 +83,8 @@ function Main() {
     });
   };
 
+  console.log('main',stateMain.reviewCocktail);
+
   return (
     <div className="main-container">
       <Header dispatch={dispatch} displayHints={stateMain.displayHints} />

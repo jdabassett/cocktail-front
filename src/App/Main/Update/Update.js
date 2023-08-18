@@ -4,26 +4,27 @@ import Card from "react-bootstrap/Card";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
-// import axios from 'axios';
-// import {useAuth0} from '@auth0/auth0-react';
+import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Update(props) {
   let navigate = useNavigate();
-  // let { getIdTokenClaims } = useAuth0();
+  let { getIdTokenClaims } = useAuth0();
 
   const [stateUpdate, setStateUpdate] = React.useState({
     ...props.reviewCocktail,
   });
 
-  const submitCocktail = (e, id) => {
+  const submitCocktail = (e) => {
     e.preventDefault();
 
+
     //formate results from form into object to be put or posted
+    let _id = stateUpdate._id || null;
     let idDrink = stateUpdate.idDrink;
     let strDrink = e.target.strDrinkInput.value;
     let strGlass = e.target.strGlassInput.value;
     let strDrinkThumb = stateUpdate.strDrinkThumb;
-    let strUserEmail = stateUpdate.strUserEmail || null;
     let strNotes = e.target.strNotesInput.value;
 
     let arrayInstructions = [];
@@ -47,39 +48,46 @@ export default function Update(props) {
       strDrinkThumb: strDrinkThumb,
       arrayInstructions: arrayInstructions,
       arrayMeasuredIngredients: arrayMeasuredIngredients,
-      strUserEmail: strUserEmail,
       strNotes: strNotes,
     };
 
-    let method = strUserEmail ? "put" : "post";
-    let url = strUserEmail ? `/updateCocktail/${id}` : `/createCocktail`;
+    let method = _id ? "put" : "post";
+    let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
+    if (_id) {
+      formatedCocktail["_id"] = _id;
+    }
 
-    console.log(formatedCocktail, method, url);
-    // getIdTokenClaims()
-    //   .then((res) => {
-    //     let jwt = res.__raw;
-    //     let userEmail = res.email;
-    //     let config = {
-    //       headers: { Authorization: `Bearer ${jwt}`,email:`${userEmail}` },
-    //       method: method,
-    //       data: formatedCocktail,
-    //       baseURL: process.env.REACT_APP_SERVER,
-    //       url: url,
-    //     };
-
-    //     axios(config)
-    //       .then((res) => {
-    //         let modifiedResponseRecipe = res.data;
-    //         // console.log('i think it updated:::', modifiedResponseRecipe);
-    //         this.props.handlerUpdateFullRecipe(modifiedResponseRecipe);
-    //         this.props.handlerFullRecipe(
-    //           modifiedResponseRecipe.idMeal,
-    //           modifiedResponseRecipe
-    //         );
-    //       })
-    //       .catch((err) => console.error(err.message));
-    // })
-    // .catch((err) => console.error(err.message));
+    // console.log(formatedCocktail, method, url);
+    //make put or post request
+    getIdTokenClaims()
+      .then((res) => {
+        let jwt = res.__raw;
+        let userEmail = res.email;
+        formatedCocktail['strUserEmail']=userEmail;
+        let config = {
+          headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
+          method: method,
+          data: formatedCocktail,
+          baseURL: process.env.REACT_APP_SERVER,
+          url: url,
+        };
+        // console.log(formatedCocktail,config);
+        axios(config)
+          .then((res) => {
+            let savedCocktail = res.data;
+            props.dispatch({
+              type: "updateRevewCocktail",
+              payload: { value: savedCocktail },
+            });
+            navigate("/review");
+          })
+          .catch((err) => {
+            //TODO: handle error when request fails
+          });
+      })
+      .catch((err) => {
+        //TODO: handle error when auth0 token request fails
+      });
 
     // this.props.closeEditForm();
   };
