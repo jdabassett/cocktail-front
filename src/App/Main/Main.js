@@ -83,7 +83,157 @@ function Main() {
     });
   };
 
-  console.log('main',stateMain.reviewCocktail);
+  //put or post updated cocktail to user database
+  const submitUpdatedCocktail = (e) => {
+    e.preventDefault();
+    console.log('submitUpdatedCocktail triggered');
+      //formate results from form into object to be put or posted
+      let _id = stateMain.reviewCocktail._id || null;
+      let idDrink = stateMain.reviewCocktail.idDrink;
+      let strDrink = e.target.strDrinkInput.value;
+      let strGlass = e.target.strGlassInput.value;
+      let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
+      let strNotes = e.target.strNotesInput.value;
+  
+      let arrayInstructions = [];
+      arrayInstructions =
+        updateArray(e, "instruction") ||
+        stateMain.reviewCocktail.arrayInstructions.forEach((item) =>
+          arrayInstructions.push(item)
+        );
+  
+      let arrayMeasuredIngredients = [];
+      arrayMeasuredIngredients =
+        updateArray(e, "ingredient") ||
+        stateMain.reviewCocktail.arrayMeasuredIngredients.forEach((item) =>
+          arrayMeasuredIngredients.push(item)
+        );
+  
+      let formatedCocktail = {
+        idDrink: idDrink,
+        strDrink: strDrink,
+        strGlass: strGlass,
+        strDrinkThumb: strDrinkThumb,
+        arrayInstructions: arrayInstructions,
+        arrayMeasuredIngredients: arrayMeasuredIngredients,
+        strNotes: strNotes,
+      };
+
+      let method = _id ? "put" : "post";
+      let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
+      if (_id) {
+        formatedCocktail["_id"] = _id;
+      };
+
+      console.log(formatedCocktail, method, url);
+
+      getIdTokenClaims()
+      .then((res) => {
+        let jwt = res.__raw;
+        let userEmail = res.email;
+        formatedCocktail['strUserEmail']=userEmail;
+        let config = {
+          headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
+          method: method,
+          data: formatedCocktail,
+          baseURL: process.env.REACT_APP_SERVER,
+          url: url,
+        };
+        // console.log(formatedCocktail,config);
+        axios(config)
+          .then((res) => {
+            let savedCocktail = res.data;
+            dispatch({
+              type: "updateRevewCocktail",
+              payload: { value: savedCocktail },
+            });
+            navigate("/review");
+          })
+          .catch((err) => {
+            //TODO: handle error when request fails
+          });
+      })
+      .catch((err) => {
+        //TODO: handle error when auth0 token request fails
+      });
+  };
+
+  const submitReviewCocktail = () => {
+    console.log('submitRevewCocktail triggered');
+    let _id = stateMain.reviewCocktail._id || null;
+      let idDrink = stateMain.reviewCocktail.idDrink;
+      let strDrink = stateMain.reviewCocktail.strDrink;
+      let strGlass = stateMain.reviewCocktail.strGlass;
+      let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
+      let strNotes = stateMain.reviewCocktail.strNotes;
+  
+      let arrayInstructions = stateMain.reviewCocktail.arrayInstructions;
+  
+      let arrayMeasuredIngredients = stateMain.reviewCocktail.arrayMeasuredIngredients;
+  
+      let formatedCocktail = {
+        idDrink: idDrink,
+        strDrink: strDrink,
+        strGlass: strGlass,
+        strDrinkThumb: strDrinkThumb,
+        arrayInstructions: arrayInstructions,
+        arrayMeasuredIngredients: arrayMeasuredIngredients,
+        strNotes: strNotes,
+      };
+
+      let method = _id ? "put" : "post";
+      let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
+      if (_id) {
+        formatedCocktail["_id"] = _id;
+      };
+
+      console.log(formatedCocktail, method, url);
+
+      getIdTokenClaims()
+      .then((res) => {
+        let jwt = res.__raw;
+        let userEmail = res.email;
+        formatedCocktail['strUserEmail']=userEmail;
+        let config = {
+          headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
+          method: method,
+          data: formatedCocktail,
+          baseURL: process.env.REACT_APP_SERVER,
+          url: url,
+        };
+        // console.log(formatedCocktail,config);
+        axios(config)
+          .then((res) => {
+            let savedCocktail = res.data;
+            dispatch({
+              type: "updateRevewCocktail",
+              payload: { value: savedCocktail },
+            });
+            navigate("/review");
+          })
+          .catch((err) => {
+            //TODO: handle error when request fails
+          });
+      })
+      .catch((err) => {
+        //TODO: handle error when auth0 token request fails
+      });
+    };
+  
+
+  const updateArray = (e, string) => {
+    let returnArray = [];
+    for (let i = 0; i < 1000; i++) {
+      if (e.target[`${string}${i}Input`]) {
+        returnArray.push(e.target[`${string}${i}Input`].value);
+      } else {
+        break;
+      }
+    }
+    return returnArray;
+  };
+
+  // console.log('main',stateMain.reviewCocktail);
 
   return (
     <div className="main-container">
@@ -113,6 +263,7 @@ function Main() {
               dispatch={dispatch}
               displayHints={stateMain.displayHints}
               reviewCocktail={stateMain.reviewCocktail}
+              submitReviewCocktail={submitReviewCocktail}
             />
           }
         ></Route>
@@ -125,6 +276,7 @@ function Main() {
               dispatch={dispatch}
               displayHints={stateMain.displayHints}
               reviewCocktail={stateMain.reviewCocktail}
+              submitUpdatedCocktail={submitUpdatedCocktail}
             />
           }
         ></Route>

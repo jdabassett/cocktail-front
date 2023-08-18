@@ -201,7 +201,7 @@ export default function Search(props) {
   return (
     <div className="search-container">
       <p>Search for cocktails by...?</p>
-      <Form>
+      <Form >
         <Form.Group>
           {Object.entries(stateSearch.searchType)
             .filter((pair) => pair[0] !== "id")

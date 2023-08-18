@@ -63,7 +63,7 @@ export default function Review (props) {
             >
               <Button 
                 variant="primary"
-                onClick={()=>console.log('edit clicked')}
+                onClick={() => props.submitReviewCocktail()}
                 >Save</Button>
             </OverlayTrigger>
             <OverlayTrigger
