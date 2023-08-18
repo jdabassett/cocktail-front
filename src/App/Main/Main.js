@@ -25,7 +25,10 @@ function reducer(stateMain, action) {
     case "updateUserCocktails":
       return { ...stateMain, userCocktails: action.payload.value };
     case "updateDisplayHints":
-      return { ...stateMain, displayHints: {...stateMain.displayHints,...action.payload.value} };
+      return {
+        ...stateMain,
+        displayHints: { ...stateMain.displayHints, ...action.payload.value },
+      };
     default:
       return stateMain;
   }
@@ -44,16 +47,50 @@ function Main() {
       attribution: null,
       error: null,
       searchResults: null,
-      reviewCocktail: null||oneCocktail,
+      reviewCocktail: oneCocktail,
       userCocktails: null,
-      displayHints: {component:"",disable:true},
+      displayHints: { component: "", disable: true },
     }
   );
 
   //keep local storage up to date
-  React.useEffect(() => {
-    localStorage.setItem("stateMain", JSON.stringify(stateMain));
-  });
+  // React.useEffect(() => {
+  //   dispatch({type:'updateRevewCocktail',payload:{value:JSON.parse(localStorage.getItem('stateMain'))['reviewCocktail']}});
+
+  //   getUserCocktails();
+  // },[]);
+
+  //set state with user cocktails
+  // React.useEffect(()=>{
+  //   localStorage.setItem("stateMain", JSON.stringify(stateMain));
+  //   console.log('triggered main refresh')
+  // },[stateMain.reviewCocktail]);
+
+  //retreive all user cocktails
+  const getUserCocktails = () => {
+    getIdTokenClaims()
+      .then((res) => {
+        let jwt = res.__raw;
+        let userEmail = res.email;
+        let config = {
+          headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
+          method: "get",
+          baseURL: process.env.REACT_APP_SERVER,
+          url: "/userCocktails",
+        };
+
+        axios(config)
+          .then((response) => {
+            dispatch({type:"updateUserCocktails",payload:{value:response.data.drinks}});
+          })
+          .catch((error) => {
+            //TODO: handler error when user cannot retrieve all cocktails
+          });
+      })
+      .catch((error) => {
+        //TODO: handler error when user not authenticated
+      });
+  };
 
   //handler get request by id
   const handlerGetById = (id) => {
@@ -86,52 +123,52 @@ function Main() {
   //put or post updated cocktail to user database
   const submitUpdatedCocktail = (e) => {
     e.preventDefault();
-    console.log('submitUpdatedCocktail triggered');
-      //formate results from form into object to be put or posted
-      let _id = stateMain.reviewCocktail._id || null;
-      let idDrink = stateMain.reviewCocktail.idDrink;
-      let strDrink = e.target.strDrinkInput.value;
-      let strGlass = e.target.strGlassInput.value;
-      let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
-      let strNotes = e.target.strNotesInput.value;
-  
-      let arrayInstructions = [];
-      arrayInstructions =
-        updateArray(e, "instruction") ||
-        stateMain.reviewCocktail.arrayInstructions.forEach((item) =>
-          arrayInstructions.push(item)
-        );
-  
-      let arrayMeasuredIngredients = [];
-      arrayMeasuredIngredients =
-        updateArray(e, "ingredient") ||
-        stateMain.reviewCocktail.arrayMeasuredIngredients.forEach((item) =>
-          arrayMeasuredIngredients.push(item)
-        );
-  
-      let formatedCocktail = {
-        idDrink: idDrink,
-        strDrink: strDrink,
-        strGlass: strGlass,
-        strDrinkThumb: strDrinkThumb,
-        arrayInstructions: arrayInstructions,
-        arrayMeasuredIngredients: arrayMeasuredIngredients,
-        strNotes: strNotes,
-      };
+    console.log("submitUpdatedCocktail triggered");
+    //formate results from form into object to be put or posted
+    let _id = stateMain.reviewCocktail._id || null;
+    let idDrink = stateMain.reviewCocktail.idDrink;
+    let strDrink = e.target.strDrinkInput.value;
+    let strGlass = e.target.strGlassInput.value;
+    let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
+    let strNotes = e.target.strNotesInput.value;
 
-      let method = _id ? "put" : "post";
-      let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
-      if (_id) {
-        formatedCocktail["_id"] = _id;
-      };
+    let arrayInstructions = [];
+    arrayInstructions =
+      updateArray(e, "instruction") ||
+      stateMain.reviewCocktail.arrayInstructions.forEach((item) =>
+        arrayInstructions.push(item)
+      );
 
-      console.log(formatedCocktail, method, url);
+    let arrayMeasuredIngredients = [];
+    arrayMeasuredIngredients =
+      updateArray(e, "ingredient") ||
+      stateMain.reviewCocktail.arrayMeasuredIngredients.forEach((item) =>
+        arrayMeasuredIngredients.push(item)
+      );
 
-      getIdTokenClaims()
+    let formatedCocktail = {
+      idDrink: idDrink,
+      strDrink: strDrink,
+      strGlass: strGlass,
+      strDrinkThumb: strDrinkThumb,
+      arrayInstructions: arrayInstructions,
+      arrayMeasuredIngredients: arrayMeasuredIngredients,
+      strNotes: strNotes,
+    };
+
+    let method = _id ? "put" : "post";
+    let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
+    if (_id) {
+      formatedCocktail["_id"] = _id;
+    }
+
+    console.log(formatedCocktail, method, url);
+
+    getIdTokenClaims()
       .then((res) => {
         let jwt = res.__raw;
         let userEmail = res.email;
-        formatedCocktail['strUserEmail']=userEmail;
+        formatedCocktail["strUserEmail"] = userEmail;
         let config = {
           headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
           method: method,
@@ -158,42 +195,44 @@ function Main() {
       });
   };
 
+  //put or post review cocktail to user database
   const submitReviewCocktail = () => {
-    console.log('submitRevewCocktail triggered');
+    console.log("submitRevewCocktail triggered");
     let _id = stateMain.reviewCocktail._id || null;
-      let idDrink = stateMain.reviewCocktail.idDrink;
-      let strDrink = stateMain.reviewCocktail.strDrink;
-      let strGlass = stateMain.reviewCocktail.strGlass;
-      let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
-      let strNotes = stateMain.reviewCocktail.strNotes;
-  
-      let arrayInstructions = stateMain.reviewCocktail.arrayInstructions;
-  
-      let arrayMeasuredIngredients = stateMain.reviewCocktail.arrayMeasuredIngredients;
-  
-      let formatedCocktail = {
-        idDrink: idDrink,
-        strDrink: strDrink,
-        strGlass: strGlass,
-        strDrinkThumb: strDrinkThumb,
-        arrayInstructions: arrayInstructions,
-        arrayMeasuredIngredients: arrayMeasuredIngredients,
-        strNotes: strNotes,
-      };
+    let idDrink = stateMain.reviewCocktail.idDrink;
+    let strDrink = stateMain.reviewCocktail.strDrink;
+    let strGlass = stateMain.reviewCocktail.strGlass;
+    let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
+    let strNotes = stateMain.reviewCocktail.strNotes;
 
-      let method = _id ? "put" : "post";
-      let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
-      if (_id) {
-        formatedCocktail["_id"] = _id;
-      };
+    let arrayInstructions = stateMain.reviewCocktail.arrayInstructions;
 
-      console.log(formatedCocktail, method, url);
+    let arrayMeasuredIngredients =
+      stateMain.reviewCocktail.arrayMeasuredIngredients;
 
-      getIdTokenClaims()
+    let formatedCocktail = {
+      idDrink: idDrink,
+      strDrink: strDrink,
+      strGlass: strGlass,
+      strDrinkThumb: strDrinkThumb,
+      arrayInstructions: arrayInstructions,
+      arrayMeasuredIngredients: arrayMeasuredIngredients,
+      strNotes: strNotes,
+    };
+
+    let method = _id ? "put" : "post";
+    let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
+    if (_id) {
+      formatedCocktail["_id"] = _id;
+    }
+
+    console.log(formatedCocktail, method, url);
+
+    getIdTokenClaims()
       .then((res) => {
         let jwt = res.__raw;
         let userEmail = res.email;
-        formatedCocktail['strUserEmail']=userEmail;
+        formatedCocktail["strUserEmail"] = userEmail;
         let config = {
           headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
           method: method,
@@ -218,9 +257,9 @@ function Main() {
       .catch((err) => {
         //TODO: handle error when auth0 token request fails
       });
-    };
-  
+  };
 
+  //used in put and post handlers
   const updateArray = (e, string) => {
     let returnArray = [];
     for (let i = 0; i < 1000; i++) {
@@ -233,7 +272,7 @@ function Main() {
     return returnArray;
   };
 
-  // console.log('main',stateMain.reviewCocktail);
+  // console.log('main',stateMain.userCocktails);
 
   return (
     <div className="main-container">
@@ -287,6 +326,8 @@ function Main() {
             <Profile
               dispatch={dispatch}
               displayHints={stateMain.displayHints}
+              getUserCocktails={getUserCocktails}
+              userCocktails={stateMain.userCocktails}
             />
           }
         ></Route>

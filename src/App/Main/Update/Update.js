@@ -9,9 +9,9 @@ export default function Update(props) {
   let navigate = useNavigate();
 
 
-  const [stateUpdate, setStateUpdate] = React.useState({
-    ...props.reviewCocktail,
-  });
+  const [stateUpdate, setStateUpdate] = React.useState({...props.reviewCocktail});
+
+
 
 
   return (

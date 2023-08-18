@@ -5,13 +5,11 @@
   "strDrinkAlternate": null,
   "strGlass": "Short and stout",
   "arrayInstructions": [
-    "Here are my instructions",
-    "2","3"
+    "Here are my instructions"
   ],
   "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/wbcvyo1535794478.jpg",
   "arrayMeasuredIngredients": [
-    "Here are my ingredients",
-    "2","3"
+    "Here are my ingredients"
   ],
   "strNotes": "Read me over and fill me out!"
 }
