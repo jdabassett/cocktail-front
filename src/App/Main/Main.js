@@ -54,17 +54,22 @@ function Main() {
   );
 
   //keep local storage up to date
-  // React.useEffect(() => {
-  //   dispatch({type:'updateRevewCocktail',payload:{value:JSON.parse(localStorage.getItem('stateMain'))['reviewCocktail']}});
-
-  //   getUserCocktails();
-  // },[]);
+  React.useEffect(() => {
+    dispatch({
+      type: "updateRevewCocktail",
+      payload: {
+        value: JSON.parse(localStorage.getItem("stateMain"))["reviewCocktail"],
+      },
+    });
+    console.log("triggered localStorage save to state");
+    getUserCocktails();
+  }, []);
 
   //set state with user cocktails
-  // React.useEffect(()=>{
-  //   localStorage.setItem("stateMain", JSON.stringify(stateMain));
-  //   console.log('triggered main refresh')
-  // },[stateMain.reviewCocktail]);
+  React.useEffect(() => {
+    localStorage.setItem("stateMain", JSON.stringify(stateMain));
+    console.log("triggered save to localStorage");
+  }, [stateMain.reviewCocktail]);
 
   //retreive all user cocktails
   const getUserCocktails = () => {
@@ -81,7 +86,10 @@ function Main() {
 
         axios(config)
           .then((response) => {
-            dispatch({type:"updateUserCocktails",payload:{value:response.data.drinks}});
+            dispatch({
+              type: "updateUserCocktails",
+              payload: { value: response.data.drinks },
+            });
           })
           .catch((error) => {
             //TODO: handler error when user cannot retrieve all cocktails
@@ -123,7 +131,7 @@ function Main() {
   //put or post updated cocktail to user database
   const submitUpdatedCocktail = (e) => {
     e.preventDefault();
-    console.log("submitUpdatedCocktail triggered");
+    // console.log("submitUpdatedCocktail triggered");
     //formate results from form into object to be put or posted
     let _id = stateMain.reviewCocktail._id || null;
     let idDrink = stateMain.reviewCocktail.idDrink;
@@ -162,7 +170,7 @@ function Main() {
       formatedCocktail["_id"] = _id;
     }
 
-    console.log(formatedCocktail, method, url);
+    // console.log(formatedCocktail, method, url);
 
     getIdTokenClaims()
       .then((res) => {
@@ -197,7 +205,7 @@ function Main() {
 
   //put or post review cocktail to user database
   const submitReviewCocktail = () => {
-    console.log("submitRevewCocktail triggered");
+    // console.log("submitRevewCocktail triggered");
     let _id = stateMain.reviewCocktail._id || null;
     let idDrink = stateMain.reviewCocktail.idDrink;
     let strDrink = stateMain.reviewCocktail.strDrink;
@@ -226,7 +234,7 @@ function Main() {
       formatedCocktail["_id"] = _id;
     }
 
-    console.log(formatedCocktail, method, url);
+    // console.log(formatedCocktail, method, url);
 
     getIdTokenClaims()
       .then((res) => {
@@ -272,7 +280,7 @@ function Main() {
     return returnArray;
   };
 
-  // console.log('main',stateMain.userCocktails);
+  console.log('main',stateMain.userCocktails);
 
   return (
     <div className="main-container">

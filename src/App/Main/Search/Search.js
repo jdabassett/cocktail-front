@@ -197,7 +197,7 @@ export default function Search(props) {
     }
   };
 
-  console.log(props.displayHints);
+  // console.log(props.displayHints);
   return (
     <div className="search-container">
       <p>Search for cocktails by...?</p>
