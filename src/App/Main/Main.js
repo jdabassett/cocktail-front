@@ -167,6 +167,7 @@ function Main() {
     let _id = stateMain.reviewCocktail._id || null;
     let idDrink = stateMain.reviewCocktail.idDrink;
     let strDrink = e.target.strDrinkInput.value;
+    let strCategory = e.target.strCategory.value;
     let strGlass = e.target.strGlassInput.value;
     let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
     let strNotes = e.target.strNotesInput.value;
@@ -185,16 +186,14 @@ function Main() {
         arrayMeasuredIngredients.push(item)
       );
 
-    //TODO: let arrayIngredients = returnRemainingIngredients
-
     let formatedCocktail = {
       idDrink: idDrink,
       strDrink: strDrink,
       strGlass: strGlass,
+      strCategory: strCategory,
       strDrinkThumb: strDrinkThumb,
       arrayInstructions: arrayInstructions,
       arrayMeasuredIngredients: arrayMeasuredIngredients,
-      arrayIngredients: arrayIngredients,
       strNotes: strNotes,
     };
 
