@@ -55,21 +55,42 @@ function Main() {
 
   //keep local storage up to date
   React.useEffect(() => {
-    dispatch({
-      type: "updateRevewCocktail",
-      payload: {
-        value: JSON.parse(localStorage.getItem("stateMain"))["reviewCocktail"],
-      },
-    });
-    console.log("triggered localStorage save to state");
-    getUserCocktails();
+    console.log("retrieve from localStorage ");
+    //retreive from localStorage
+    const onLoad = () => {
+      let localStateMain = JSON.parse(localStorage.getItem("stateMain"));
+
+      if (localStateMain["reviewCocktail"]) {
+        console.log("local storage update review cocktail");
+        dispatch({
+          type: "updateRevewCocktail",
+          payload: {
+            value: localStateMain["reviewCocktail"],
+          },
+        });
+      }
+      if (localStateMain["userCocktails"]) {
+        console.log("local storage update user cocktails");
+        dispatch({
+          type: "updateUserCocktails",
+          payload: {
+            value: localStateMain["userCocktails"],
+          },
+        });
+      } else {
+        console.log("database get update user cocktails");
+        getUserCocktails();
+      }
+    };
+    onLoad();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //set state with user cocktails
   React.useEffect(() => {
+    console.log("save to localStorage");
     localStorage.setItem("stateMain", JSON.stringify(stateMain));
-    console.log("triggered save to localStorage");
-  }, [stateMain.reviewCocktail]);
+  }, [stateMain]);
 
   //retreive all user cocktails
   const getUserCocktails = () => {
@@ -280,7 +301,7 @@ function Main() {
     return returnArray;
   };
 
-  console.log('main',stateMain.userCocktails);
+  console.log("main", stateMain.userCocktails);
 
   return (
     <div className="main-container">
