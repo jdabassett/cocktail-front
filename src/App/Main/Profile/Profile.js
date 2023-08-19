@@ -11,7 +11,10 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 
 export default function Profile(props) {
+  //make a list of unique names from the userCocktails in state
   let uniqueNames= props.userCocktails.reduce((acc,b)=>{acc.push(acc.includes(b['strDrink'])?null:b['strDrink']); return acc;},[]).filter(string => string!==null).sort((a,b)=>a.localeCompare(b));
+  
+  //make a list of unique glass from the userCocktails in state
   let uniqueGlass= props.userCocktails.reduce((acc,b)=>{acc.push(acc.includes(b['strGlass'])?null:b['strGlass']); return acc;},[]).filter(string => string!==null).sort((a,b)=>a.localeCompare(b));
 
   console.log('project page: ',uniqueNames,uniqueGlass);

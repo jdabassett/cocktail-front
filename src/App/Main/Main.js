@@ -58,7 +58,7 @@ function Main() {
 
   //keep local storage up to date
   React.useEffect(() => {
-    console.log("retrieve from localStorage ");
+    // console.log("retrieve from localStorage ");
     //retreive from localStorage
     const onLoad = () => {
       let localStateMain = JSON.parse(localStorage.getItem("stateMain"));
@@ -185,6 +185,8 @@ function Main() {
         arrayMeasuredIngredients.push(item)
       );
 
+    //TODO: let arrayIngredients = returnRemainingIngredients
+
     let formatedCocktail = {
       idDrink: idDrink,
       strDrink: strDrink,
@@ -192,6 +194,7 @@ function Main() {
       strDrinkThumb: strDrinkThumb,
       arrayInstructions: arrayInstructions,
       arrayMeasuredIngredients: arrayMeasuredIngredients,
+      arrayIngredients: arrayIngredients,
       strNotes: strNotes,
     };
 
@@ -242,6 +245,7 @@ function Main() {
     let strDrink = stateMain.reviewCocktail.strDrink;
     let strGlass = stateMain.reviewCocktail.strGlass;
     let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
+    let arrayIngredients = stateMain.reviewCocktail.arrayIngredients;
     let strNotes = stateMain.reviewCocktail.strNotes;
 
     let arrayInstructions = stateMain.reviewCocktail.arrayInstructions;
@@ -256,6 +260,7 @@ function Main() {
       strDrinkThumb: strDrinkThumb,
       arrayInstructions: arrayInstructions,
       arrayMeasuredIngredients: arrayMeasuredIngredients,
+      arrayIngredients : arrayIngredients,
       strNotes: strNotes,
     };
 
@@ -311,7 +316,7 @@ function Main() {
     return returnArray;
   };
 
-  // console.log("main", stateMain.userCocktails);
+  console.log("main", stateMain.reviewCocktail);
 
   return (
     <div className="main-container">
