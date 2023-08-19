@@ -200,7 +200,7 @@ export default function Search(props) {
   // console.log(props.displayHints);
   return (
     <div className="search-container">
-      <p>Search for cocktails by...?</p>
+      <p>Search for new cocktails by...?</p>
       <Form >
         <Form.Group>
           {Object.entries(stateSearch.searchType)

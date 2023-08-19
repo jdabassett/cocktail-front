@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+// import { useAuth0 } from "@auth0/auth0-react";
 import Header from "./Header/Header.js";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Search from "./Search/Search.js";
@@ -7,7 +7,7 @@ import Update from "./Update/Update.js";
 import Review from "./Review/Review.js";
 import Landing from "./Landing/Landing.js";
 import Profile from "./Profile/Profile.js";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
+import { withAuthenticationRequired, useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import oneCocktail from "../../Data/data_one-cocktail.json";
 
@@ -24,6 +24,8 @@ function reducer(stateMain, action) {
       return { ...stateMain, reviewCocktail: action.payload.value };
     case "updateUserCocktails":
       return { ...stateMain, userCocktails: action.payload.value };
+    case "updateUserDetails":
+        return { ...stateMain, userDetails: action.payload.value };
     case "updateDisplayHints":
       return {
         ...stateMain,
@@ -49,6 +51,7 @@ function Main() {
       searchResults: null,
       reviewCocktail: oneCocktail,
       userCocktails: null,
+      userDetails:{userEmail:"",userPicture:""},
       displayHints: { component: "", disable: true },
     }
   );
@@ -61,7 +64,7 @@ function Main() {
       let localStateMain = JSON.parse(localStorage.getItem("stateMain"));
 
       if (localStateMain["reviewCocktail"]) {
-        console.log("local storage update review cocktail");
+        // console.log("local storage update review cocktail");
         dispatch({
           type: "updateRevewCocktail",
           payload: {
@@ -70,7 +73,7 @@ function Main() {
         });
       }
       if (localStateMain["userCocktails"]) {
-        console.log("local storage update user cocktails");
+        // console.log("local storage update user cocktails");
         dispatch({
           type: "updateUserCocktails",
           payload: {
@@ -78,7 +81,7 @@ function Main() {
           },
         });
       } else {
-        console.log("database get update user cocktails");
+        // console.log("database get update user cocktails");
         getUserCocktails();
       }
     };
@@ -88,7 +91,7 @@ function Main() {
 
   //set state with user cocktails
   React.useEffect(() => {
-    console.log("save to localStorage");
+    // console.log("save to localStorage");
     localStorage.setItem("stateMain", JSON.stringify(stateMain));
   }, [stateMain]);
 
@@ -97,13 +100,20 @@ function Main() {
     getIdTokenClaims()
       .then((res) => {
         let jwt = res.__raw;
+        
+        //update users personal details
         let userEmail = res.email;
+        let userPicture = res.picture;
+        dispatch({type:'updateUserDetails',payload:{value:{userEmail:userEmail,userPicture:userPicture}}})
+
         let config = {
           headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
           method: "get",
           baseURL: process.env.REACT_APP_SERVER,
           url: "/userCocktails",
         };
+
+        // console.log('getUserCocktails',userEmail,userPicture);
 
         axios(config)
           .then((response) => {
@@ -301,11 +311,14 @@ function Main() {
     return returnArray;
   };
 
-  console.log("main", stateMain.userCocktails);
+  // console.log("main", stateMain.userCocktails);
 
   return (
     <div className="main-container">
-      <Header dispatch={dispatch} displayHints={stateMain.displayHints} />
+      <Header 
+        dispatch={dispatch} 
+        displayHints={stateMain.displayHints}
+        userDetails={stateMain.userDetails} />
 
       <Routes>
         <Route exact path="/" element={<Landing />}></Route>
