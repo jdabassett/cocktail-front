@@ -25,7 +25,7 @@ function reducer(stateMain, action) {
     case "updateUserCocktails":
       return { ...stateMain, userCocktails: action.payload.value };
     case "updateUserDetails":
-        return { ...stateMain, userDetails: action.payload.value };
+      return { ...stateMain, userDetails: action.payload.value };
     case "updateDisplayHints":
       return {
         ...stateMain,
@@ -51,7 +51,7 @@ function Main() {
       searchResults: null,
       reviewCocktail: oneCocktail,
       userCocktails: null,
-      userDetails:{userEmail:"",userPicture:""},
+      userDetails: { userEmail: "", userPicture: "" },
       displayHints: { component: "", disable: true },
     }
   );
@@ -87,7 +87,7 @@ function Main() {
     };
     onLoad();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  },[]);
 
   //set state with user cocktails
   React.useEffect(() => {
@@ -100,11 +100,16 @@ function Main() {
     getIdTokenClaims()
       .then((res) => {
         let jwt = res.__raw;
-        
+
         //update users personal details
         let userEmail = res.email;
         let userPicture = res.picture;
-        dispatch({type:'updateUserDetails',payload:{value:{userEmail:userEmail,userPicture:userPicture}}})
+        dispatch({
+          type: "updateUserDetails",
+          payload: {
+            value: { userEmail: userEmail, userPicture: userPicture },
+          },
+        });
 
         let config = {
           headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
@@ -117,6 +122,7 @@ function Main() {
 
         axios(config)
           .then((response) => {
+            // console.log(response.data.drinks);
             dispatch({
               type: "updateUserCocktails",
               payload: { value: response.data.drinks },
@@ -162,12 +168,12 @@ function Main() {
   //put or post updated cocktail to user database
   const submitUpdatedCocktail = (e) => {
     e.preventDefault();
-    // console.log("submitUpdatedCocktail triggered");
+    console.log("submitUpdatedCocktail triggered");
     //formate results from form into object to be put or posted
     let _id = stateMain.reviewCocktail._id || null;
     let idDrink = stateMain.reviewCocktail.idDrink;
     let strDrink = e.target.strDrinkInput.value;
-    let strCategory = e.target.strCategory.value;
+    let strCategory = e.target.strCategoryInput.value;
     let strGlass = e.target.strGlassInput.value;
     let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
     let strNotes = e.target.strNotesInput.value;
@@ -181,7 +187,7 @@ function Main() {
 
     let arrayMeasuredIngredients = [];
     arrayMeasuredIngredients =
-      updateArray(e, "ingredient") ||
+      updateArray(e, "ingredient", "measurement") ||
       stateMain.reviewCocktail.arrayMeasuredIngredients.forEach((item) =>
         arrayMeasuredIngredients.push(item)
       );
@@ -197,9 +203,14 @@ function Main() {
       strNotes: strNotes,
     };
 
-    let method = _id ? "put" : "post";
-    let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
-    if (_id) {
+    let isNew = stateMain.userCocktails.filter(
+      (cocktail) => cocktail._id === _id
+    ).length
+      ? false
+      : true;
+    let method = isNew ? "post" : "put";
+    let url = isNew ? `/createCocktail` : `/updateCocktail/${_id}`;
+    if (!isNew) {
       formatedCocktail["_id"] = _id;
     }
 
@@ -225,6 +236,7 @@ function Main() {
               type: "updateRevewCocktail",
               payload: { value: savedCocktail },
             });
+            getUserCocktails();
             navigate("/review");
           })
           .catch((err) => {
@@ -234,6 +246,8 @@ function Main() {
       .catch((err) => {
         //TODO: handle error when auth0 token request fails
       });
+
+      getUserCocktails();
   };
 
   //put or post review cocktail to user database
@@ -243,6 +257,7 @@ function Main() {
     let idDrink = stateMain.reviewCocktail.idDrink;
     let strDrink = stateMain.reviewCocktail.strDrink;
     let strGlass = stateMain.reviewCocktail.strGlass;
+    let strCategory = stateMain.reviewCocktail.strCategory;
     let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
     let arrayIngredients = stateMain.reviewCocktail.arrayIngredients;
     let strNotes = stateMain.reviewCocktail.strNotes;
@@ -256,16 +271,22 @@ function Main() {
       idDrink: idDrink,
       strDrink: strDrink,
       strGlass: strGlass,
+      strCategory: strCategory,
       strDrinkThumb: strDrinkThumb,
       arrayInstructions: arrayInstructions,
       arrayMeasuredIngredients: arrayMeasuredIngredients,
-      arrayIngredients : arrayIngredients,
+      arrayIngredients: arrayIngredients,
       strNotes: strNotes,
     };
 
-    let method = _id ? "put" : "post";
-    let url = _id ? `/updateCocktail/${_id}` : `/createCocktail`;
-    if (_id) {
+    let isNew = stateMain.userCocktails.filter(
+      (cocktail) => (cocktail._id === _id)
+    ).length
+      ? false
+      : true;
+    let method = isNew ? "post" : "put";
+    let url = isNew ? `/createCocktail` : `/updateCocktail/${_id}`;
+    if (!isNew) {
       formatedCocktail["_id"] = _id;
     }
 
@@ -291,6 +312,7 @@ function Main() {
               type: "updateRevewCocktail",
               payload: { value: savedCocktail },
             });
+            getUserCocktails();
             navigate("/review");
           })
           .catch((err) => {
@@ -300,14 +322,21 @@ function Main() {
       .catch((err) => {
         //TODO: handle error when auth0 token request fails
       });
+
   };
 
   //used in put and post handlers
-  const updateArray = (e, string) => {
+  const updateArray = (e, string1, string2) => {
     let returnArray = [];
     for (let i = 0; i < 1000; i++) {
-      if (e.target[`${string}${i}Input`]) {
-        returnArray.push(e.target[`${string}${i}Input`].value);
+      if (e.target[`${string1}${i}Input`] && string2 === "measurement") {
+        returnArray.push(
+          `${e.target[`${string2}${i}Input`].value}_${
+            e.target[`${string1}${i}Input`].value
+          }`
+        );
+      } else if (e.target[`${string1}${i}Input`] && string1 === "instruction") {
+        returnArray.push(e.target[`${string1}${i}Input`].value);
       } else {
         break;
       }
@@ -315,14 +344,16 @@ function Main() {
     return returnArray;
   };
 
-  console.log("main", stateMain.reviewCocktail);
+  // console.log("main", stateMain.reviewCocktail);
+  // console.log("main", stateMain.userCocktailsCocktail);
 
   return (
     <div className="main-container">
-      <Header 
-        dispatch={dispatch} 
+      <Header
+        dispatch={dispatch}
         displayHints={stateMain.displayHints}
-        userDetails={stateMain.userDetails} />
+        userDetails={stateMain.userDetails}
+      />
 
       <Routes>
         <Route exact path="/" element={<Landing />}></Route>

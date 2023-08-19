@@ -11,7 +11,7 @@ export default function Review (props) {
   let navigate = useNavigate();
 
   let viewCocktail = props.reviewCocktail || oneCocktail;
-  // console.log(props.reviewCocktail);
+  console.log(props.reviewCocktail);
   return (
     <div className="review-container">
       <Card style={{ width: '30rem' }}>
@@ -20,11 +20,19 @@ export default function Review (props) {
           <Card.Title className="reviewCardTitle">{viewCocktail.strDrink}</Card.Title>
           <div>
             {/* if there is a glass add here... */}
-            {viewCocktail.arrayMeasuredIngredients &&
+            {viewCocktail.strGlass &&
               <>
                 <h4 className="reviewGlassH4">Glass:</h4>
                 <ul>
                   <li className="reviewGlassLi">{viewCocktail.strGlass}</li>
+                </ul>
+              </>}
+            {/* if there is a category add here... */}
+            {viewCocktail.strCategory &&
+              <>
+                <h4 className="reviewCategoryH4">Category:</h4>
+                <ul>
+                  <li className="reviewCategoryLi">{viewCocktail.strCategory}</li>
                 </ul>
               </>}
             {/* if there are ingredients display... */}
@@ -33,7 +41,7 @@ export default function Review (props) {
                 <h4 className="reviewIngredientsH4">Ingredients:</h4>
                 <ul>
                 {viewCocktail.arrayMeasuredIngredients.map((item,idx)=>{
-                return <li key={idx} className="reviewIngredientsLi">{item}</li>})}
+                return <li key={idx} className="reviewIngredientsLi">{item.replace("_"," ")}</li>})}
                 </ul>
               </>}
             {/* if there are instructions display... */}

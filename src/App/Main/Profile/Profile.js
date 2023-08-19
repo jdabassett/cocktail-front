@@ -12,14 +12,45 @@ import Tooltip from "react-bootstrap/Tooltip";
 
 export default function Profile(props) {
   //make a list of unique names from the userCocktails in state
-  let uniqueNames= props.userCocktails.reduce((acc,b)=>{acc.push(acc.includes(b['strDrink'])?null:b['strDrink']); return acc;},[]).filter(string => string!==null).sort((a,b)=>a.localeCompare(b));
-  
+  let uniqueNames = props.userCocktails
+    .reduce((acc, b) => {
+      acc.push(acc.includes(b["strDrink"]) ? null : b["strDrink"]);
+      return acc;
+    }, [])
+    .filter((string) => string !== null)
+    .sort((a, b) => a.localeCompare(b));
+
+  //make list of unique categories from the userCocktails in state
+  let uniqueCategories = props.userCocktails
+    .reduce((acc, b) => {
+      acc.push(acc.includes(b["strCategory"]) ? null : b["strCategory"]);
+      return acc;
+    }, [])
+    .filter((string) => string !== null)
+    .sort((a, b) => a.localeCompare(b));
+
+  //make a list of unique ingredients from the userCocktails in state
+  let uniqueIngredients = props.userCocktails.reduce((acc,b)=>{
+    b.arrayMeasuredIngredients.forEach(ingredient=>{
+      let newIngredient = ingredient.split("_")[1];
+      if(!acc.includes(newIngredient)){
+        acc.push(newIngredient)
+      };
+    });
+    return acc;
+  },[]).sort((a, b) => a.localeCompare(b));
+
   //make a list of unique glass from the userCocktails in state
-  let uniqueGlass= props.userCocktails.reduce((acc,b)=>{acc.push(acc.includes(b['strGlass'])?null:b['strGlass']); return acc;},[]).filter(string => string!==null).sort((a,b)=>a.localeCompare(b));
+  let uniqueGlass = props.userCocktails
+    .reduce((acc, b) => {
+      acc.push(acc.includes(b["strGlass"]) ? null : b["strGlass"]);
+      return acc;
+    }, [])
+    .filter((string) => string !== null)
+    .sort((a, b) => a.localeCompare(b));
 
-  console.log('project page: ',uniqueNames,uniqueGlass);
-
-
+  // console.log("project page: ", uniqueNames, uniqueCategories, uniqueIngredients, uniqueGlass);
+  // console.log('project page',props.userCocktails);
 
   let [stateProfile, setStateProfile] = React.useState({
     selectedName: [],
@@ -166,7 +197,7 @@ export default function Profile(props) {
                   selectedName: selected,
                 }));
               }}
-              options={uniqueObject.uniqueNames}
+              options={uniqueNames}
               selected={stateProfile.selectedName}
             />
           </Form.Group>
@@ -183,7 +214,7 @@ export default function Profile(props) {
                   selectedCategory: selected,
                 }));
               }}
-              options={uniqueObject.uniqueCategories}
+              options={uniqueCategories}
               selected={stateProfile.selectedCategory}
             />
           </Form.Group>
@@ -200,7 +231,7 @@ export default function Profile(props) {
                   selectedIngredient: selected,
                 }));
               }}
-              options={uniqueObject.uniqueIngredients}
+              options={uniqueIngredients}
               selected={stateProfile.selectedIngredient}
             />
           </Form.Group>
@@ -217,7 +248,7 @@ export default function Profile(props) {
                   selectedGlass: selected,
                 }));
               }}
-              options={uniqueObject.uniqueGlasses}
+              options={uniqueGlass}
               selected={stateProfile.selectedGlass}
             />
           </Form.Group>
