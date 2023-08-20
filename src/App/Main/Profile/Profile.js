@@ -364,12 +364,12 @@ export default function Profile(props) {
                       if (itemSplit.length > 1) {
                         return (
                           <li
-                            key={`ingredients${idx0}${idx1}`}
+                            key={`ingredientsU${idx0}${idx1}${item}`}
                           >{`${itemSplit[0]} ${itemSplit[1]}`}</li>
                         );
                       } else {
                         return (
-                          <li key={`ingredients${idx0}${idx1}`}>{`${item}`}</li>
+                          <li key={`ingredientsU${idx0}${idx1}${item}`}>{`${item}`}</li>
                         );
                       }
                     })}
@@ -378,7 +378,7 @@ export default function Profile(props) {
                   <ul>
                     {cocktail.arrayInstructions.map((item, idx1) => {
                       return (
-                        <li key={`instructions${idx0}${idx1}`}>{`${item}`}</li>
+                        <li key={`instructionsU${idx0}${idx1}${item}`}>{`${item}`}</li>
                       );
                     })}
                   </ul>
@@ -404,18 +404,18 @@ export default function Profile(props) {
                   if (itemSplit.length > 1) {
                     return (
                       <li
-                        key={`ingredients${idx}`}
+                        key={`ingredientsP${idx}${item}`}
                       >{`${itemSplit[0]} ${itemSplit[1]}`}</li>
                     );
                   } else {
-                    return <li key={`ingredients${idx}`}>{`${item}`}</li>;
+                    return <li key={`ingredientsP${idx}${item}`}>{`${item}`}</li>;
                   }
                 })}
               </ul>
               <h4>Instructions</h4>
               <ul>
                 {oneCocktail.arrayInstructions.map((item, idx) => {
-                  return <li key={`instructions${idx}}`}>{`${item}`}</li>;
+                  return <li key={`instructionsP${idx}${item}`}>{`${item}`}</li>;
                 })}
               </ul>
               <Card.Text>{`Notes: ${oneCocktail.strNotes}`}</Card.Text>
