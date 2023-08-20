@@ -9,55 +9,21 @@ import Button from "react-bootstrap/Button";
 // import Image from "react-bootstrap/Image";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import Card from 'react-bootstrap/Card';
+import oneCocktail from "../../../Data/data_one-cocktail.json";
+
 
 export default function Profile(props) {
-  //make a list of unique names from the userCocktails in state
-  let uniqueNames = props.userCocktails
-    .reduce((acc, b) => {
-      acc.push(acc.includes(b["strDrink"]) ? null : b["strDrink"]);
-      return acc;
-    }, [])
-    .filter((string) => string !== null)
-    .sort((a, b) => a.localeCompare(b));
-
-  //make list of unique categories from the userCocktails in state
-  let uniqueCategories = props.userCocktails
-    .reduce((acc, b) => {
-      acc.push(acc.includes(b["strCategory"]) ? null : b["strCategory"]);
-      return acc;
-    }, [])
-    .filter((string) => string !== null)
-    .sort((a, b) => a.localeCompare(b));
-
-  //make a list of unique ingredients from the userCocktails in state
-  let uniqueIngredients = props.userCocktails.reduce((acc,b)=>{
-    b.arrayMeasuredIngredients.forEach(ingredient=>{
-      let newIngredient = ingredient.split("_")[1];
-      if(!acc.includes(newIngredient)){
-        acc.push(newIngredient)
-      };
-    });
-    return acc;
-  },[]).sort((a, b) => a.localeCompare(b));
-
-  //make a list of unique glass from the userCocktails in state
-  let uniqueGlass = props.userCocktails
-    .reduce((acc, b) => {
-      acc.push(acc.includes(b["strGlass"]) ? null : b["strGlass"]);
-      return acc;
-    }, [])
-    .filter((string) => string !== null)
-    .sort((a, b) => a.localeCompare(b));
-
-  // console.log("project page: ", uniqueNames, uniqueCategories, uniqueIngredients, uniqueGlass);
-  // console.log('project page',props.userCocktails);
-
   let [stateProfile, setStateProfile] = React.useState({
     selectedName: [],
     selectedIngredient: [],
     selectedGlass: [],
     selectedCategory: [],
     selectedRandom: [],
+    uniqueNames:[],
+    uniqueCategories:[],
+    uniqueIngredients:[],
+    uniqueGlasses:[],
     searchType: {
       name: false,
       category: false,
@@ -68,6 +34,57 @@ export default function Profile(props) {
     },
   });
 
+  React.useEffect(() => {
+    console.log("profile page: on load");
+    makeAndSetUniqueLists(props.userCocktails);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
+
+
+  const makeAndSetUniqueLists = (userCocktails) => {
+
+    let uniqueNames = userCocktails
+    .reduce((acc, b) => {
+      acc.push(acc.includes(b["strDrink"]) ? null : b["strDrink"]);
+      return acc;
+    }, [])
+    .filter((string) => string !== null)
+    .sort((a, b) => a.localeCompare(b));
+
+  //make list of unique categories from the userCocktails in state
+  let uniqueCategories = userCocktails
+    .reduce((acc, b) => {
+      acc.push(acc.includes(b["strCategory"]) ? null : b["strCategory"]);
+      return acc;
+    }, [])
+    .filter((string) => string !== null)
+    .sort((a, b) => a.localeCompare(b));
+
+  //make a list of unique ingredients from the userCocktails in state
+  let uniqueIngredients = userCocktails
+    .reduce((acc, b) => {
+      b.arrayMeasuredIngredients.forEach((ingredient) => {
+        let newIngredient = ingredient.split("_")[1];
+        if (!acc.includes(newIngredient)) {
+          acc.push(newIngredient);
+        }
+      });
+      return acc;
+    }, [])
+    .sort((a, b) => a.localeCompare(b));
+
+  //make a list of unique glass from the userCocktails in state
+  let uniqueGlasses = userCocktails
+    .reduce((acc, b) => {
+      acc.push(acc.includes(b["strGlass"]) ? null : b["strGlass"]);
+      return acc;
+    }, [])
+    .filter((string) => string !== null)
+    .sort((a, b) => a.localeCompare(b));
+
+    setStateProfile(prevState=>({...prevState,uniqueNames:uniqueNames,uniqueCategories:uniqueCategories,uniqueIngredients:uniqueIngredients,uniqueGlasses:uniqueGlasses}))
+  };
+  
   const handlerSearchType = (e) => {
     e.persist();
     switch (e.target.value) {
@@ -161,147 +178,215 @@ export default function Profile(props) {
 
   const handlerOnSubmit = () => {
     // console.log("handlerSubmit");
+    props.getUserCocktails();
   };
 
   return (
     <div className="profile-container">
-      <p>Search your records for the perfect cocktail!</p>
-      <Form>
-        <Form.Group>
-          {Object.entries(stateProfile.searchType)
-            .filter((pair) => pair[0] !== "id")
-            .map((pair, idx) => {
-              return (
-                <Form.Check
-                  key={idx}
-                  type="radio"
-                  id="default-radio"
-                  label={`${pair[0]}`}
-                  onChange={handlerSearchType}
-                  value={`${pair[0]}`}
-                  checked={pair[1]}
-                  inline
-                />
-              );
-            })}
-        </Form.Group>
-
-        {stateProfile.searchType.name && (
+      <div className="profile-form">
+        <p>Search your records for the perfect cocktail!</p>
+        <Form>
           <Form.Group>
-            <Typeahead
-              placeholder="Cocktail name?"
-              id="name-search"
-              onChange={(selected) => {
-                setStateProfile((prevState) => ({
-                  ...prevState,
-                  selectedName: selected,
-                }));
-              }}
-              options={uniqueNames}
-              selected={stateProfile.selectedName}
-            />
+            {Object.entries(stateProfile.searchType)
+              .filter((pair) => pair[0] !== "id")
+              .map((pair, idx) => {
+                return (
+                  <Form.Check
+                    key={idx}
+                    type="radio"
+                    id="default-radio"
+                    label={`${pair[0]}`}
+                    onChange={handlerSearchType}
+                    value={`${pair[0]}`}
+                    checked={pair[1]}
+                    inline
+                  />
+                );
+              })}
           </Form.Group>
-        )}
 
-        {stateProfile.searchType.category && (
-          <Form.Group>
-            <Typeahead
-              placeholder="Cocktail category?"
-              id="cocktail-search"
-              onChange={(selected) => {
-                setStateProfile((prevState) => ({
-                  ...prevState,
-                  selectedCategory: selected,
-                }));
-              }}
-              options={uniqueCategories}
-              selected={stateProfile.selectedCategory}
-            />
-          </Form.Group>
-        )}
+          {stateProfile.searchType.name && (
+            <Form.Group>
+              <Typeahead
+                placeholder="Cocktail name?"
+                id="name-search"
+                onChange={(selected) => {
+                  setStateProfile((prevState) => ({
+                    ...prevState,
+                    selectedName: selected,
+                  }));
+                }}
+                options={stateProfile.uniqueNames}
+                selected={stateProfile.selectedName}
+              />
+            </Form.Group>
+          )}
 
-        {stateProfile.searchType.ingredient && (
-          <Form.Group>
-            <Typeahead
-              placeholder="Cocktail ingredient?"
-              id="ingredient-search"
-              onChange={(selected) => {
-                setStateProfile((prevState) => ({
-                  ...prevState,
-                  selectedIngredient: selected,
-                }));
-              }}
-              options={uniqueIngredients}
-              selected={stateProfile.selectedIngredient}
-            />
-          </Form.Group>
-        )}
+          {stateProfile.searchType.category && (
+            <Form.Group>
+              <Typeahead
+                placeholder="Cocktail category?"
+                id="cocktail-search"
+                onChange={(selected) => {
+                  setStateProfile((prevState) => ({
+                    ...prevState,
+                    selectedCategory: selected,
+                  }));
+                }}
+                options={stateProfile.uniqueCategories}
+                selected={stateProfile.selectedCategory}
+              />
+            </Form.Group>
+          )}
 
-        {stateProfile.searchType.glass && (
-          <Form.Group>
-            <Typeahead
-              placeholder="Glass type?"
-              id="glass-search"
-              onChange={(selected) => {
-                setStateProfile((prevState) => ({
-                  ...prevState,
-                  selectedGlass: selected,
-                }));
-              }}
-              options={uniqueGlass}
-              selected={stateProfile.selectedGlass}
-            />
-          </Form.Group>
-        )}
+          {stateProfile.searchType.ingredient && (
+            <Form.Group>
+              <Typeahead
+                placeholder="Cocktail ingredient?"
+                id="ingredient-search"
+                onChange={(selected) => {
+                  setStateProfile((prevState) => ({
+                    ...prevState,
+                    selectedIngredient: selected,
+                  }));
+                }}
+                options={stateProfile.uniqueIngredients}
+                selected={stateProfile.selectedIngredient}
+              />
+            </Form.Group>
+          )}
 
-        {stateProfile.searchType.random && (
-          <Form.Group>
-            <Typeahead
-              placeholder="How many?"
-              id="random-search"
-              onChange={(selected) => {
-                setStateProfile((prevState) => ({
-                  ...prevState,
-                  selectedRandom: selected,
-                }));
-              }}
-              options={uniqueObject.uniqueRandom}
-              selected={stateProfile.selectedRandom}
-            />
-          </Form.Group>
-        )}
-      </Form>
-      <OverlayTrigger
-        placement="top"
-        delay={{ show: 250, hide: 400 }}
-        overlay={
-          <Tooltip id="button-tooltip">
-            Click to find a cocktail with the above search criteria from your
-            records.
-          </Tooltip>
-        }
-      >
-        <Button className="button search-buttons" onClick={handlerOnSubmit}>
-          Search
-        </Button>
-      </OverlayTrigger>
+          {stateProfile.searchType.glass && (
+            <Form.Group>
+              <Typeahead
+                placeholder="Glass type?"
+                id="glass-search"
+                onChange={(selected) => {
+                  setStateProfile((prevState) => ({
+                    ...prevState,
+                    selectedGlass: selected,
+                  }));
+                }}
+                options={stateProfile.uniqueGlass}
+                selected={stateProfile.selectedGlass}
+              />
+            </Form.Group>
+          )}
 
-      <OverlayTrigger
-        placement="top"
-        delay={{ show: 250, hide: 400 }}
-        overlay={
-          <Tooltip className="tooltip" id="button-tooltip">
-            Click to clear search criteria and view all records.
-          </Tooltip>
-        }
-      >
-        <Button
-          className="button search-buttons"
-          onClick={() => console.log("triggered clear stateProject")}
+          {stateProfile.searchType.random && (
+            <Form.Group>
+              <Typeahead
+                placeholder="How many?"
+                id="random-search"
+                onChange={(selected) => {
+                  setStateProfile((prevState) => ({
+                    ...prevState,
+                    selectedRandom: selected,
+                  }));
+                }}
+                options={uniqueObject.uniqueRandom}
+                selected={stateProfile.selectedRandom}
+              />
+            </Form.Group>
+          )}
+        </Form>
+        <OverlayTrigger
+          placement="top"
+          delay={{ show: 250, hide: 400 }}
+          overlay={
+            <Tooltip id="button-tooltip">
+              Click to find a cocktail with the above search criteria from your
+              records.
+            </Tooltip>
+          }
         >
-          View-All
-        </Button>
-      </OverlayTrigger>
+          <Button className="button search-buttons" onClick={handlerOnSubmit}>
+            Refresh
+          </Button>
+        </OverlayTrigger>
+
+        <OverlayTrigger
+          placement="top"
+          delay={{ show: 250, hide: 400 }}
+          overlay={
+            <Tooltip className="tooltip" id="button-tooltip">
+              Click to clear search criteria and view all records.
+            </Tooltip>
+          }
+        >
+          <Button
+            className="button search-buttons"
+            onClick={() => console.log("triggered clear stateProject")}
+          >
+            View-All
+          </Button>
+        </OverlayTrigger>
+      </div>
+      <div className="user-cocktails-container">
+          {props.userCocktails.length?
+            props.userCocktails.map((cocktail,idx0)=>{
+              return <Card style={{ width: '30rem' }}>
+              <Card.Img variant="top" src={cocktail.strDrinkThumb} />
+              <Card.Body>
+                <Card.Title>{cocktail.strDrink}</Card.Title>
+                <Card.Text>{`Glass: ${cocktail.strGlass}`}</Card.Text>
+                <Card.Text>{`Category: ${cocktail.strCategory}`}</Card.Text>
+    
+                <h4>Ingredients:</h4>
+                <ul>
+                  {cocktail.arrayMeasuredIngredients.map((item,idx1)=>{
+                    let itemSplit = item.split("_");
+                    if(itemSplit.length>1){
+                      return <li key={`ingredients${idx0}${idx1}`}>{`${itemSplit[0]} ${itemSplit[1]}`}</li>
+                    }else {
+                      return <li key={`ingredients${idx0}${idx1}`}>{`${item}`}</li>
+                    };
+                  })}
+                </ul>
+                <h4>Instructions</h4>
+                <ul>
+                  {cocktail.arrayInstructions.map((item,idx1)=>{
+                    return <li key={`instructions${idx0}${idx1}`}>{`${item}`}</li>
+                  })}
+                </ul>
+                
+                <Card.Text>{`Notes: ${cocktail.strNotes}`}</Card.Text>
+                <Button variant="primary">Edit</Button>
+                <Button variant="primary">Delete</Button>
+              </Card.Body>
+            </Card>
+            })
+          :
+
+            <Card style={{ width: '30rem' }}>
+              <Card.Img variant="top" src={oneCocktail.strDrinkThumb} />
+              <Card.Body>
+                <Card.Title>{oneCocktail.strDrink}</Card.Title>
+                <Card.Text>{`Glass: ${oneCocktail.strGlass}`}</Card.Text>
+                <Card.Text>{`Category: ${oneCocktail.strCategory}`}</Card.Text>
+                <h4>Ingredients:</h4>
+                <ul>
+                  {oneCocktail.arrayMeasuredIngredients.map((item,idx)=>{
+                    let itemSplit = item.split("_");
+                    if(itemSplit.length>1){
+                      return <li key={`ingredients${idx}`}>{`${itemSplit[0]} ${itemSplit[1]}`}</li>
+                    }else {
+                      return <li key={`ingredients ${idx}${item}`}>{`${item}`}</li>
+                    };
+                  })}
+                </ul>
+                <h4>Instructions</h4>
+                <ul>
+                  {oneCocktail.arrayInstructions.map((item,idx)=>{
+                    return <li key={`instructions${item}`}>{`${item}`}</li>
+                  })}
+                </ul>
+                <Card.Text>{`Notes: ${oneCocktail.strNotes}`}</Card.Text>
+                <Button variant="primary">Edit</Button>
+                <Button variant="primary">Delete</Button>
+              </Card.Body>
+            </Card>}
+      </div>
     </div>
   );
 }

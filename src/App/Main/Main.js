@@ -62,38 +62,34 @@ function Main() {
     //retreive from localStorage
     const onLoad = () => {
       let localStateMain = JSON.parse(localStorage.getItem("stateMain"));
+      // console.log(localStateMain);
 
       if (localStateMain["reviewCocktail"]) {
-        // console.log("local storage update review cocktail");
+        console.log("local storage update review cocktail");
         dispatch({
           type: "updateRevewCocktail",
           payload: {
             value: localStateMain["reviewCocktail"],
           },
         });
-      }
+      };
       if (localStateMain["userCocktails"]) {
-        // console.log("local storage update user cocktails");
+        console.log("local storage update user cocktails");
         dispatch({
           type: "updateUserCocktails",
           payload: {
             value: localStateMain["userCocktails"],
           },
         });
-      } else {
-        // console.log("database get update user cocktails");
+      };
+      if (!localStateMain["userCocktails"]) {
+        console.log("database get update user cocktails");
         getUserCocktails();
       }
     };
     onLoad();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
-
-  //set state with user cocktails
-  React.useEffect(() => {
-    // console.log("save to localStorage");
-    localStorage.setItem("stateMain", JSON.stringify(stateMain));
-  }, [stateMain]);
 
   //retreive all user cocktails
   const getUserCocktails = () => {
@@ -127,6 +123,10 @@ function Main() {
               type: "updateUserCocktails",
               payload: { value: response.data.drinks },
             });
+          })
+          .then(()=>{
+            console.log('main page: saved state to local storage')
+            localStorage.setItem("stateMain", JSON.stringify(stateMain));
           })
           .catch((error) => {
             //TODO: handler error when user cannot retrieve all cocktails
@@ -168,10 +168,17 @@ function Main() {
   //put or post updated cocktail to user database
   const submitUpdatedCocktail = (e) => {
     e.preventDefault();
+    
     console.log("submitUpdatedCocktail triggered");
+
+    let idDrink = stateMain.reviewCocktail.idDrink;
+    
+    if(idDrink==='1000000'){
+      console.log('main page: attempt to save placeholder');
+      //TODO: handler error when attempting to save placeholder
+    } else {
     //formate results from form into object to be put or posted
     let _id = stateMain.reviewCocktail._id || null;
-    let idDrink = stateMain.reviewCocktail.idDrink;
     let strDrink = e.target.strDrinkInput.value;
     let strCategory = e.target.strCategoryInput.value;
     let strGlass = e.target.strGlassInput.value;
@@ -246,83 +253,91 @@ function Main() {
       .catch((err) => {
         //TODO: handle error when auth0 token request fails
       });
-
-      getUserCocktails();
+    };
   };
 
   //put or post review cocktail to user database
   const submitReviewCocktail = () => {
     // console.log("submitRevewCocktail triggered");
-    let _id = stateMain.reviewCocktail._id || null;
     let idDrink = stateMain.reviewCocktail.idDrink;
-    let strDrink = stateMain.reviewCocktail.strDrink;
-    let strGlass = stateMain.reviewCocktail.strGlass;
-    let strCategory = stateMain.reviewCocktail.strCategory;
-    let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
-    let arrayIngredients = stateMain.reviewCocktail.arrayIngredients;
-    let strNotes = stateMain.reviewCocktail.strNotes;
 
-    let arrayInstructions = stateMain.reviewCocktail.arrayInstructions;
+    if(idDrink==='1000000'){
+    console.log('main page: attempt to save placeholder');
+    //TODO: handler error when attempting to save placeholder
 
-    let arrayMeasuredIngredients =
-      stateMain.reviewCocktail.arrayMeasuredIngredients;
-
-    let formatedCocktail = {
-      idDrink: idDrink,
-      strDrink: strDrink,
-      strGlass: strGlass,
-      strCategory: strCategory,
-      strDrinkThumb: strDrinkThumb,
-      arrayInstructions: arrayInstructions,
-      arrayMeasuredIngredients: arrayMeasuredIngredients,
-      arrayIngredients: arrayIngredients,
-      strNotes: strNotes,
-    };
-
-    let isNew = stateMain.userCocktails.filter(
-      (cocktail) => (cocktail._id === _id)
-    ).length
-      ? false
-      : true;
-    let method = isNew ? "post" : "put";
-    let url = isNew ? `/createCocktail` : `/updateCocktail/${_id}`;
-    if (!isNew) {
-      formatedCocktail["_id"] = _id;
-    }
-
-    // console.log(formatedCocktail, method, url);
-
-    getIdTokenClaims()
-      .then((res) => {
-        let jwt = res.__raw;
-        let userEmail = res.email;
-        formatedCocktail["strUserEmail"] = userEmail;
-        let config = {
-          headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
-          method: method,
-          data: formatedCocktail,
-          baseURL: process.env.REACT_APP_SERVER,
-          url: url,
-        };
-        // console.log(formatedCocktail,config);
-        axios(config)
-          .then((res) => {
-            let savedCocktail = res.data;
-            dispatch({
-              type: "updateRevewCocktail",
-              payload: { value: savedCocktail },
+    }else if(stateMain.userCocktails.filter(cocktail=>cocktail.idDrink===idDrink).length===0){
+      let _id = stateMain.reviewCocktail._id || null;
+      let strDrink = stateMain.reviewCocktail.strDrink;
+      let strGlass = stateMain.reviewCocktail.strGlass;
+      let strCategory = stateMain.reviewCocktail.strCategory;
+      let strDrinkThumb = stateMain.reviewCocktail.strDrinkThumb;
+      let arrayIngredients = stateMain.reviewCocktail.arrayIngredients;
+      let strNotes = stateMain.reviewCocktail.strNotes;
+  
+      let arrayInstructions = stateMain.reviewCocktail.arrayInstructions;
+  
+      let arrayMeasuredIngredients =
+        stateMain.reviewCocktail.arrayMeasuredIngredients;
+  
+      let formatedCocktail = {
+        idDrink: idDrink,
+        strDrink: strDrink,
+        strGlass: strGlass,
+        strCategory: strCategory,
+        strDrinkThumb: strDrinkThumb,
+        arrayInstructions: arrayInstructions,
+        arrayMeasuredIngredients: arrayMeasuredIngredients,
+        arrayIngredients: arrayIngredients,
+        strNotes: strNotes,
+      };
+  
+      let isNew = stateMain.userCocktails.filter(
+        (cocktail) => (cocktail._id === _id)
+      ).length
+        ? false
+        : true;
+      let method = isNew ? "post" : "put";
+      let url = isNew ? `/createCocktail` : `/updateCocktail/${_id}`;
+      if (!isNew) {
+        formatedCocktail["_id"] = _id;
+      }
+  
+      // console.log(formatedCocktail, method, url);
+  
+      getIdTokenClaims()
+        .then((res) => {
+          let jwt = res.__raw;
+          let userEmail = res.email;
+          formatedCocktail["strUserEmail"] = userEmail;
+          let config = {
+            headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
+            method: method,
+            data: formatedCocktail,
+            baseURL: process.env.REACT_APP_SERVER,
+            url: url,
+          };
+          // console.log(formatedCocktail,config);
+          axios(config)
+            .then((res) => {
+              let savedCocktail = res.data;
+              dispatch({
+                type: "updateRevewCocktail",
+                payload: { value: savedCocktail },
+              });
+              getUserCocktails();
+              navigate("/review");
+            })
+            .catch((err) => {
+              //TODO: handle error when request fails
             });
-            getUserCocktails();
-            navigate("/review");
-          })
-          .catch((err) => {
-            //TODO: handle error when request fails
-          });
-      })
-      .catch((err) => {
-        //TODO: handle error when auth0 token request fails
-      });
-
+        })
+        .catch((err) => {
+          //TODO: handle error when auth0 token request fails
+        });
+    } else {
+      console.log('main page: attempt to save duplicate record');
+      //TODO: handler error when attempting to duplicate record
+    };
   };
 
   //used in put and post handlers
@@ -380,6 +395,7 @@ function Main() {
               displayHints={stateMain.displayHints}
               reviewCocktail={stateMain.reviewCocktail}
               submitReviewCocktail={submitReviewCocktail}
+              userCocktails={stateMain.userCocktails}
             />
           }
         ></Route>

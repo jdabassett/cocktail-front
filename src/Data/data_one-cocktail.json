@@ -1,9 +1,10 @@
 
 {
-  "idDrink": "17826",
+  "idDrink": "1000000",
   "strDrink": "I am a placeholder",
   "strDrinkAlternate": null,
   "strGlass": "Short and stout",
+  "strCategory":"Here is my category",
   "arrayInstructions": [
     "Here are my instructions"
   ],
