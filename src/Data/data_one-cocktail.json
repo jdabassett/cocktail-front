@@ -1,19 +1,16 @@
+
 {
-  "idDrink": "17826",
-  "strDrink": "The Jimmy Conway (Placeholder)",
+  "idDrink": "1000000",
+  "strDrink": "I am a placeholder",
   "strDrinkAlternate": null,
-  "strGlass": "Whiskey sour glass",
+  "strGlass": "Short and stout",
+  "strCategory":"Here is my category",
   "arrayInstructions": [
-    "Fill glass with ice",
-    "Pour in The Irishman and Disaronno",
-    "Fill to the top with Cranberry Juice",
-    "Garnish with a slice of lemon…Enjoy!"
+    "Here are my instructions"
   ],
   "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/wbcvyo1535794478.jpg",
   "arrayMeasuredIngredients": [
-    "50 ml Irish Whiskey",
-    "50 ml Amaretto",
-    "4 oz Cranberry Juice"
+    "Here are my ingredients"
   ],
-  "strNotes": "You can add notes here."
+  "strNotes": "Read me over and fill me out!"
 }
