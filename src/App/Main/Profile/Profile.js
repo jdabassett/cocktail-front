@@ -7,8 +7,10 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import Card from "react-bootstrap/Card";
 import oneCocktail from "../../../Data/data_one-cocktail.json";
+import {useNavigate} from 'react-router-dom';
 
 export default function Profile(props) {
+  let navigate = useNavigate();
   let [stateProfile, setStateProfile] = React.useState({
     selectedName: [],
     selectedIngredient: [],
@@ -19,7 +21,7 @@ export default function Profile(props) {
     uniqueCategories: [],
     uniqueIngredients: [],
     uniqueGlasses: [],
-    searchUserCocktails:props.userCocktails||[],
+    searchUserCocktails: props.userCocktails || [],
     searchType: {
       name: false,
       category: false,
@@ -31,8 +33,9 @@ export default function Profile(props) {
   });
 
   React.useEffect(() => {
-    console.log("profile page: on load");
-    makeAndSetUniqueLists(props.userCocktails||[]);
+    // console.log("profile page: on load");
+    makeAndSetUniqueLists(props.userCocktails || []);
+    handlerOnSubmit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -180,46 +183,73 @@ export default function Profile(props) {
     console.log("handlerSubmit");
     let searchUserCocktails = props.userCocktails;
 
-    if(stateProfile.searchType.name){
-      if(stateProfile.selectedName[0]){
-        searchUserCocktails=props.userCocktails.filter(cocktail=>cocktail.strDrink===stateProfile.selectedName[0]);
+    if (stateProfile.searchType.name) {
+      if (stateProfile.selectedName[0]) {
+        searchUserCocktails = props.userCocktails.filter(
+          (cocktail) => cocktail.strDrink === stateProfile.selectedName[0]
+        );
       } else {
         //TODO: handler error when search is empty
       }
-    } else if (stateProfile.searchType.category){
-      if(stateProfile.selectedCategory[0]){
-        searchUserCocktails=props.userCocktails.filter(cocktail=>cocktail.strCategory===stateProfile.selectedCategory[0]);
+    } else if (stateProfile.searchType.category) {
+      if (stateProfile.selectedCategory[0]) {
+        searchUserCocktails = props.userCocktails.filter(
+          (cocktail) =>
+            cocktail.strCategory === stateProfile.selectedCategory[0]
+        );
       } else {
         //TODO: handler error when search is empty
       }
-    } else if (stateProfile.searchType.ingredient){
-      if(stateProfile.selectedIngredient[0]){
-        searchUserCocktails=props.userCocktails.filter(cocktail=>cocktail.arrayMeasuredIngredients.filter(string => string.includes(stateProfile.selectedIngredient[0])).length>0);
+    } else if (stateProfile.searchType.ingredient) {
+      if (stateProfile.selectedIngredient[0]) {
+        searchUserCocktails = props.userCocktails.filter(
+          (cocktail) =>
+            cocktail.arrayMeasuredIngredients.filter((string) =>
+              string.includes(stateProfile.selectedIngredient[0])
+            ).length > 0
+        );
       } else {
         //TODO: handler error when search is empty
       }
-    } else if (stateProfile.searchType.glass){
-      if(stateProfile.selectedGlass[0]){
-        searchUserCocktails=props.userCocktails.filter(cocktail=>cocktail.strGlass===stateProfile.selectedGlass[0]);
+    } else if (stateProfile.searchType.glass) {
+      if (stateProfile.selectedGlass[0]) {
+        searchUserCocktails = props.userCocktails.filter(
+          (cocktail) => cocktail.strGlass === stateProfile.selectedGlass[0]
+        );
       } else {
         //TODO: handler error when search is empty
       }
-    } else if (stateProfile.searchType.random){
-      if(stateProfile.selectedRandom[0]){
-        if (props.userCocktails.length>stateProfile.selectedRandom[0]) {
-          searchUserCocktails=props.userCocktails.sort((a,b)=> 0.5-Math.random()).slice(0,stateProfile.selectedRandom[0]);
+    } else if (stateProfile.searchType.random) {
+      if (stateProfile.selectedRandom[0]) {
+        if (props.userCocktails.length > stateProfile.selectedRandom[0]) {
+          searchUserCocktails = props.userCocktails
+            .sort((a, b) => 0.5 - Math.random())
+            .slice(0, stateProfile.selectedRandom[0]);
         } else {
-          searchUserCocktails=props.userCocktails;
-        };
+          searchUserCocktails = props.userCocktails;
+        }
       } else {
         //TODO: handler error when search is empty
       }
     }
 
-    setStateProfile(prevState=>({...prevState,searchUserCocktails:searchUserCocktails}))
+    setStateProfile((prevState) => ({
+      ...prevState,
+      searchUserCocktails: searchUserCocktails,
+    }));
   };
 
-  console.log(stateProfile.searchUserCocktails);
+  const handlerOnEdit = (cocktail) => {
+    console.log('handlerOnEdit Triggered');
+    props.dispatch({
+      type: "updateRevewCocktail",
+      payload: { value: cocktail },
+    });
+    navigate('/update');
+  }
+
+  // console.log(stateProfile.searchUserCocktails);
+  console.log("profile rendered");
   return (
     <div className="profile-container">
       <div className="profile-form">
@@ -343,8 +373,6 @@ export default function Profile(props) {
             Search
           </Button>
         </OverlayTrigger>
-       
-
       </div>
       <div className="user-cocktails-container">
         {stateProfile.searchUserCocktails.length ? (
@@ -369,7 +397,9 @@ export default function Profile(props) {
                         );
                       } else {
                         return (
-                          <li key={`ingredientsU${idx0}${idx1}${item}`}>{`${item}`}</li>
+                          <li
+                            key={`ingredientsU${idx0}${idx1}${item}`}
+                          >{`${item}`}</li>
                         );
                       }
                     })}
@@ -378,14 +408,31 @@ export default function Profile(props) {
                   <ul>
                     {cocktail.arrayInstructions.map((item, idx1) => {
                       return (
-                        <li key={`instructionsU${idx0}${idx1}${item}`}>{`${item}`}</li>
+                        <li
+                          key={`instructionsU${idx0}${idx1}${item}`}
+                        >{`${item}`}</li>
                       );
                     })}
                   </ul>
 
                   <Card.Text>{`Notes: ${cocktail.strNotes}`}</Card.Text>
-                  <Button variant="primary">Edit</Button>
-                  <Button variant="primary">Delete</Button>
+                  <Button variant="primary"
+                    onClick={()=>handlerOnEdit(cocktail)}>Edit</Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      props.handlerOnDelete(cocktail);
+                      setStateProfile((prevState) => ({
+                        ...prevState,
+                        searchUserCocktails:
+                          prevState.searchUserCocktails.filter(
+                            (item) => item._id !== cocktail._id
+                          ),
+                      }));
+                    }}
+                  >
+                    Delete
+                  </Button>
                 </Card.Body>
               </Card>
             );
@@ -408,14 +455,18 @@ export default function Profile(props) {
                       >{`${itemSplit[0]} ${itemSplit[1]}`}</li>
                     );
                   } else {
-                    return <li key={`ingredientsP${idx}${item}`}>{`${item}`}</li>;
+                    return (
+                      <li key={`ingredientsP${idx}${item}`}>{`${item}`}</li>
+                    );
                   }
                 })}
               </ul>
               <h4>Instructions</h4>
               <ul>
                 {oneCocktail.arrayInstructions.map((item, idx) => {
-                  return <li key={`instructionsP${idx}${item}`}>{`${item}`}</li>;
+                  return (
+                    <li key={`instructionsP${idx}${item}`}>{`${item}`}</li>
+                  );
                 })}
               </ul>
               <Card.Text>{`Notes: ${oneCocktail.strNotes}`}</Card.Text>

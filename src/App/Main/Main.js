@@ -359,9 +359,42 @@ function Main() {
     return returnArray;
   };
 
+  const handlerOnDelete = (cocktail) => {
+    console.log('delete button clicked');
+    console.log(cocktail)
+    getIdTokenClaims()
+        .then((res) => {
+          let jwt = res.__raw;
+          let userEmail = res.email;
+          let url = `/deleteCocktail/${cocktail._id}`;
+          let config = {
+            headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
+            method: "delete",
+            data: cocktail,
+            baseURL: process.env.REACT_APP_SERVER,
+            url: url,
+          };
+          // console.log(formatedCocktail,config);
+          axios(config)
+            .then((res) => {
+              dispatch({
+                type: "updateRevewCocktail",
+                payload: { value: oneCocktail },
+              });
+              getUserCocktails();
+            })
+            .catch((err) => {
+              //TODO: handle error when request fails
+            });
+        })
+        .catch((err) => {
+          //TODO: handle error when auth0 token request fails
+        });
+
+  }
+
   // console.log("main", stateMain.reviewCocktail);
   // console.log("main", stateMain.userCocktailsCocktail);
-
   return (
     <div className="main-container">
       <Header
@@ -420,6 +453,7 @@ function Main() {
               dispatch={dispatch}
               displayHints={stateMain.displayHints}
               getUserCocktails={getUserCocktails}
+              handlerOnDelete = {handlerOnDelete}
               userCocktails={stateMain.userCocktails}
             />
           }
