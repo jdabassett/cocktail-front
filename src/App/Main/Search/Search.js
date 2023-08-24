@@ -32,21 +32,21 @@ export default function Search(props) {
     //keep local storage up to date
     React.useEffect(() => {
       //retreive from localStorage
-      updateStateFromLocal('setState',stateSearch);
+      getOrSetLocalStorage('setState',null);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
-  const updateStateFromLocal = (type,newState=null) => {
+  const getOrSetLocalStorage = (type,newState=null) => {
     if(type==="setState"){
       // console.log("update search state from local storage");
       let localStateSearch = JSON.parse(localStorage.getItem("stateSearch"));
-      console.log(localStateSearch);
-      if(Object.values(localStateSearch.searchType).includes(true)){
+      // console.log(localStateSearch);
+      if(localStateSearch && Object.values(localStateSearch.searchType).includes(true)){
         setStateSearch(prevState=>({...localStateSearch}));
       };
     } else if (type==="setLocal" && newState){
-      console.log('update search local storage');
-      console.log(stateSearch);
+      // console.log('update search local storage');
+      // console.log(stateSearch);
       localStorage.setItem('stateSearch',JSON.stringify(newState));
     }
   };
@@ -66,7 +66,7 @@ export default function Search(props) {
             random: false,
             clear: false,
           }};
-          updateStateFromLocal('setLocal',newState);
+          getOrSetLocalStorage('setLocal',newState);
           return newState;
         }); break;
 
@@ -82,7 +82,7 @@ export default function Search(props) {
             random: false,
             clear: false,
           }};
-          updateStateFromLocal('setLocal',newState);
+          getOrSetLocalStorage('setLocal',newState);
           return newState;
         }); break;
 
@@ -98,7 +98,7 @@ export default function Search(props) {
           random: false,
           clear: false,
         }};
-        updateStateFromLocal('setLocal',newState);
+        getOrSetLocalStorage('setLocal',newState);
         return newState;
       }); break;
 
@@ -115,7 +115,7 @@ export default function Search(props) {
             random: false,
             clear: false,
           }};
-          updateStateFromLocal('setLocal',newState);
+          getOrSetLocalStorage('setLocal',newState);
           return newState;
         }); break;
 
@@ -131,7 +131,7 @@ export default function Search(props) {
             random: !prevState.searchType.random,
             clear: false,
           }};
-          updateStateFromLocal('setLocal',newState);
+          getOrSetLocalStorage('setLocal',newState);
           return newState;
         }); break;
 
@@ -152,7 +152,7 @@ export default function Search(props) {
             random: false,
             clear: true
           }};
-          updateStateFromLocal('setLocal',newState);
+          getOrSetLocalStorage('setLocal',newState);
           return newState;
         }); break;
       default:
@@ -272,7 +272,7 @@ export default function Search(props) {
                   let newState={
                   ...prevState,
                   selectedName: selected};
-                updateStateFromLocal('setLocal',newState);
+                getOrSetLocalStorage('setLocal',newState);
                 return newState;})}}
               options={uniqueObject.uniqueNames}
               selected={stateSearch.selectedName}
@@ -290,7 +290,7 @@ export default function Search(props) {
                   let newState={
                   ...prevState,
                   selectedCategory: selected};
-                updateStateFromLocal('setLocal',newState);
+                getOrSetLocalStorage('setLocal',newState);
                 return newState;})}}
               options={uniqueObject.uniqueCategories}
               selected={stateSearch.selectedCategory}
@@ -308,7 +308,7 @@ export default function Search(props) {
                   let newState={
                   ...prevState,
                   selectedIngredient: selected};
-                updateStateFromLocal('setLocal',newState);
+                getOrSetLocalStorage('setLocal',newState);
                 return newState;})}}
               options={uniqueObject.uniqueIngredients}
               selected={stateSearch.selectedIngredient}
@@ -326,7 +326,7 @@ export default function Search(props) {
                   let newState={
                   ...prevState,
                   selectedGlass: selected};
-                updateStateFromLocal('setLocal',newState);
+                getOrSetLocalStorage('setLocal',newState);
                 return newState;})}}
               options={uniqueObject.uniqueGlasses}
               selected={stateSearch.selectedGlass}
@@ -344,7 +344,7 @@ export default function Search(props) {
                   let newState={
                   ...prevState,
                   selectedRandom: selected};
-                updateStateFromLocal('setLocal',newState);
+                getOrSetLocalStorage('setLocal',newState);
                 return newState;})}}
               options={uniqueObject.uniqueRandom}
               selected={stateSearch.selectedRandom}

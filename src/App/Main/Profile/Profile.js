@@ -34,10 +34,26 @@ export default function Profile(props) {
 
   React.useEffect(() => {
     // console.log("profile page: on load");
-    makeAndSetUniqueLists(props.userCocktails || []);
-    handlerOnSubmit();
+    getOrSetLocalStorage('setState',null);
+    props.getUserCocktails();
+    makeAndSetUniqueLists(props.userCocktails);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getOrSetLocalStorage = (type,newState=null) => {
+    if(type==="setState"){
+      console.log("update profile state from local storage");
+      let localStateProfile = JSON.parse(localStorage.getItem("stateProfile"));
+      // console.log(localStateProfile);
+      if(localStateProfile && Object.values(localStateProfile.searchType).includes(true)){
+        setStateProfile(prevState=>({...localStateProfile}));
+      };
+    } else if (type==="setLocal" && newState){
+      console.log('update profile local storage');
+      // console.log(stateProfile);
+      localStorage.setItem('stateProfile',JSON.stringify(newState));
+    }
+  };
 
   const makeAndSetUniqueLists = (userCocktails) => {
     let uniqueNames = userCocktails
@@ -92,8 +108,8 @@ export default function Profile(props) {
     e.persist();
     switch (e.target.value) {
       case "name":
-        return setStateProfile((prevState) => ({
-          ...prevState,
+        setStateProfile((prevState) => {
+          let newState = {...prevState,
           searchType: {
             name: !prevState.searchType.name,
             category: false,
@@ -101,12 +117,14 @@ export default function Profile(props) {
             glass: false,
             random: false,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+      }); break;
 
       case "ingredient":
-        return setStateProfile((prevState) => ({
-          ...prevState,
+        setStateProfile((prevState) => {
+          let newState = {...prevState,
           searchType: {
             name: false,
             category: false,
@@ -114,12 +132,14 @@ export default function Profile(props) {
             glass: false,
             random: false,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+      }); break;
 
       case "glass":
-        return setStateProfile((prevState) => ({
-          ...prevState,
+        setStateProfile((prevState) => {
+          let newState = {...prevState,
           searchType: {
             name: false,
             category: false,
@@ -127,12 +147,14 @@ export default function Profile(props) {
             glass: !prevState.searchType.glass,
             random: false,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+      }); break;
 
       case "category":
-        return setStateProfile((prevState) => ({
-          ...prevState,
+        setStateProfile((prevState) => {
+          let newState = {...prevState,
           searchType: {
             name: false,
             category: !prevState.searchType.category,
@@ -140,12 +162,14 @@ export default function Profile(props) {
             glass: false,
             random: false,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+      }); break;
 
       case "random":
-        return setStateProfile((prevState) => ({
-          ...prevState,
+        setStateProfile((prevState) => {
+          let newState = {...prevState,
           searchType: {
             name: false,
             category: false,
@@ -153,12 +177,14 @@ export default function Profile(props) {
             glass: false,
             random: !prevState.searchType.random,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+      }); break;
 
       case "clear":
-        return setStateProfile((prevState) => ({
-          ...prevState,
+        setStateProfile((prevState) => {
+          let newState = {...prevState,
           selectedName: [],
           selectedIngredient: [],
           selectedGlass: [],
@@ -171,8 +197,10 @@ export default function Profile(props) {
             glass: false,
             random: false,
             clear: true,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+      }); break;
 
       default:
         return;
@@ -240,7 +268,7 @@ export default function Profile(props) {
   };
 
   const handlerOnEdit = (cocktail) => {
-    console.log('handlerOnEdit Triggered');
+    // console.log('handlerOnEdit Triggered');
     props.dispatch({
       type: "updateRevewCocktail",
       payload: { value: cocktail },
@@ -249,7 +277,7 @@ export default function Profile(props) {
   }
 
   // console.log(stateProfile.searchUserCocktails);
-  console.log("profile rendered");
+  // console.log("profile rendered");
   return (
     <div className="profile-container">
       <div className="profile-form">
@@ -280,11 +308,12 @@ export default function Profile(props) {
                 placeholder="Cocktail name?"
                 id="name-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
+                  setStateProfile((prevState) => {
+                    let newState={
                     ...prevState,
-                    selectedName: selected,
-                  }));
-                }}
+                    selectedName: selected};
+                  getOrSetLocalStorage('setLocal',newState);
+                  return newState;})}}
                 options={stateProfile.uniqueNames}
                 selected={stateProfile.selectedName}
               />
@@ -297,11 +326,12 @@ export default function Profile(props) {
                 placeholder="Cocktail category?"
                 id="cocktail-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
+                  setStateProfile((prevState) => {
+                    let newState={
                     ...prevState,
-                    selectedCategory: selected,
-                  }));
-                }}
+                    selectedCategory: selected};
+                  getOrSetLocalStorage('setLocal',newState);
+                  return newState;})}}
                 options={stateProfile.uniqueCategories}
                 selected={stateProfile.selectedCategory}
               />
@@ -314,11 +344,12 @@ export default function Profile(props) {
                 placeholder="Cocktail ingredient?"
                 id="ingredient-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
+                  setStateProfile((prevState) => {
+                    let newState={
                     ...prevState,
-                    selectedIngredient: selected,
-                  }));
-                }}
+                    selectedIngredient: selected};
+                  getOrSetLocalStorage('setLocal',newState);
+                  return newState;})}}
                 options={stateProfile.uniqueIngredients}
                 selected={stateProfile.selectedIngredient}
               />
@@ -331,11 +362,12 @@ export default function Profile(props) {
                 placeholder="Glass type?"
                 id="glass-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
+                  setStateProfile((prevState) => {
+                    let newState={
                     ...prevState,
-                    selectedGlass: selected,
-                  }));
-                }}
+                    selectedGlass: selected};
+                  getOrSetLocalStorage('setLocal',newState);
+                  return newState;})}}
                 options={stateProfile.uniqueGlasses}
                 selected={stateProfile.selectedGlass}
               />
@@ -348,11 +380,12 @@ export default function Profile(props) {
                 placeholder="How many?"
                 id="random-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
+                  setStateProfile((prevState) => {
+                    let newState={
                     ...prevState,
-                    selectedRandom: selected,
-                  }));
-                }}
+                    selectedRandom: selected};
+                  getOrSetLocalStorage('setLocal',newState);
+                  return newState;})}}
                 options={uniqueObject.uniqueRandom}
                 selected={stateProfile.selectedRandom}
               />
@@ -373,6 +406,7 @@ export default function Profile(props) {
             Search
           </Button>
         </OverlayTrigger>
+ 
       </div>
       <div className="user-cocktails-container">
         {stateProfile.searchUserCocktails.length ? (

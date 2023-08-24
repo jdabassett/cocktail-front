@@ -65,7 +65,7 @@ function Main() {
       // console.log(localStateMain);
 
       if (localStateMain["reviewCocktail"]) {
-        console.log("local storage update review cocktail");
+        // console.log("local storage update review cocktail");
         dispatch({
           type: "updateRevewCocktail",
           payload: {
@@ -74,7 +74,7 @@ function Main() {
         });
       };
       if (localStateMain["userCocktails"]) {
-        console.log("local storage update user cocktails");
+        // console.log("local storage update user cocktails");
         dispatch({
           type: "updateUserCocktails",
           payload: {
@@ -83,7 +83,7 @@ function Main() {
         });
       };
       if (!localStateMain["userCocktails"]) {
-        console.log("database get update user cocktails");
+        // console.log("database get update user cocktails");
         getUserCocktails();
       }
     };
@@ -125,7 +125,7 @@ function Main() {
             });
           })
           .then(()=>{
-            console.log('main page: saved state to local storage')
+            // console.log('main page: saved state to local storage')
             localStorage.setItem("stateMain", JSON.stringify(stateMain));
           })
           .catch((error) => {
