@@ -6,11 +6,15 @@
   "strGlass": "Short and stout",
   "strCategory":"Here is my category",
   "arrayInstructions": [
-    "Here are my instructions"
+    {"id":"1TlZfCsfaljkljaCBBC0LQ","instruction":"Here are my instructions"}
   ],
   "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/wbcvyo1535794478.jpg",
   "arrayMeasuredIngredients": [
-    "Here are my ingredients"
+    {
+      "unit": "",
+      "ingredient": "Here are my ingredients",
+      "id": "gySKriLDS7PnQafdm4heggkn"
+    }
   ],
   "strNotes": "Read me over and fill me out!"
 }
