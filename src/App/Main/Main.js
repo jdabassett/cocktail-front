@@ -166,7 +166,7 @@ function Main() {
   };
 
   //put or post updated cocktail to user database
-  const submitUpdatedCocktail = (e) => {
+  const submitUpdatedCocktail = (e,updatedCocktail) => {
     e.preventDefault();
     
     console.log("submitUpdatedCocktail triggered");
@@ -187,14 +187,14 @@ function Main() {
 
     let arrayInstructions = [];
     arrayInstructions =
-      updateArray(e, "instruction") ||
+      updateArray(e,updatedCocktail.arrayInstructions, "instruction") ||
       stateMain.reviewCocktail.arrayInstructions.forEach((item) =>
         arrayInstructions.push(item)
       );
 
     let arrayMeasuredIngredients = [];
     arrayMeasuredIngredients =
-      updateArray(e, "ingredient", "measurement") ||
+      updateArray(e,updatedCocktail.arrayMeasuredIngredients, "ingredient", "measurement") ||
       stateMain.reviewCocktail.arrayMeasuredIngredients.forEach((item) =>
         arrayMeasuredIngredients.push(item)
       );
@@ -341,21 +341,17 @@ function Main() {
   };
 
   //used in put and post handlers
-  const updateArray = (e, string1, string2) => {
+  const updateArray = (e, array, string1, string2) => {
     let returnArray = [];
-    for (let i = 0; i < 1000; i++) {
-      if (e.target[`${string1}${i}Input`] && string2 === "measurement") {
-        returnArray.push(
-          `${e.target[`${string2}${i}Input`].value}_${
-            e.target[`${string1}${i}Input`].value
-          }`
-        );
-      } else if (e.target[`${string1}${i}Input`] && string1 === "instruction") {
-        returnArray.push(e.target[`${string1}${i}Input`].value);
-      } else {
-        break;
-      }
-    }
+
+    array.forEach(item => {
+      if (e.target[`${string1}${item.id}Input`] && string2 === "measurement") {
+        returnArray.push({id:item.id,unit:e.target[`${string2}${item.id}Input`].value,ingredient:e.target[`${string1}${item.id}Input`].value});
+      } else if (e.target[`${string1}${item.id}Input`] && string1 === "instruction") {
+        returnArray.push({id:item.id,instruction:e.target[`${string1}${item.id}Input`].value});
+      };
+    });
+
     return returnArray;
   };
 

@@ -4,6 +4,7 @@ import Card from "react-bootstrap/Card";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
+import nanoid from "nanoid";
 
 export default function Update(props) {
   let navigate = useNavigate();
@@ -12,9 +13,6 @@ export default function Update(props) {
     ...props.reviewCocktail,
   });
 
-  // React.useEffect(()=>{setStateUpdate(prevState=>({...prevState}))},[stateUpdate]);
-
-  console.log("update", stateUpdate);
   return (
     <div className="update-container">
       <Card className="update-card" style={{ width: "30rem" }}>
@@ -22,7 +20,7 @@ export default function Update(props) {
         <Card.Body>
           <h3>Customize your cocktail recipe!</h3>
 
-          <Form onSubmit={(e) => props.submitUpdatedCocktail(e)}>
+          <Form onSubmit={(e) => props.submitUpdatedCocktail(e,stateUpdate)}>
             <Card.Title className="card-title">
               <Form.Group className="mb-3" controlId="strDrinkInput">
                 <Form.Label>Name:</Form.Label>
@@ -53,55 +51,17 @@ export default function Update(props) {
 
               <div className="update-list">
                 <h4>Ingredients:</h4>
-                <AiOutlinePlusCircle
-                  onClick={() =>
-                    setStateUpdate((prevState) => ({
-                      ...prevState,
-                      arrayMeasuredIngredients: [" _ "].concat(
-                        prevState.arrayMeasuredIngredients
-                      ),
-                    }))
-                  }
-                />
-                <AiOutlineMinusCircle
-                  onClick={() => {
-                    setStateUpdate((prevState) => ({
-                      ...prevState,
-                      arrayMeasuredIngredients:
-                        prevState.arrayMeasuredIngredients.filter(
-                          (item, index) => index !== 0
-                        ),
-                    }));
-                  }}
-                />
-                  <ul>
-                    {stateUpdate.arrayMeasuredIngredients.map(
-                      (ingredient, idx) => {
-                        return (
-                          <li className="ingredient-li" key={idx}>
-                            <Form.Group
-                              key={`measurement${idx}`}
-                              className="mb-3 ingredient-field"
-                              controlId={`measurement${idx}Input`}
-                            >
-                              <Form.Label>{idx + 1}:</Form.Label>
-                              <Form.Control
-                                className="ingredient-control"
-                                type="text"
-                                defaultValue={ingredient.split("_")[0]}
-                              />
-                            </Form.Group>
-                            <Form.Group
-                              key={`ingredient${idx}`}
-                              className="mb-3 ingredient-field"
-                              controlId={`ingredient${idx}Input`}
-                            >
-                              <Form.Control
-                                className="ingredient-control"
-                                type="text"
-                                defaultValue={ingredient.split("_")[1]}
-                              />
-                            </Form.Group>
+
+                <ul>
+                  {stateUpdate.arrayMeasuredIngredients.map(
+                    (ingredient, idx) => {
+                      return (
+                        <li className="ingredient-li" key={ingredient.id}>
+                          <Form.Group
+                            key={`measurement${ingredient.id}`}
+                            className="mb-3 ingredient-field"
+                            controlId={`measurement${ingredient.id}Input`}
+                          >
                             <AiOutlinePlusCircle
                               onClick={() =>
                                 setStateUpdate((prevState) => ({
@@ -109,16 +69,23 @@ export default function Update(props) {
                                   arrayMeasuredIngredients: [
                                     ...prevState.arrayMeasuredIngredients.slice(
                                       0,
-                                      idx + 1
+                                      idx
                                     ),
-                                    ...[""],
+                                    ...[
+                                      {
+                                        id: nanoid(),
+                                        unit: "",
+                                        ingredient: "",
+                                      },
+                                    ],
                                     ...prevState.arrayMeasuredIngredients.slice(
-                                      idx + 1
+                                      idx
                                     ),
                                   ],
                                 }))
                               }
                             />
+                            <Form.Label>{idx + 1}:</Form.Label>
                             <AiOutlineMinusCircle
                               onClick={() => {
                                 setStateUpdate((prevState) => ({
@@ -126,74 +93,76 @@ export default function Update(props) {
                                   arrayMeasuredIngredients:
                                     prevState.arrayMeasuredIngredients.filter(
                                       (item, index) => {
-                                        console.log(idx, index);
+                                        // console.log(idx, index);
                                         return idx !== index;
                                       }
                                     ),
                                 }));
                               }}
                             />
-                          </li>
-                        );
-                      }
-                    )}
-                  </ul>
-              </div>
-
-              <div className="update-list">
-                <h4>Instructions:</h4>
+                            <Form.Control
+                              className="ingredient-control"
+                              type="text"
+                              defaultValue={ingredient.unit}
+                            />
+                          </Form.Group>
+                          <Form.Group
+                            key={`ingredient${idx}`}
+                            className="mb-3 ingredient-field"
+                            controlId={`ingredient${ingredient.id}Input`}
+                          >
+                            <Form.Control
+                              className="ingredient-control"
+                              type="text"
+                              defaultValue={ingredient.ingredient}
+                            />
+                          </Form.Group>
+                        </li>
+                      );
+                    }
+                  )}
+                </ul>
                 <AiOutlinePlusCircle
                   onClick={() =>
                     setStateUpdate((prevState) => ({
                       ...prevState,
-                      arrayInstructions: [""].concat(
-                        prevState.arrayInstructions
-                      ),
+                      arrayMeasuredIngredients:
+                        prevState.arrayMeasuredIngredients.concat([
+                          { id: nanoid(), unit: "", ingredient: "" },
+                        ]),
                     }))
                   }
                 />
-                <AiOutlineMinusCircle
-                  onClick={() => {
-                    setStateUpdate((prevState) => ({
-                      ...prevState,
-                      arrayInstructions:
-                        prevState.arrayInstructions.filter(
-                          (item, index) => index !== 0
-                        ),
-                    }));
-                  }}
-                />
-                  <ul>
-                    {stateUpdate.arrayInstructions.map((instruction, idx) => {
-                      return (
-                        <li className="instruction-li" key={idx}>
-                          <Form.Group
-                            key={idx}
-                            className="mb-3 instruction-field"
-                            controlId={`instruction${idx}Input`}
-                          >
-                            <Form.Label>{idx + 1}:</Form.Label>
-                            <Form.Control
-                              className="instruction-control"
-                              type="text"
-                              defaultValue={instruction}
-                            />
-                          </Form.Group>
+              </div>
+
+              <div className="update-list">
+                <h4>Instructions:</h4>
+
+                <ul>
+                  {stateUpdate.arrayInstructions.map((instruction, idx) => {
+                    return (
+                      <li
+                        className="instruction-li"
+                        key={`li${instruction.id}`}
+                      >
+                        <Form.Group
+                          key={`instruction form ${instruction.id}`}
+                          className="mb-3 instruction-field"
+                          controlId={`instruction${instruction.id}Input`}
+                        >
                           <AiOutlinePlusCircle
                             onClick={() =>
                               setStateUpdate((prevState) => ({
                                 ...prevState,
                                 arrayInstructions: [
-                                  ...prevState.arrayInstructions.slice(
-                                    0,
-                                    idx + 1
-                                  ),
-                                  ...[""],
-                                  ...prevState.arrayInstructions.slice(idx + 1),
+                                  ...prevState.arrayInstructions.slice(0, idx),
+                                  ...[{ id: nanoid(), instruction: "" }],
+                                  ...prevState.arrayInstructions.slice(idx),
                                 ],
                               }))
                             }
                           />
+                          <Form.Label>{idx + 1}:</Form.Label>
                           <AiOutlineMinusCircle
                             onClick={() => {
                               setStateUpdate((prevState) => ({
@@ -205,10 +174,26 @@ export default function Update(props) {
                               }));
                             }}
                           />
-                        </li>
-                      );
-                    })}
-                  </ul>
+                          <Form.Control
+                            className="instruction-control"
+                            type="text"
+                            defaultValue={instruction.instruction}
+                          />
+                        </Form.Group>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <AiOutlinePlusCircle
+                  onClick={() =>
+                    setStateUpdate((prevState) => ({
+                      ...prevState,
+                      arrayInstructions: prevState.arrayInstructions.concat([
+                        { id: nanoid(), instruction: "" },
+                      ]),
+                    }))
+                  }
+                />
               </div>
 
               <Form.Group className="mb-3" controlId="strNotesInput">
