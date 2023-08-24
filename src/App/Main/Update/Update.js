@@ -8,12 +8,13 @@ import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
 export default function Update(props) {
   let navigate = useNavigate();
 
+  const [stateUpdate, setStateUpdate] = React.useState({
+    ...props.reviewCocktail,
+  });
 
-  const [stateUpdate, setStateUpdate] = React.useState({...props.reviewCocktail});
+  // React.useEffect(()=>{setStateUpdate(prevState=>({...prevState}))},[stateUpdate]);
 
-
-
-
+  console.log("update", stateUpdate);
   return (
     <div className="update-container">
       <Card className="update-card" style={{ width: "30rem" }}>
@@ -56,10 +57,22 @@ export default function Update(props) {
                   onClick={() =>
                     setStateUpdate((prevState) => ({
                       ...prevState,
-                      arrayMeasuredIngredients:
-                        prevState.arrayMeasuredIngredients.concat([""]),
+                      arrayMeasuredIngredients: [" _ "].concat(
+                        prevState.arrayMeasuredIngredients
+                      ),
                     }))
                   }
+                />
+                <AiOutlineMinusCircle
+                  onClick={() => {
+                    setStateUpdate((prevState) => ({
+                      ...prevState,
+                      arrayMeasuredIngredients:
+                        prevState.arrayMeasuredIngredients.filter(
+                          (item, index) => index !== 0
+                        ),
+                    }));
+                  }}
                 />
                 {stateUpdate.arrayMeasuredIngredients && (
                   <ul>
@@ -113,7 +126,10 @@ export default function Update(props) {
                                   ...prevState,
                                   arrayMeasuredIngredients:
                                     prevState.arrayMeasuredIngredients.filter(
-                                      (item, index) => idx !== index
+                                      (item, index) => {
+                                        console.log(idx, index);
+                                        return idx !== index;
+                                      }
                                     ),
                                 }));
                               }}
@@ -125,7 +141,7 @@ export default function Update(props) {
                   </ul>
                 )}
               </div>
-              
+
               <div className="update-list">
                 <h4>Instructions:</h4>
                 <AiOutlinePlusCircle
