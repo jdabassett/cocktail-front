@@ -74,7 +74,6 @@ export default function Update(props) {
                     }));
                   }}
                 />
-                {stateUpdate.arrayMeasuredIngredients && (
                   <ul>
                     {stateUpdate.arrayMeasuredIngredients.map(
                       (ingredient, idx) => {
@@ -139,7 +138,6 @@ export default function Update(props) {
                       }
                     )}
                   </ul>
-                )}
               </div>
 
               <div className="update-list">
@@ -148,13 +146,23 @@ export default function Update(props) {
                   onClick={() =>
                     setStateUpdate((prevState) => ({
                       ...prevState,
-                      arrayInstructions: prevState.arrayInstructions.concat([
-                        "",
-                      ]),
+                      arrayInstructions: [""].concat(
+                        prevState.arrayInstructions
+                      ),
                     }))
                   }
                 />
-                {stateUpdate.arrayInstructions && (
+                <AiOutlineMinusCircle
+                  onClick={() => {
+                    setStateUpdate((prevState) => ({
+                      ...prevState,
+                      arrayInstructions:
+                        prevState.arrayInstructions.filter(
+                          (item, index) => index !== 0
+                        ),
+                    }));
+                  }}
+                />
                   <ul>
                     {stateUpdate.arrayInstructions.map((instruction, idx) => {
                       return (
@@ -201,7 +209,6 @@ export default function Update(props) {
                       );
                     })}
                   </ul>
-                )}
               </div>
 
               <Form.Group className="mb-3" controlId="strNotesInput">
