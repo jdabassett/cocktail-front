@@ -10,6 +10,7 @@ import Profile from "./Profile/Profile.js";
 import { withAuthenticationRequired, useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import oneCocktail from "../../Data/data_one-cocktail.json";
+import userCocktails from "../../Data/data_userCocktails.json";
 
 function reducer(stateMain, action) {
   localStorage.setItem("stateMain", JSON.stringify(stateMain));
@@ -48,9 +49,9 @@ function Main() {
     {
       attribution: null,
       error: null,
-      searchResults: JSON.parse(localStorage.getItem('stateMain')).searchResults||null,
+      searchResults: JSON.parse(localStorage.getItem('stateMain')).searchResults||userCocktails,
       reviewCocktail: JSON.parse(localStorage.getItem('stateMain.reviewCocktail'))||oneCocktail,
-      userCocktails: JSON.parse(localStorage.getItem('stateMain.userCocktails'))||null,
+      userCocktails: JSON.parse(localStorage.getItem('stateMain.userCocktails'))||userCocktails,
       userDetails: JSON.parse(localStorage.getItem('stateMain.userDetails'))||{ userEmail: "", userPicture: "" },
       displayHints: { component: "", disable: true },
     }
