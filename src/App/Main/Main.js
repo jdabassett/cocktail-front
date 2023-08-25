@@ -102,7 +102,8 @@ function Main() {
             localStorage.setItem("stateMain.userCocktails", JSON.stringify(response.data.drinks));
           })
           .catch((err) => {
-            dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. Cannot retrieve user records. (Get Request)`}}});
+            console.log('getUserCocktails failed');
+            // dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. Cannot retrieve user records. (Get Request)`}}});
             });
       })
       .catch((err) => {
