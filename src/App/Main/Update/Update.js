@@ -13,6 +13,12 @@ export default function Update(props) {
     ...props.reviewCocktail,
   });
 
+  // React.useEffect(() => {
+  //   // console.log("update page: on load ");
+  //   setStateUpdate({...props.reviewCocktail});
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // },[]);
+
   return (
     <div className="update-container">
       <Card className="update-card" style={{ width: "30rem" }}>
@@ -57,11 +63,6 @@ export default function Update(props) {
                     (ingredient, idx) => {
                       return (
                         <li className="ingredient-li" key={ingredient.id}>
-                          <Form.Group
-                            key={`measurement${ingredient.id}`}
-                            className="mb-3 ingredient-field"
-                            controlId={`measurement${ingredient.id}Input`}
-                          >
                             <AiOutlinePlusCircle
                               onClick={() =>
                                 setStateUpdate((prevState) => ({
@@ -85,7 +86,6 @@ export default function Update(props) {
                                 }))
                               }
                             />
-                            <Form.Label>{idx + 1}:</Form.Label>
                             <AiOutlineMinusCircle
                               onClick={() => {
                                 setStateUpdate((prevState) => ({
@@ -100,6 +100,14 @@ export default function Update(props) {
                                 }));
                               }}
                             />
+                          <Form.Group
+                            key={`measurement${ingredient.id}`}
+                            className="mb-3 ingredient-field"
+                            controlId={`measurement${ingredient.id}Input`}
+                          >
+     
+                            <Form.Label>{idx + 1}:</Form.Label>
+
                             <Form.Control
                               className="ingredient-control"
                               type="text"
@@ -145,11 +153,6 @@ export default function Update(props) {
                         className="instruction-li"
                         key={`li${instruction.id}`}
                       >
-                        <Form.Group
-                          key={`instruction form ${instruction.id}`}
-                          className="mb-3 instruction-field"
-                          controlId={`instruction${instruction.id}Input`}
-                        >
                           <AiOutlinePlusCircle
                             onClick={() =>
                               setStateUpdate((prevState) => ({
@@ -162,7 +165,6 @@ export default function Update(props) {
                               }))
                             }
                           />
-                          <Form.Label>{idx + 1}:</Form.Label>
                           <AiOutlineMinusCircle
                             onClick={() => {
                               setStateUpdate((prevState) => ({
@@ -174,6 +176,14 @@ export default function Update(props) {
                               }));
                             }}
                           />
+                        <Form.Group
+                          key={`instruction form ${instruction.id}`}
+                          className="mb-3 instruction-field"
+                          controlId={`instruction${instruction.id}Input`}
+                        >
+
+                          <Form.Label>{idx + 1}:</Form.Label>
+  
                           <Form.Control
                             className="instruction-control"
                             type="text"

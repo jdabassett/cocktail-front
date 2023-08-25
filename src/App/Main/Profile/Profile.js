@@ -21,7 +21,7 @@ export default function Profile(props) {
     uniqueCategories: [],
     uniqueIngredients: [],
     uniqueGlasses: [],
-    searchUserCocktails: props.userCocktails || [],
+    searchUserCocktails: props.userCocktails,
     searchType: {
       name: false,
       category: false,
@@ -33,9 +33,10 @@ export default function Profile(props) {
   });
 
   React.useEffect(() => {
-    // console.log("profile page: on load");
+    console.log("profile page: on load");
     getOrSetLocalStorage("setState", null);
     props.getUserCocktails();
+    // setStateProfile(prevState=>({...prevState,searchUserCocktails:props.userCocktails}));
     makeAndSetUniqueLists(props.userCocktails);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -49,7 +50,7 @@ export default function Profile(props) {
         localStateProfile &&
         Object.values(localStateProfile.searchType).includes(true)
       ) {
-        setStateProfile((prevState) => ({ ...localStateProfile }));
+        setStateProfile((prevState) => ({...localStateProfile,searchUserCocktails:props.userCocktails }));
       }
     } else if (type === "setLocal" && newState) {
       console.log("update profile local storage");
@@ -87,7 +88,8 @@ export default function Profile(props) {
         return acc;
       }, [])
       .sort((a, b) => a.localeCompare(b));
-    console.log(uniqueIngredients);
+    // let uniqueIngredients = [];
+    // console.log(uniqueIngredients);
 
     //make a list of unique glass from the userCocktails in state
     let uniqueGlasses = userCocktails
@@ -229,7 +231,7 @@ export default function Profile(props) {
   };
 
   const handlerOnSubmit = () => {
-    console.log("handlerSubmit");
+    // console.log("handlerSubmit");
     let searchUserCocktails = props.userCocktails;
 
     if (stateProfile.searchType.name) {
@@ -254,7 +256,7 @@ export default function Profile(props) {
         searchUserCocktails = props.userCocktails.filter(
           (cocktail) =>
             cocktail.arrayMeasuredIngredients.filter((string) =>
-              string.includes(stateProfile.selectedIngredient[0])
+              string.ingredient.includes(stateProfile.selectedIngredient[0])
             ).length > 0
         );
       } else {
@@ -296,8 +298,8 @@ export default function Profile(props) {
     });
     navigate("/update");
   };
-
-  // console.log(stateProfile.searchUserCocktails);
+  console.log("profile page:", stateProfile.searchUserCocktails);
+  // console.log("profile page:",stateProfile.searchUserCocktails);
   // console.log("profile rendered");
   return (
     <div className="profile-container">
@@ -445,34 +447,36 @@ export default function Profile(props) {
       </div>
       <div className="user-cocktails-container">
         {stateProfile.searchUserCocktails.length ? (
-          stateProfile.searchUserCocktails.map((cocktail, idx0) => {
+          stateProfile.searchUserCocktails.map((cocktail) => {
             return (
-              <Card style={{ width: "30rem" }}>
-                <Card.Img variant="top" src={cocktail.strDrinkThumb} />
+              <Card key={`card${cocktail._id}`} style={{ width: "30rem" }}>
+                <Card.Img key={`card-img${cocktail._id}`} variant="top" src={cocktail.strDrinkThumb} />
                 <Card.Body>
-                  <Card.Title>{cocktail.strDrink}</Card.Title>
-                  <Card.Text>{`Glass: ${cocktail.strGlass}`}</Card.Text>
-                  <Card.Text>{`Category: ${cocktail.strCategory}`}</Card.Text>
+                  <Card.Title key={`card-title${cocktail._id}`}>{cocktail.strDrink}</Card.Title>
+                  <Card.Text key={`card-text-glass${cocktail._id}`}>{`Glass: ${cocktail.strGlass}`}</Card.Text>
+                  <Card.Text key={`card-text-category${cocktail._id}`}>{`Category: ${cocktail.strCategory}`}</Card.Text>
 
                   <h4>Ingredients:</h4>
                   <ul>
-                    {cocktail.arrayMeasuredIngredients.map((item, idx1) => {
+                    {cocktail.arrayMeasuredIngredients.map((item, idx) => {
                       return (
-                        <li key={`ingredients${item.id}`}>{`${
+                        <li key={`ingredients${item.id}${idx}`}>{`${
                           item.unit ? `${item.unit} ` : ""
                         }${item.ingredient}`}</li>
                       );
                     })}
+                    {/* {<p>cocktail.arrayMeasuredIngredients</p>} */}
                   </ul>
                   <h4>Instructions</h4>
                   <ul>
-                    {cocktail.arrayInstructions.map((item, idx1) => {
+                    {cocktail.arrayInstructions.map((item, idx) => {
                       return (
                         <li
-                          key={`instructions${item.id}`}
+                          key={`instructions${item.id}${idx}`}
                         >{`${item.instruction}`}</li>
                       );
                     })}
+                    {/* {<p>cocktail.arrayInstructions</p>} */}
                   </ul>
 
                   <Card.Text>{`Notes: ${
