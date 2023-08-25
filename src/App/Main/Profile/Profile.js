@@ -7,8 +7,10 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import Card from "react-bootstrap/Card";
 import oneCocktail from "../../../Data/data_one-cocktail.json";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile(props) {
+  let navigate = useNavigate();
   let [stateProfile, setStateProfile] = React.useState({
     selectedName: [],
     selectedIngredient: [],
@@ -19,7 +21,7 @@ export default function Profile(props) {
     uniqueCategories: [],
     uniqueIngredients: [],
     uniqueGlasses: [],
-    searchUserCocktails:props.userCocktails||[],
+    searchUserCocktails: props.userCocktails,
     searchType: {
       name: false,
       category: false,
@@ -32,9 +34,30 @@ export default function Profile(props) {
 
   React.useEffect(() => {
     console.log("profile page: on load");
-    makeAndSetUniqueLists(props.userCocktails||[]);
+    getOrSetLocalStorage("setState", null);
+    props.getUserCocktails();
+    // setStateProfile(prevState=>({...prevState,searchUserCocktails:props.userCocktails}));
+    makeAndSetUniqueLists(props.userCocktails);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getOrSetLocalStorage = (type, newState = null) => {
+    if (type === "setState") {
+      console.log("update profile state from local storage");
+      let localStateProfile = JSON.parse(localStorage.getItem("stateProfile"));
+      // console.log(localStateProfile);
+      if (
+        localStateProfile &&
+        Object.values(localStateProfile.searchType).includes(true)
+      ) {
+        setStateProfile((prevState) => ({...localStateProfile,searchUserCocktails:props.userCocktails }));
+      }
+    } else if (type === "setLocal" && newState) {
+      console.log("update profile local storage");
+      // console.log(stateProfile);
+      localStorage.setItem("stateProfile", JSON.stringify(newState));
+    }
+  };
 
   const makeAndSetUniqueLists = (userCocktails) => {
     let uniqueNames = userCocktails
@@ -57,15 +80,16 @@ export default function Profile(props) {
     //make a list of unique ingredients from the userCocktails in state
     let uniqueIngredients = userCocktails
       .reduce((acc, b) => {
-        b.arrayMeasuredIngredients.forEach((ingredient) => {
-          let newIngredient = ingredient.split("_")[1];
-          if (!acc.includes(newIngredient)) {
-            acc.push(newIngredient);
+        b.arrayMeasuredIngredients.forEach((ingredientObject) => {
+          if (!acc.includes(ingredientObject.ingredient)) {
+            acc.push(ingredientObject.ingredient);
           }
         });
         return acc;
       }, [])
       .sort((a, b) => a.localeCompare(b));
+    // let uniqueIngredients = [];
+    // console.log(uniqueIngredients);
 
     //make a list of unique glass from the userCocktails in state
     let uniqueGlasses = userCocktails
@@ -89,87 +113,117 @@ export default function Profile(props) {
     e.persist();
     switch (e.target.value) {
       case "name":
-        return setStateProfile((prevState) => ({
-          ...prevState,
-          searchType: {
-            name: !prevState.searchType.name,
-            category: false,
-            ingredient: false,
-            glass: false,
-            random: false,
-            clear: false,
-          },
-        }));
+        setStateProfile((prevState) => {
+          let newState = {
+            ...prevState,
+            searchType: {
+              name: !prevState.searchType.name,
+              category: false,
+              ingredient: false,
+              glass: false,
+              random: false,
+              clear: false,
+            },
+          };
+          getOrSetLocalStorage("setLocal", newState);
+          return newState;
+        });
+        break;
 
       case "ingredient":
-        return setStateProfile((prevState) => ({
-          ...prevState,
-          searchType: {
-            name: false,
-            category: false,
-            ingredient: !prevState.searchType.ingredient,
-            glass: false,
-            random: false,
-            clear: false,
-          },
-        }));
+        setStateProfile((prevState) => {
+          let newState = {
+            ...prevState,
+            searchType: {
+              name: false,
+              category: false,
+              ingredient: !prevState.searchType.ingredient,
+              glass: false,
+              random: false,
+              clear: false,
+            },
+          };
+          getOrSetLocalStorage("setLocal", newState);
+          return newState;
+        });
+        break;
 
       case "glass":
-        return setStateProfile((prevState) => ({
-          ...prevState,
-          searchType: {
-            name: false,
-            category: false,
-            ingredient: false,
-            glass: !prevState.searchType.glass,
-            random: false,
-            clear: false,
-          },
-        }));
+        setStateProfile((prevState) => {
+          let newState = {
+            ...prevState,
+            searchType: {
+              name: false,
+              category: false,
+              ingredient: false,
+              glass: !prevState.searchType.glass,
+              random: false,
+              clear: false,
+            },
+          };
+          getOrSetLocalStorage("setLocal", newState);
+          return newState;
+        });
+        break;
 
       case "category":
-        return setStateProfile((prevState) => ({
-          ...prevState,
-          searchType: {
-            name: false,
-            category: !prevState.searchType.category,
-            ingredient: false,
-            glass: false,
-            random: false,
-            clear: false,
-          },
-        }));
+        setStateProfile((prevState) => {
+          let newState = {
+            ...prevState,
+            searchType: {
+              name: false,
+              category: !prevState.searchType.category,
+              ingredient: false,
+              glass: false,
+              random: false,
+              clear: false,
+            },
+          };
+          getOrSetLocalStorage("setLocal", newState);
+          return newState;
+        });
+        break;
 
       case "random":
-        return setStateProfile((prevState) => ({
-          ...prevState,
-          searchType: {
-            name: false,
-            category: false,
-            ingredient: false,
-            glass: false,
-            random: !prevState.searchType.random,
-            clear: false,
-          },
-        }));
+        setStateProfile((prevState) => {
+          let newState = {
+            ...prevState,
+            searchType: {
+              name: false,
+              category: false,
+              ingredient: false,
+              glass: false,
+              random: !prevState.searchType.random,
+              clear: false,
+            },
+          };
+          getOrSetLocalStorage("setLocal", newState);
+          return newState;
+        });
+        break;
 
       case "clear":
-        return setStateProfile((prevState) => ({
-          ...prevState,
-          selectedName: [],
-          selectedIngredient: [],
-          selectedGlass: [],
-          selectedCategory: [],
-          selectedRandom: [],
-          searchType: {
-            name: false,
-            category: false,
-            ingredient: false,
-            glass: false,
-            random: false,
-            clear: true,
-          },
-        }));
+        setStateProfile((prevState) => {
+          let newState = {
+            ...prevState,
+            selectedName: [],
+            selectedIngredient: [],
+            selectedGlass: [],
+            selectedCategory: [],
+            selectedRandom: [],
+            searchType: {
+              name: false,
+              category: false,
+              ingredient: false,
+              glass: false,
+              random: false,
+              clear: true,
+            },
+          };
+          getOrSetLocalStorage("setLocal", newState);
+          return newState;
+        });
+        break;
 
       default:
         return;
@@ -177,49 +231,76 @@ export default function Profile(props) {
   };
 
   const handlerOnSubmit = () => {
-    console.log("handlerSubmit");
+    // console.log("handlerSubmit");
     let searchUserCocktails = props.userCocktails;
 
-    if(stateProfile.searchType.name){
-      if(stateProfile.selectedName[0]){
-        searchUserCocktails=props.userCocktails.filter(cocktail=>cocktail.strDrink===stateProfile.selectedName[0]);
+    if (stateProfile.searchType.name) {
+      if (stateProfile.selectedName[0]) {
+        searchUserCocktails = props.userCocktails.filter(
+          (cocktail) => cocktail.strDrink === stateProfile.selectedName[0]
+        );
       } else {
         //TODO: handler error when search is empty
       }
-    } else if (stateProfile.searchType.category){
-      if(stateProfile.selectedCategory[0]){
-        searchUserCocktails=props.userCocktails.filter(cocktail=>cocktail.strCategory===stateProfile.selectedCategory[0]);
+    } else if (stateProfile.searchType.category) {
+      if (stateProfile.selectedCategory[0]) {
+        searchUserCocktails = props.userCocktails.filter(
+          (cocktail) =>
+            cocktail.strCategory === stateProfile.selectedCategory[0]
+        );
       } else {
         //TODO: handler error when search is empty
       }
-    } else if (stateProfile.searchType.ingredient){
-      if(stateProfile.selectedIngredient[0]){
-        searchUserCocktails=props.userCocktails.filter(cocktail=>cocktail.arrayMeasuredIngredients.filter(string => string.includes(stateProfile.selectedIngredient[0])).length>0);
+    } else if (stateProfile.searchType.ingredient) {
+      if (stateProfile.selectedIngredient[0]) {
+        searchUserCocktails = props.userCocktails.filter(
+          (cocktail) =>
+            cocktail.arrayMeasuredIngredients.filter((string) =>
+              string.ingredient.includes(stateProfile.selectedIngredient[0])
+            ).length > 0
+        );
       } else {
         //TODO: handler error when search is empty
       }
-    } else if (stateProfile.searchType.glass){
-      if(stateProfile.selectedGlass[0]){
-        searchUserCocktails=props.userCocktails.filter(cocktail=>cocktail.strGlass===stateProfile.selectedGlass[0]);
+    } else if (stateProfile.searchType.glass) {
+      if (stateProfile.selectedGlass[0]) {
+        searchUserCocktails = props.userCocktails.filter(
+          (cocktail) => cocktail.strGlass === stateProfile.selectedGlass[0]
+        );
       } else {
         //TODO: handler error when search is empty
       }
-    } else if (stateProfile.searchType.random){
-      if(stateProfile.selectedRandom[0]){
-        if (props.userCocktails.length>stateProfile.selectedRandom[0]) {
-          searchUserCocktails=props.userCocktails.sort((a,b)=> 0.5-Math.random()).slice(0,stateProfile.selectedRandom[0]);
+    } else if (stateProfile.searchType.random) {
+      if (stateProfile.selectedRandom[0]) {
+        if (props.userCocktails.length > stateProfile.selectedRandom[0]) {
+          searchUserCocktails = props.userCocktails
+            .sort((a, b) => 0.5 - Math.random())
+            .slice(0, stateProfile.selectedRandom[0]);
         } else {
-          searchUserCocktails=props.userCocktails;
-        };
+          searchUserCocktails = props.userCocktails;
+        }
       } else {
         //TODO: handler error when search is empty
       }
     }
 
-    setStateProfile(prevState=>({...prevState,searchUserCocktails:searchUserCocktails}))
+    setStateProfile((prevState) => ({
+      ...prevState,
+      searchUserCocktails: searchUserCocktails,
+    }));
   };
 
-  console.log(stateProfile.searchUserCocktails);
+  const handlerOnEdit = (cocktail) => {
+    // console.log('handlerOnEdit Triggered');
+    props.dispatch({
+      type: "updateRevewCocktail",
+      payload: { value: cocktail },
+    });
+    navigate("/update");
+  };
+  console.log("profile page:", stateProfile.searchUserCocktails);
+  // console.log("profile page:",stateProfile.searchUserCocktails);
+  // console.log("profile rendered");
   return (
     <div className="profile-container">
       <div className="profile-form">
@@ -250,10 +331,14 @@ export default function Profile(props) {
                 placeholder="Cocktail name?"
                 id="name-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
-                    ...prevState,
-                    selectedName: selected,
-                  }));
+                  setStateProfile((prevState) => {
+                    let newState = {
+                      ...prevState,
+                      selectedName: selected,
+                    };
+                    getOrSetLocalStorage("setLocal", newState);
+                    return newState;
+                  });
                 }}
                 options={stateProfile.uniqueNames}
                 selected={stateProfile.selectedName}
@@ -267,10 +352,14 @@ export default function Profile(props) {
                 placeholder="Cocktail category?"
                 id="cocktail-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
-                    ...prevState,
-                    selectedCategory: selected,
-                  }));
+                  setStateProfile((prevState) => {
+                    let newState = {
+                      ...prevState,
+                      selectedCategory: selected,
+                    };
+                    getOrSetLocalStorage("setLocal", newState);
+                    return newState;
+                  });
                 }}
                 options={stateProfile.uniqueCategories}
                 selected={stateProfile.selectedCategory}
@@ -284,10 +373,14 @@ export default function Profile(props) {
                 placeholder="Cocktail ingredient?"
                 id="ingredient-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
-                    ...prevState,
-                    selectedIngredient: selected,
-                  }));
+                  setStateProfile((prevState) => {
+                    let newState = {
+                      ...prevState,
+                      selectedIngredient: selected,
+                    };
+                    getOrSetLocalStorage("setLocal", newState);
+                    return newState;
+                  });
                 }}
                 options={stateProfile.uniqueIngredients}
                 selected={stateProfile.selectedIngredient}
@@ -301,10 +394,14 @@ export default function Profile(props) {
                 placeholder="Glass type?"
                 id="glass-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
-                    ...prevState,
-                    selectedGlass: selected,
-                  }));
+                  setStateProfile((prevState) => {
+                    let newState = {
+                      ...prevState,
+                      selectedGlass: selected,
+                    };
+                    getOrSetLocalStorage("setLocal", newState);
+                    return newState;
+                  });
                 }}
                 options={stateProfile.uniqueGlasses}
                 selected={stateProfile.selectedGlass}
@@ -318,10 +415,14 @@ export default function Profile(props) {
                 placeholder="How many?"
                 id="random-search"
                 onChange={(selected) => {
-                  setStateProfile((prevState) => ({
-                    ...prevState,
-                    selectedRandom: selected,
-                  }));
+                  setStateProfile((prevState) => {
+                    let newState = {
+                      ...prevState,
+                      selectedRandom: selected,
+                    };
+                    getOrSetLocalStorage("setLocal", newState);
+                    return newState;
+                  });
                 }}
                 options={uniqueObject.uniqueRandom}
                 selected={stateProfile.selectedRandom}
@@ -340,52 +441,69 @@ export default function Profile(props) {
           }
         >
           <Button className="button search-buttons" onClick={handlerOnSubmit}>
-            Search
+            Refresh
           </Button>
         </OverlayTrigger>
-       
-
       </div>
       <div className="user-cocktails-container">
         {stateProfile.searchUserCocktails.length ? (
-          stateProfile.searchUserCocktails.map((cocktail, idx0) => {
+          stateProfile.searchUserCocktails.map((cocktail) => {
             return (
-              <Card style={{ width: "30rem" }}>
-                <Card.Img variant="top" src={cocktail.strDrinkThumb} />
+              <Card key={`card${cocktail._id}`} style={{ width: "30rem" }}>
+                <Card.Img key={`card-img${cocktail._id}`} variant="top" src={cocktail.strDrinkThumb} />
                 <Card.Body>
-                  <Card.Title>{cocktail.strDrink}</Card.Title>
-                  <Card.Text>{`Glass: ${cocktail.strGlass}`}</Card.Text>
-                  <Card.Text>{`Category: ${cocktail.strCategory}`}</Card.Text>
+                  <Card.Title key={`card-title${cocktail._id}`}>{cocktail.strDrink}</Card.Title>
+                  <Card.Text key={`card-text-glass${cocktail._id}`}>{`Glass: ${cocktail.strGlass}`}</Card.Text>
+                  <Card.Text key={`card-text-category${cocktail._id}`}>{`Category: ${cocktail.strCategory}`}</Card.Text>
 
                   <h4>Ingredients:</h4>
                   <ul>
-                    {cocktail.arrayMeasuredIngredients.map((item, idx1) => {
-                      let itemSplit = item.split("_");
-                      if (itemSplit.length > 1) {
-                        return (
-                          <li
-                            key={`ingredientsU${idx0}${idx1}${item}`}
-                          >{`${itemSplit[0]} ${itemSplit[1]}`}</li>
-                        );
-                      } else {
-                        return (
-                          <li key={`ingredientsU${idx0}${idx1}${item}`}>{`${item}`}</li>
-                        );
-                      }
+                    {cocktail.arrayMeasuredIngredients.map((item, idx) => {
+                      return (
+                        <li key={`ingredients${item.id}${idx}`}>{`${
+                          item.unit ? `${item.unit} ` : ""
+                        }${item.ingredient}`}</li>
+                      );
                     })}
+                    {/* {<p>cocktail.arrayMeasuredIngredients</p>} */}
                   </ul>
                   <h4>Instructions</h4>
                   <ul>
-                    {cocktail.arrayInstructions.map((item, idx1) => {
+                    {cocktail.arrayInstructions.map((item, idx) => {
                       return (
-                        <li key={`instructionsU${idx0}${idx1}${item}`}>{`${item}`}</li>
+                        <li
+                          key={`instructions${item.id}${idx}`}
+                        >{`${item.instruction}`}</li>
                       );
                     })}
+                    {/* {<p>cocktail.arrayInstructions</p>} */}
                   </ul>
 
-                  <Card.Text>{`Notes: ${cocktail.strNotes}`}</Card.Text>
-                  <Button variant="primary">Edit</Button>
-                  <Button variant="primary">Delete</Button>
+                  <Card.Text>{`Notes: ${
+                    cocktail.strNotes ? cocktail.strNotes : ""
+                  }`}</Card.Text>
+                  <Button
+                    variant="primary"
+                    onClick={() => handlerOnEdit(cocktail)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      props.handlerOnDelete(cocktail);
+                      makeAndSetUniqueLists(props.userCocktails.filter(item=>item._id!==cocktail._id));
+                      setStateProfile((prevState) => ({
+                        ...prevState,
+                        searchUserCocktails:
+                          prevState.searchUserCocktails.filter(
+                            (item) => item._id !== cocktail._id
+                          ),
+                      }));
+                    }}
+                  >
+                    Delete
+                  </Button>
                 </Card.Body>
               </Card>
             );
@@ -400,22 +518,16 @@ export default function Profile(props) {
               <h4>Ingredients:</h4>
               <ul>
                 {oneCocktail.arrayMeasuredIngredients.map((item, idx) => {
-                  let itemSplit = item.split("_");
-                  if (itemSplit.length > 1) {
-                    return (
-                      <li
-                        key={`ingredientsP${idx}${item}`}
-                      >{`${itemSplit[0]} ${itemSplit[1]}`}</li>
-                    );
-                  } else {
-                    return <li key={`ingredientsP${idx}${item}`}>{`${item}`}</li>;
-                  }
-                })}
+                    return  <li key={`ingredients${item.id}`}>{`${
+                      item.unit ? `${item.unit} ` : ""
+                    }${item.ingredient}`}</li>})}
               </ul>
               <h4>Instructions</h4>
               <ul>
                 {oneCocktail.arrayInstructions.map((item, idx) => {
-                  return <li key={`instructionsP${idx}${item}`}>{`${item}`}</li>;
+                  return (
+                    <li key={`instructions${item.id}`}>{`${item.instruction}`}</li>
+                  );
                 })}
               </ul>
               <Card.Text>{`Notes: ${oneCocktail.strNotes}`}</Card.Text>

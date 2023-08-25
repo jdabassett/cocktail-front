@@ -40,20 +40,18 @@ export default function Review(props) {
               </>
             )}
             {/* if there are ingredients display... */}
-            {viewCocktail.arrayMeasuredIngredients && (
-              <>
+
                 <h4 className="reviewIngredients H4">Ingredients:</h4>
                 <ul>
                   {viewCocktail.arrayMeasuredIngredients.map((item, idx) => {
                     return (
-                      <li key={idx} className="reviewIngredientsLi">
-                        {item.replace("_", " ")}
+                      <li key={item.id} className="reviewIngredientsLi">
+                        {`${item.unit?`${item.unit} `:""} ${item.ingredient}`}
                       </li>
                     );
                   })}
                 </ul>
-              </>
-            )}
+
             {/* if there are instructions display... */}
             {viewCocktail.arrayInstructions && (
               <>
@@ -61,8 +59,8 @@ export default function Review(props) {
                 <ul>
                   {viewCocktail.arrayInstructions.map((item, idx) => {
                     return (
-                      <li key={idx} className="reviewInstructionLi">
-                        {item}
+                      <li key={item.id} className="reviewInstructionLi">
+                        {item.instruction}
                       </li>
                     );
                   })}
@@ -90,7 +88,7 @@ export default function Review(props) {
           >
             <Button
               variant="primary"
-              onClick={() => props.submitReviewCocktail()}
+              onClick={() => props.submitReviewCocktail(viewCocktail)}
             >
               Save
             </Button>

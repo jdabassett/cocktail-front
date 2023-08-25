@@ -48,46 +48,17 @@ function Main() {
     {
       attribution: null,
       error: null,
-      searchResults: null,
-      reviewCocktail: oneCocktail,
-      userCocktails: null,
-      userDetails: { userEmail: "", userPicture: "" },
+      searchResults: JSON.parse(localStorage.getItem('stateMain')).searchResults||null,
+      reviewCocktail: JSON.parse(localStorage.getItem('stateMain.reviewCocktail'))||oneCocktail,
+      userCocktails: JSON.parse(localStorage.getItem('stateMain.userCocktails'))||null,
+      userDetails: JSON.parse(localStorage.getItem('stateMain.userDetails'))||{ userEmail: "", userPicture: "" },
       displayHints: { component: "", disable: true },
     }
   );
 
   //keep local storage up to date
   React.useEffect(() => {
-    // console.log("retrieve from localStorage ");
-    //retreive from localStorage
-    const onLoad = () => {
-      let localStateMain = JSON.parse(localStorage.getItem("stateMain"));
-      // console.log(localStateMain);
-
-      if (localStateMain["reviewCocktail"]) {
-        console.log("local storage update review cocktail");
-        dispatch({
-          type: "updateRevewCocktail",
-          payload: {
-            value: localStateMain["reviewCocktail"],
-          },
-        });
-      };
-      if (localStateMain["userCocktails"]) {
-        console.log("local storage update user cocktails");
-        dispatch({
-          type: "updateUserCocktails",
-          payload: {
-            value: localStateMain["userCocktails"],
-          },
-        });
-      };
-      if (!localStateMain["userCocktails"]) {
-        console.log("database get update user cocktails");
-        getUserCocktails();
-      }
-    };
-    onLoad();
+        getUserCocktails()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
@@ -100,12 +71,15 @@ function Main() {
         //update users personal details
         let userEmail = res.email;
         let userPicture = res.picture;
+
         dispatch({
           type: "updateUserDetails",
           payload: {
             value: { userEmail: userEmail, userPicture: userPicture },
           },
         });
+
+        localStorage.setItem("stateMain.userDetails", JSON.stringify({ userEmail: userEmail, userPicture: userPicture }));
 
         let config = {
           headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
@@ -118,15 +92,13 @@ function Main() {
 
         axios(config)
           .then((response) => {
-            // console.log(response.data.drinks);
+            console.log("getUserCocktails",response.data.drinks);
+            
             dispatch({
               type: "updateUserCocktails",
               payload: { value: response.data.drinks },
             });
-          })
-          .then(()=>{
-            console.log('main page: saved state to local storage')
-            localStorage.setItem("stateMain", JSON.stringify(stateMain));
+            localStorage.setItem("stateMain.userCocktails", JSON.stringify(response.data.drinks));
           })
           .catch((error) => {
             //TODO: handler error when user cannot retrieve all cocktails
@@ -158,7 +130,12 @@ function Main() {
             type: "updateRevewCocktail",
             payload: { value: searchResults[0] },
           });
+          localStorage.setItem("stateMain.reviewCocktail", JSON.stringify(searchResults[0]));
           navigate("/review");
+        })
+        .then(()=>{
+          console.log('main page: saved state to local storage')
+          localStorage.setItem("stateMain", JSON.stringify(stateMain));
         })
         //TODO: Handle error
         .catch((err) => console.log(err));
@@ -166,10 +143,10 @@ function Main() {
   };
 
   //put or post updated cocktail to user database
-  const submitUpdatedCocktail = (e) => {
+  const submitUpdatedCocktail = (e,updatedCocktail) => {
     e.preventDefault();
     
-    console.log("submitUpdatedCocktail triggered");
+    // console.log("submitUpdatedCocktail triggered");
 
     let idDrink = stateMain.reviewCocktail.idDrink;
     
@@ -187,14 +164,14 @@ function Main() {
 
     let arrayInstructions = [];
     arrayInstructions =
-      updateArray(e, "instruction") ||
+      updateArray(e,updatedCocktail.arrayInstructions, "instruction") ||
       stateMain.reviewCocktail.arrayInstructions.forEach((item) =>
         arrayInstructions.push(item)
       );
 
     let arrayMeasuredIngredients = [];
     arrayMeasuredIngredients =
-      updateArray(e, "ingredient", "measurement") ||
+      updateArray(e,updatedCocktail.arrayMeasuredIngredients, "ingredient", "measurement") ||
       stateMain.reviewCocktail.arrayMeasuredIngredients.forEach((item) =>
         arrayMeasuredIngredients.push(item)
       );
@@ -245,6 +222,10 @@ function Main() {
             });
             getUserCocktails();
             navigate("/review");
+          })
+          .then(()=>{
+            // console.log('main page: saved state to local storage')
+            localStorage.setItem("stateMain", JSON.stringify(stateMain));
           })
           .catch((err) => {
             //TODO: handle error when request fails
@@ -327,6 +308,10 @@ function Main() {
               getUserCocktails();
               navigate("/review");
             })
+            .then(()=>{
+              // console.log('main page: saved state to local storage')
+              localStorage.setItem("stateMain", JSON.stringify(stateMain));
+            })
             .catch((err) => {
               //TODO: handle error when request fails
             });
@@ -341,27 +326,61 @@ function Main() {
   };
 
   //used in put and post handlers
-  const updateArray = (e, string1, string2) => {
+  const updateArray = (e, array, string1, string2) => {
     let returnArray = [];
-    for (let i = 0; i < 1000; i++) {
-      if (e.target[`${string1}${i}Input`] && string2 === "measurement") {
-        returnArray.push(
-          `${e.target[`${string2}${i}Input`].value}_${
-            e.target[`${string1}${i}Input`].value
-          }`
-        );
-      } else if (e.target[`${string1}${i}Input`] && string1 === "instruction") {
-        returnArray.push(e.target[`${string1}${i}Input`].value);
-      } else {
-        break;
-      }
-    }
+
+    array.forEach(item => {
+      if (e.target[`${string1}${item.id}Input`] && string2 === "measurement") {
+        returnArray.push({id:item.id,unit:e.target[`${string2}${item.id}Input`].value,ingredient:e.target[`${string1}${item.id}Input`].value});
+      } else if (e.target[`${string1}${item.id}Input`] && string1 === "instruction") {
+        returnArray.push({id:item.id,instruction:e.target[`${string1}${item.id}Input`].value});
+      };
+    });
+
     return returnArray;
   };
 
-  // console.log("main", stateMain.reviewCocktail);
-  // console.log("main", stateMain.userCocktailsCocktail);
+  const handlerOnDelete = (cocktail) => {
+    console.log('delete button clicked');
+    // console.log(cocktail)
+    getIdTokenClaims()
+        .then((res) => {
+          let jwt = res.__raw;
+          let userEmail = res.email;
+          let url = `/deleteCocktail/${cocktail._id}`;
+          let config = {
+            headers: { authorization: `Bearer ${jwt}`, email: `${userEmail}` },
+            method: "delete",
+            data: cocktail,
+            baseURL: process.env.REACT_APP_SERVER,
+            url: url,
+          };
+          // console.log(formatedCocktail,config);
+          axios(config)
+            .then((res) => {
+              dispatch({
+                type: "updateRevewCocktail",
+                payload: { value: oneCocktail },
+              });
+              getUserCocktails();
+            })
+            .then(()=>{
+              // console.log('main page: saved state to local storage')
+              localStorage.setItem("stateMain", JSON.stringify(stateMain));
+            })
+            .catch((err) => {
+              //TODO: handle error when request fails
+            });
+        })
+        .catch((err) => {
+          //TODO: handle error when auth0 token request fails
+        });
 
+  }
+
+  // console.log("main", stateMain.reviewCocktail);
+  // console.log("main", stateMain.searchResults);
+  console.log("main", stateMain.userCocktails);
   return (
     <div className="main-container">
       <Header
@@ -420,6 +439,7 @@ function Main() {
               dispatch={dispatch}
               displayHints={stateMain.displayHints}
               getUserCocktails={getUserCocktails}
+              handlerOnDelete = {handlerOnDelete}
               userCocktails={stateMain.userCocktails}
             />
           }

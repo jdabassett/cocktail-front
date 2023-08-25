@@ -29,11 +29,34 @@ export default function Search(props) {
     },
   });
 
+    //keep local storage up to date
+    React.useEffect(() => {
+      //retreive from localStorage
+      getOrSetLocalStorage('setState',null);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[]);
+
+  const getOrSetLocalStorage = (type,newState=null) => {
+    if(type==="setState"){
+      // console.log("update search state from local storage");
+      let localStateSearch = JSON.parse(localStorage.getItem("stateSearch"));
+      // console.log(localStateSearch);
+      if(localStateSearch && Object.values(localStateSearch.searchType).includes(true)){
+        setStateSearch(prevState=>({...localStateSearch}));
+      };
+    } else if (type==="setLocal" && newState){
+      // console.log('update search local storage');
+      // console.log(stateSearch);
+      localStorage.setItem('stateSearch',JSON.stringify(newState));
+    }
+  };
+
   const handlerSearchType = (e) => {
     e.persist();
     switch (e.target.value) {
       case "name":
-        return setStateSearch((prevState) => ({
+        setStateSearch((prevState) => {
+          let newState ={
           ...prevState,
           searchType: {
             name: !prevState.searchType.name,
@@ -42,11 +65,14 @@ export default function Search(props) {
             glass: false,
             random: false,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+        }); break;
 
       case "ingredient":
-        return setStateSearch((prevState) => ({
+        setStateSearch((prevState) => {
+          let newState ={
           ...prevState,
           searchType: {
             name: false,
@@ -55,24 +81,31 @@ export default function Search(props) {
             glass: false,
             random: false,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+        }); break;
 
-      case "glass":
-        return setStateSearch((prevState) => ({
-          ...prevState,
-          searchType: {
-            name: false,
-            category: false,
-            ingredient: false,
-            glass: !prevState.searchType.glass,
-            random: false,
-            clear: false,
-          },
-        }));
+      case "glass": 
+      setStateSearch((prevState) => {
+        let newState ={
+        ...prevState,
+        searchType: {
+          name: false,
+          category: false,
+          ingredient: false,
+          glass: !prevState.searchType.glass,
+          random: false,
+          clear: false,
+        }};
+        getOrSetLocalStorage('setLocal',newState);
+        return newState;
+      }); break;
 
+  
       case "category":
-        return setStateSearch((prevState) => ({
+        setStateSearch((prevState) => {
+          let newState ={
           ...prevState,
           searchType: {
             name: false,
@@ -81,11 +114,14 @@ export default function Search(props) {
             glass: false,
             random: false,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+        }); break;
 
       case "random":
-        return setStateSearch((prevState) => ({
+        setStateSearch((prevState) => {
+          let newState ={
           ...prevState,
           searchType: {
             name: false,
@@ -94,11 +130,14 @@ export default function Search(props) {
             glass: false,
             random: !prevState.searchType.random,
             clear: false,
-          },
-        }));
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+        }); break;
 
       case "clear":
-        return setStateSearch((prevState) => ({
+        setStateSearch((prevState) => {
+          let newState ={
           ...prevState,
           selectedName: [],
           selectedIngredient: [],
@@ -111,13 +150,14 @@ export default function Search(props) {
             ingredient: false,
             glass: false,
             random: false,
-            clear: true,
-          },
-        }));
-
+            clear: true
+          }};
+          getOrSetLocalStorage('setLocal',newState);
+          return newState;
+        }); break;
       default:
         return;
-    }
+    };
   };
 
   const configureConfigObject = (config) => {
@@ -187,6 +227,7 @@ export default function Search(props) {
               type: "updateSearchResults",
               payload: { value: searchResults },
             });
+
           })
           //TODO: Handle error
           .catch((err) => console.log(err));
@@ -227,11 +268,12 @@ export default function Search(props) {
               placeholder="Cocktail name?"
               id="name-search"
               onChange={(selected) => {
-                setStateSearch((prevState) => ({
+                setStateSearch((prevState) => {
+                  let newState={
                   ...prevState,
-                  selectedName: selected,
-                }));
-              }}
+                  selectedName: selected};
+                getOrSetLocalStorage('setLocal',newState);
+                return newState;})}}
               options={uniqueObject.uniqueNames}
               selected={stateSearch.selectedName}
             />
@@ -244,11 +286,12 @@ export default function Search(props) {
               placeholder="Cocktail category?"
               id="cocktail-search"
               onChange={(selected) => {
-                setStateSearch((prevState) => ({
+                setStateSearch((prevState) => {
+                  let newState={
                   ...prevState,
-                  selectedCategory: selected,
-                }));
-              }}
+                  selectedCategory: selected};
+                getOrSetLocalStorage('setLocal',newState);
+                return newState;})}}
               options={uniqueObject.uniqueCategories}
               selected={stateSearch.selectedCategory}
             />
@@ -261,11 +304,12 @@ export default function Search(props) {
               placeholder="Cocktail ingredient?"
               id="ingredient-search"
               onChange={(selected) => {
-                setStateSearch((prevState) => ({
+                setStateSearch((prevState) => {
+                  let newState={
                   ...prevState,
-                  selectedIngredient: selected,
-                }));
-              }}
+                  selectedIngredient: selected};
+                getOrSetLocalStorage('setLocal',newState);
+                return newState;})}}
               options={uniqueObject.uniqueIngredients}
               selected={stateSearch.selectedIngredient}
             />
@@ -278,11 +322,12 @@ export default function Search(props) {
               placeholder="Glass type?"
               id="glass-search"
               onChange={(selected) => {
-                setStateSearch((prevState) => ({
+                setStateSearch((prevState) => {
+                  let newState={
                   ...prevState,
-                  selectedGlass: selected,
-                }));
-              }}
+                  selectedGlass: selected};
+                getOrSetLocalStorage('setLocal',newState);
+                return newState;})}}
               options={uniqueObject.uniqueGlasses}
               selected={stateSearch.selectedGlass}
             />
@@ -295,11 +340,12 @@ export default function Search(props) {
               placeholder="How many?"
               id="random-search"
               onChange={(selected) => {
-                setStateSearch((prevState) => ({
+                setStateSearch((prevState) => {
+                  let newState={
                   ...prevState,
-                  selectedRandom: selected,
-                }));
-              }}
+                  selectedRandom: selected};
+                getOrSetLocalStorage('setLocal',newState);
+                return newState;})}}
               options={uniqueObject.uniqueRandom}
               selected={stateSearch.selectedRandom}
             />
