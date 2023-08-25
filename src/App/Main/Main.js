@@ -49,7 +49,7 @@ function Main() {
     {
       attribution: null,
       error: null,
-      searchResults: JSON.parse(localStorage.getItem('stateMain')).searchResults||userCocktails,
+      searchResults: JSON.parse(localStorage.getItem('stateMain.searchResults'))||userCocktails,
       reviewCocktail: JSON.parse(localStorage.getItem('stateMain.reviewCocktail'))||oneCocktail,
       userCocktails: JSON.parse(localStorage.getItem('stateMain.userCocktails'))||userCocktails,
       userDetails: JSON.parse(localStorage.getItem('stateMain.userDetails'))||{ userEmail: "", userPicture: "" },
@@ -132,6 +132,7 @@ function Main() {
             payload: { value: searchResults[0] },
           });
           localStorage.setItem("stateMain.reviewCocktail", JSON.stringify(searchResults[0]));
+          localStorage.setItem("stateMain.searchResults", JSON.stringify(stateMain.searchResults));
           navigate("/review");
         })
         .then(()=>{
