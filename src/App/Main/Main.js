@@ -11,9 +11,10 @@ import { withAuthenticationRequired, useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import oneCocktail from "../../Data/data_one-cocktail.json";
 import userCocktails from "../../Data/data_userCocktails.json";
+import ErrorAlert from '../Main/ErrorAlert/ErrorAlert.js';
 
 function reducer(stateMain, action) {
-  localStorage.setItem("stateMain", JSON.stringify(stateMain));
+
   switch (action.type) {
     case "updateAttribution":
       return { ...stateMain, attribution: action.payload.value };
@@ -45,10 +46,9 @@ function Main() {
   //set state
   const [stateMain, dispatch] = React.useReducer(
     reducer,
-    // TODO: JSON.parse(localStorage.getItem("stateMain")) ||
     {
       attribution: null,
-      error: null,
+      error: {bool:false,message:''},
       searchResults: JSON.parse(localStorage.getItem('stateMain.searchResults'))||userCocktails,
       reviewCocktail: JSON.parse(localStorage.getItem('stateMain.reviewCocktail'))||oneCocktail,
       userCocktails: JSON.parse(localStorage.getItem('stateMain.userCocktails'))||userCocktails,
@@ -93,7 +93,7 @@ function Main() {
 
         axios(config)
           .then((response) => {
-            console.log("getUserCocktails",response.data.drinks);
+            // console.log("getUserCocktails",response.data.drinks);
             
             dispatch({
               type: "updateUserCocktails",
@@ -101,13 +101,13 @@ function Main() {
             });
             localStorage.setItem("stateMain.userCocktails", JSON.stringify(response.data.drinks));
           })
-          .catch((error) => {
-            //TODO: handler error when user cannot retrieve all cocktails
-          });
+          .catch((err) => {
+            dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. Cannot retrieve user records. (Get Request)`}}});
+            });
       })
-      .catch((error) => {
-        //TODO: handler error when user not authenticated
-      });
+      .catch((err) => {
+        dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. Cannot authenticate user. (Authentication)`}}});
+        });
   };
 
   //handler get request by id
@@ -135,12 +135,9 @@ function Main() {
           localStorage.setItem("stateMain.searchResults", JSON.stringify(stateMain.searchResults));
           navigate("/review");
         })
-        .then(()=>{
-          console.log('main page: saved state to local storage')
-          localStorage.setItem("stateMain", JSON.stringify(stateMain));
-        })
-        //TODO: Handle error
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. Cannot retrieve this cocktail record. (Get Request)`}}});
+          });
     });
   };
 
@@ -153,8 +150,8 @@ function Main() {
     let idDrink = stateMain.reviewCocktail.idDrink;
     
     if(idDrink==='1000000'){
-      console.log('main page: attempt to save placeholder');
-      //TODO: handler error when attempting to save placeholder
+      // console.log('main page: attempt to save placeholder');
+      dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot save placeholder cocktail, no matter how tasty it looks. (Put Request)"}}});
     } else {
     //formate results from form into object to be put or posted
     let _id = stateMain.reviewCocktail._id || null;
@@ -225,17 +222,13 @@ function Main() {
             getUserCocktails();
             navigate("/review");
           })
-          .then(()=>{
-            // console.log('main page: saved state to local storage')
-            localStorage.setItem("stateMain", JSON.stringify(stateMain));
-          })
           .catch((err) => {
-            //TODO: handle error when request fails
-          });
+            dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. Cannot save record. (Post Request)`}}});
+            });
       })
       .catch((err) => {
-        //TODO: handle error when auth0 token request fails
-      });
+        dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. User is not authenticated. (Authentication)`}}});
+        });
     };
   };
 
@@ -245,8 +238,9 @@ function Main() {
     let idDrink = stateMain.reviewCocktail.idDrink;
 
     if(idDrink==='1000000'){
-    console.log('main page: attempt to save placeholder');
-    //TODO: handler error when attempting to save placeholder
+  
+    // console.log('main page: attempt to save placeholder');
+    dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot save placeholder cocktail, no matter how tasty it looks. (Put Request)"}}});
 
     }else if(stateMain.userCocktails.filter(cocktail=>cocktail.idDrink===idDrink).length===0){
       let _id = stateMain.reviewCocktail._id || null;
@@ -310,20 +304,16 @@ function Main() {
               getUserCocktails();
               navigate("/review");
             })
-            .then(()=>{
-              // console.log('main page: saved state to local storage')
-              localStorage.setItem("stateMain", JSON.stringify(stateMain));
-            })
             .catch((err) => {
-              //TODO: handle error when request fails
-            });
+              dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. Cannot save record. (Put Request)`}}});
+              });
         })
         .catch((err) => {
-          //TODO: handle error when auth0 token request fails
-        });
+          dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. User is not authenticated. (Authentication)`}}});
+          });
     } else {
-      console.log('main page: attempt to save duplicate record');
-      //TODO: handler error when attempting to duplicate record
+      // console.log('main page: attempt to save duplicate record');
+      dispatch({type:'updateError',payload:{value:{bool:true,message:"You have this cocktail in your records already. You can find it on your profile page. (Put Request)"}}});
     };
   };
 
@@ -343,7 +333,7 @@ function Main() {
   };
 
   const handlerOnDelete = (cocktail) => {
-    console.log('delete button clicked');
+    // console.log('delete button clicked');
     // console.log(cocktail)
     getIdTokenClaims()
         .then((res) => {
@@ -366,25 +356,28 @@ function Main() {
               });
               getUserCocktails();
             })
-            .then(()=>{
-              // console.log('main page: saved state to local storage')
-              localStorage.setItem("stateMain", JSON.stringify(stateMain));
-            })
             .catch((err) => {
-              //TODO: handle error when request fails
-            });
+              dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. (Delete Request)`}}});
+              });
         })
         .catch((err) => {
-          //TODO: handle error when auth0 token request fails
-        });
+          dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. User is not authenticated. (Authentication)`}}});
+          });
 
   }
 
   // console.log("main", stateMain.reviewCocktail);
   // console.log("main", stateMain.searchResults);
-  console.log("main", stateMain.userCocktails);
+  // console.log("main", stateMain.userCocktails);
+  console.log("main page:",stateMain.error);
   return (
     <div className="main-container">
+      {stateMain.error.bool && 
+        <ErrorAlert
+          dispatch={dispatch}
+          state={stateMain.error}
+          />}
+
       <Header
         dispatch={dispatch}
         displayHints={stateMain.displayHints}

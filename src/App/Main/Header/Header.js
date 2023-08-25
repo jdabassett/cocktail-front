@@ -24,9 +24,6 @@ export default function Header (props) {
                   <NavItem><Link to="/profile">PROFILE</Link></NavItem>
                   <Image style={{width:'40px'}} src={props.userDetails.userPicture} roundedCircle/>
        
-                  {/* <NavItem><Button
-                    onClick={()=>{props.dispatch({type:'updateDisplayHints',payload:{value:{component:"",disable:props.displayHints.disable?false:true}}})}}
-                  >{props.displayHints.disable?"Show Hints":"Hide Hints"}</Button></NavItem> */}
                   <NavItem><LogOutButton/></NavItem>
                   
                 </Nav>

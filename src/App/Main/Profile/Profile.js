@@ -43,9 +43,9 @@ export default function Profile(props) {
 
   const getOrSetLocalStorage = (type, newState = null) => {
     if (type === "setState") {
-      console.log("update profile state from local storage");
+      console.log("profile page: update profile state from local storage");
       let localStateProfile = JSON.parse(localStorage.getItem("stateProfile"));
-      // console.log(localStateProfile);
+      // console.log("profile page",localStateProfile);
       if (
         localStateProfile &&
         Object.values(localStateProfile.searchType).includes(true)
@@ -53,8 +53,8 @@ export default function Profile(props) {
         setStateProfile((prevState) => ({...localStateProfile,searchUserCocktails:props.userCocktails }));
       }
     } else if (type === "setLocal" && newState) {
-      console.log("update profile local storage");
-      // console.log(stateProfile);
+      console.log("profile page: update profile local storage");
+      // console.log("profile page",stateProfile);
       localStorage.setItem("stateProfile", JSON.stringify(newState));
     }
   };
@@ -88,8 +88,7 @@ export default function Profile(props) {
         return acc;
       }, [])
       .sort((a, b) => a.localeCompare(b));
-    // let uniqueIngredients = [];
-    // console.log(uniqueIngredients);
+    // console.log("profile page",uniqueIngredients);
 
     //make a list of unique glass from the userCocktails in state
     let uniqueGlasses = userCocktails
@@ -231,7 +230,7 @@ export default function Profile(props) {
   };
 
   const handlerOnSubmit = () => {
-    // console.log("handlerSubmit");
+    // console.log("profile page: handlerSubmit");
     let searchUserCocktails = props.userCocktails;
 
     if (stateProfile.searchType.name) {
@@ -240,7 +239,8 @@ export default function Profile(props) {
           (cocktail) => cocktail.strDrink === stateProfile.selectedName[0]
         );
       } else {
-        //TODO: handler error when search is empty
+          props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
+     
       }
     } else if (stateProfile.searchType.category) {
       if (stateProfile.selectedCategory[0]) {
@@ -249,7 +249,7 @@ export default function Profile(props) {
             cocktail.strCategory === stateProfile.selectedCategory[0]
         );
       } else {
-        //TODO: handler error when search is empty
+        props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
       }
     } else if (stateProfile.searchType.ingredient) {
       if (stateProfile.selectedIngredient[0]) {
@@ -260,7 +260,7 @@ export default function Profile(props) {
             ).length > 0
         );
       } else {
-        //TODO: handler error when search is empty
+        props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
       }
     } else if (stateProfile.searchType.glass) {
       if (stateProfile.selectedGlass[0]) {
@@ -268,7 +268,7 @@ export default function Profile(props) {
           (cocktail) => cocktail.strGlass === stateProfile.selectedGlass[0]
         );
       } else {
-        //TODO: handler error when search is empty
+        props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
       }
     } else if (stateProfile.searchType.random) {
       if (stateProfile.selectedRandom[0]) {
@@ -280,9 +280,9 @@ export default function Profile(props) {
           searchUserCocktails = props.userCocktails;
         }
       } else {
-        //TODO: handler error when search is empty
+        props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
       }
-    }
+    } 
 
     setStateProfile((prevState) => ({
       ...prevState,
@@ -291,14 +291,14 @@ export default function Profile(props) {
   };
 
   const handlerOnEdit = (cocktail) => {
-    // console.log('handlerOnEdit Triggered');
+    // console.log('profile page: handlerOnEdit Triggered');
     props.dispatch({
       type: "updateRevewCocktail",
       payload: { value: cocktail },
     });
     navigate("/update");
   };
-  console.log("profile page:", stateProfile.searchUserCocktails);
+  // console.log("profile page:", stateProfile.searchUserCocktails);
   // console.log("profile page:",stateProfile.searchUserCocktails);
   // console.log("profile rendered");
   return (
