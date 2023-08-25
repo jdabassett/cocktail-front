@@ -38,15 +38,15 @@ export default function Search(props) {
 
   const getOrSetLocalStorage = (type,newState=null) => {
     if(type==="setState"){
-      // console.log("update search state from local storage");
+      // console.log("search page: update search state from local storage");
       let localStateSearch = JSON.parse(localStorage.getItem("stateSearch"));
-      // console.log(localStateSearch);
+      // console.log("search page", localStateSearch);
       if(localStateSearch && Object.values(localStateSearch.searchType).includes(true)){
         setStateSearch(prevState=>({...localStateSearch}));
       };
     } else if (type==="setLocal" && newState){
-      // console.log('update search local storage');
-      // console.log(stateSearch);
+      // console.log('search page: update search local storage');
+      // console.log("search page", stateSearch);
       localStorage.setItem('stateSearch',JSON.stringify(newState));
     }
   };
@@ -189,8 +189,9 @@ export default function Search(props) {
         "url"
       ] = `/glass?glass=${stateSearch.selectedGlass[0].replace(/\s/g, "_")}`;
     } else {
-      //TODO: Handle error when empty  request made.
-      console.log("handling error");
+      // console.log("search page: when empty request is made");
+
+      props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot perform search with empty search field. (Get Request)"}}});
     }
     return returnConfig;
   };
@@ -208,7 +209,8 @@ export default function Search(props) {
         stateSearch.selectedGlass ||
         stateSearch.selectedRandom)
     ) {
-      getIdTokenClaims().then((res) => {
+      getIdTokenClaims()
+        .then((res) => {
         //get authentication to use in request
         let jwt = res.__raw;
         let config = {
@@ -218,7 +220,7 @@ export default function Search(props) {
         };
         //make new config object with proper url
         let newConfig = configureConfigObject(config);
-        // console.log(newConfig);
+        // console.log("search page:",newConfig);
 
         axios(newConfig)
           .then((res) => {
@@ -229,12 +231,12 @@ export default function Search(props) {
             });
 
           })
-          //TODO: Handle error
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            props.dispatch({type:'updateError',payload:{value:{bool:true,message:`${err.message}. Cannot perform this search. (Get Request)`}}});
+            });
       });
     } else {
-      //TODO: Handle error if search criteria isn't meet.
-      console.log("search criteria wasnt meet");
+      props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot perform search with empty search field. (Get Request)"}}});
     }
   };
 

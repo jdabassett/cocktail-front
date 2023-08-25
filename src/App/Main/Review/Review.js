@@ -10,8 +10,8 @@ export default function Review(props) {
   let navigate = useNavigate();
 
   let viewCocktail = props.reviewCocktail || oneCocktail;
-  // console.log(props.reviewCocktail);
-  // console.log(props.userCocktails);
+  // console.log("review page",props.reviewCocktail);
+  // console.log("review page",props.userCocktails);
   return (
     <div className="review-container">
       <Card style={{ width: "30rem" }}>
