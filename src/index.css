@@ -98,23 +98,33 @@
   
   /*=====================================landing page========================= */
 
-  /* .landing-carousel {
-
-  } */
-  
-  /* .carousel {
-    width:99vw;
-    height:90vh;
+  .landing-container {
+    max-height:90vh;
+    max-width:100vw;
     overflow:hidden;
-  } */
+    display:flex;
+    flex-direction:column;
+    flex-wrap:nowrap;
+    justify-content:center;
+    align-content:center;
+  }
+  
+  .landing-carousel {
+    /* max-height:90vh;
+    max-width:100vw; */
+    /* overflow:hidden; */
+  }
 
-  /* .carousel-item {
-    object-fit:cover;
-  } */
+  .carousel-item {
+    /* display:flex;
+    flex-direction:column;
+    flex-wrap:nowrap; */
+  }
 
-  /* .landing-image {
-
-  } */
+  .landing-image {
+    /* align-self:center;
+    justify-self:center; */
+  }
 
   .landing-carousel-caption {
     background-color:var(--white-opacity);
