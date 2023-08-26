@@ -440,7 +440,10 @@ export default function Profile(props) {
             </Tooltip>
           }
         >
-          <Button className="button search-buttons" onClick={handlerOnSubmit}>
+          <Button 
+            variant="dark"
+            className="button search-buttons rounded-0" 
+            onClick={handlerOnSubmit}>
             Refresh
           </Button>
         </OverlayTrigger>
@@ -483,13 +486,15 @@ export default function Profile(props) {
                     cocktail.strNotes ? cocktail.strNotes : ""
                   }`}</Card.Text>
                   <Button
-                    variant="primary"
+                    variant="dark"
+                    className="dark-button edit-button rounded-0"
                     onClick={() => handlerOnEdit(cocktail)}
                   >
                     Edit
                   </Button>
                   <Button
-                    variant="primary"
+                    variant="dark"
+                    className="dark-button delete-button rounded-0"
                     onClick={() => {
                       props.handlerOnDelete(cocktail);
                       makeAndSetUniqueLists(props.userCocktails.filter(item=>item._id!==cocktail._id));

@@ -1,7 +1,7 @@
   
   :root {
     --green-light:#33cc33;
-    --green-blue:#33cccc;
+    --blue-green:#33cccc;
     --blue:#3366ff;
     --pink:#ff00ff;
     --red-light:#ff5050;
@@ -16,12 +16,43 @@
     font-size:100%;
   }
 
+  /* ====================================Global================================== */
+
   #root {
     background-color:var(--black);
   }
   :root {
     background-color:var(--black);
   }
+
+  .light-button {
+    outline:2px solid var(--white);
+    color:var(--black);
+    font-weight:bold;
+    background-color:var(--white);
+  }
+
+  .dark-button {
+    outline:0.25em solid var(--black);
+    color:var(--black);
+    font-weight:bold;
+    background-color:var(--white) !important;
+  }
+
+  .save-button {
+    background-color:var(--green-dark) !important;
+  }
+
+  .edit-button {
+    background-color:var(--yellow) !important;
+  }
+
+  .delete-button {
+    background-color:var(--red) !important;
+   }
+
+
+
 
   /* ======================================Login=============================== */
   
@@ -46,6 +77,11 @@
   .header-navbar
   .header-nav-container
   .header-link
+  .about
+  .search
+  .review
+  .update
+  .profile
   .header-image
   .header-button */
 
@@ -75,6 +111,37 @@
 
   .nav-item {
     margin:0em 1em 0em 0em;
+    padding:0.25em;
+  }
+
+  .about:hover {
+    background-color:var(--white);
+    color:gray;
+    outline:0.25em solid gray;
+  }
+
+  .search:hover {
+    background-color:var(--white);
+    color:var(--blue-dark);
+    outline:0.25em solid var(--blue-dark);
+  }
+
+  .review:hover {
+    background-color:var(--white);
+    color:var(--green-light);
+    outline:0.25em solid var(--green-light);
+  }
+
+  .update:hover {
+    background-color:var(--white);
+    color:var(--red-light);
+    outline:0.25em solid var(--red-light);
+  }
+
+  .profile:hover {
+    background-color:var(--white);
+    color:var(--purple);
+    outline:0.25em solid var(--purple);
   }
 
   .header-image {
@@ -85,14 +152,6 @@
     color:var(--white);
     text-decoration:none;
     font-size:1.5em;
-  }
-
-  .header-button {
-    outline:2px solid var(--white);
-    border-radius:8px;
-    color:var(--black);
-    font-weight:bold;
-    background-color:var(--white);
   }
   
   
@@ -109,22 +168,11 @@
     align-content:center;
   }
   
-  .landing-carousel {
-    /* max-height:90vh;
-    max-width:100vw; */
-    /* overflow:hidden; */
-  }
+  /* .landing-carousel {} */
 
-  .carousel-item {
-    /* display:flex;
-    flex-direction:column;
-    flex-wrap:nowrap; */
-  }
+  /* .carousel-item {} */
 
-  .landing-image {
-    /* align-self:center;
-    justify-self:center; */
-  }
+  /* .landing-image {} */
 
   .landing-carousel-caption {
     background-color:var(--white-opacity);
@@ -146,8 +194,137 @@
   /* modal component */
 
 
- /* search page */
+ /* ===================================search page============================ */
 
- .search-buttons {
-  margin:1em;
+ .search-container {
+  /* outline:2px solid red; */
+  padding:2em;
+  color:var(--black);
  }
+
+ .search-form {
+  padding: 1em 1em 1em 1em;
+  margin: 0em 0em 2em 0em;
+  background-color:var(--white);
+  outline:0.5em solid var(--blue-dark);
+ }
+ .search-form-title {
+  font-size:2em;
+ }
+
+ /* .search-form-group { } */
+
+ .radio-group {
+  /* outline:2px solid blue; */
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  padding:0em 0em 0.5em 0em;
+ }
+ /* .search-radio-buttons {} */
+ .typehead {
+  border:0.25em solid var(--black);
+  /* border-radius:0.5em; */
+}
+ /* .name-group {} */
+ /* .name-typehead {} */
+ /* .category-group {} */
+ /* .category-typehead {} */
+ /* .ingredient-group {} */
+ /* .ingredient-typehead {} */
+ /* .glass-group {} */
+ /* .glass-typehead {} */
+ /* .random-group {} */
+ /* .random-typehead {} */
+
+ .search-button-container {
+  /* outline:2px solid red; */
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  justify-content:space-between;
+  padding:0.5em 0.25em 0em 0.25em;
+ }
+
+ /* .search-button {} */
+ /* .tooltip {} */
+ .search-accordion {
+  background-color:var(--white);
+  outline:0.5em solid var(--blue-dark);
+ }
+ .accordion-item {
+  border-bottom:0.1em solid var(--blue-dark);
+ }
+ .accordion-item-header {
+  background-color:var(--blue-light);
+ }
+ .accordion-item-body {
+  display:flex;
+  flex-direction:column;
+  flex-wrap:nowrap;
+  justify-content:center;
+  align-items:center;
+
+ }
+ /* .accordion-item-button {} */
+ .accordion-item-image {
+  max-width:500px;
+  outline:0.25em solid var(--blue-dark);
+  margin:0em 0em 1em 0em;
+  border-radius:0;
+ }
+
+ /* =====================================Review================================= */
+
+ .review-container {
+  padding:2em;
+  /* outline:3px solid red; */
+  display:flex;
+  flex-direction:column;
+  flex-wrap:nowrap;
+  align-items:center;
+ }
+.review-card {
+  outline:0.5em solid var(--green-light);
+  min-width:300px;
+  width:800px !important;
+  height:80vh;
+  border-radius:0;
+}
+
+.review-card-image-container {
+  border-bottom:0.2em solid var(--green-light);
+  height:400px;
+  overflow:hidden;
+}
+.review-card-image {
+  position:relative;
+  top:-40%;  
+}
+/* .review-card-body {} */
+/* .review-card-glass-title {} */
+/* .review-card-glass-ul {} */
+/* .review-card-glass-li {} */
+/* .review-card-category-title {} */
+/* .review-card-category-ul {} */
+/* .review-card-category-li {} */
+/* .review-card-ingredient-title {} */
+/* .review-card-ingredient-ul {} */
+/* .review-card-ingredient-li {} */
+/* .review-card-instruction-title {} */
+/* .review-card-instruction-ul {} */
+/* .review-card-instruction-li {} */
+/* .review-card-note-title {} */
+/* .review-card-note-ul {} */
+/* .review-card-note-li {} */
+.review-card-button-container {
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  justify-content:space-between;
+  align-content:center;
+}
+
+ /* ======================================Profile================================= */
+

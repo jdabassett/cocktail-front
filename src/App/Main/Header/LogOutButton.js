@@ -7,7 +7,8 @@ export default function LogOutButton(){
 
   return (
     <Button 
-      className="logButtons header-button"
+      variant="light"
+      className="logButtons header-button light-button rounded-0"
       onClick={() => logout({ logoutParams: { returnTo: process.env.REACT_APP_AUTH_REDIRECT_URI } })}>
       Log-Out
     </Button>

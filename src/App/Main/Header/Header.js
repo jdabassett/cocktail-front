@@ -18,11 +18,11 @@ export default function Header (props) {
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto header-nav-container">
   
-                  <NavItem><Link className="header-link nav-item" to="/">ABOUT</Link></NavItem>
-                  <NavItem><Link className="header-link nav-item" to="/search">SEARCH</Link></NavItem>
-                  <NavItem><Link className="header-link nav-item" to="/review">REVIEW</Link></NavItem>
-                  <NavItem><Link className="header-link nav-item" to="/update">UPDATE</Link></NavItem>
-                  <NavItem><Link className="header-link nav-item" to="/profile">PROFILE</Link></NavItem>
+                  <NavItem><Link className="header-link nav-item about" to="/">ABOUT</Link></NavItem>
+                  <NavItem><Link className="header-link nav-item search" to="/search">SEARCH</Link></NavItem>
+                  <NavItem><Link className="header-link nav-item review" to="/review">REVIEW</Link></NavItem>
+                  <NavItem><Link className="header-link nav-item update" to="/update">UPDATE</Link></NavItem>
+                  <NavItem><Link className="header-link nav-item profile" to="/profile">PROFILE</Link></NavItem>
                   <Image className="header-image nav-item" style={{width:'40px'}} src={props.userDetails.userPicture} roundedCircle/>
        
                   <NavItem className="nav-item" ><LogOutButton/></NavItem>
