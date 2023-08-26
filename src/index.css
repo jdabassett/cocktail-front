@@ -1,7 +1,140 @@
-  /* modal component */
-  .modal-backdrop{
-    background:none
+  
+  :root {
+    --green-light:#33cc33;
+    --green-blue:#33cccc;
+    --blue:#3366ff;
+    --pink:#ff00ff;
+    --red-light:#ff5050;
+    --yellow:#ffff00;
+    --red:#ff3300;
+    --green-dark:#99cc00;
+    --blue-dark:#0066cc;
+    --purple:#cc3399;
+    --black:#150808; 
+    --white-opacity:rgba(240,240,240,0.6);
+    --white:#FEFEFE;
+    font-size:100%;
   }
+
+  #root {
+    background-color:var(--black);
+  }
+  :root {
+    background-color:var(--black);
+  }
+
+  /* ======================================Login=============================== */
+  
+  .login-container {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:nowrap;
+    justify-content:space-evenly;
+    align-content:center;
+    align-items:center;
+    height:10vh;
+  }
+
+  /* .logButtons {
+  } */
+
+  /* ====================================header============================== */
+
+  /* 
+  .header-container
+  .header-title
+  .header-navbar
+  .header-nav-container
+  .header-link
+  .header-image
+  .header-button */
+
+  .header-container {
+    height:10vh;
+    display:flex;
+    flex-direction:row;
+    flex-wrap:nowrap;
+    justify-content:space-between;
+    align-content:center;
+    align-items:center;
+  }
+
+  .header-title {
+    color:var(--white);
+    font-size:2em;
+    margin:0em 0em 0em 1em;
+  }
+
+  .header-navbar {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:nowrap;
+    justify-content:space-between;
+    align-content:center;
+  }
+
+  .nav-item {
+    margin:0em 1em 0em 0em;
+  }
+
+  .header-image {
+    outline:2px solid var(--white);
+  }
+
+  .header-link {
+    color:var(--white);
+    text-decoration:none;
+    font-size:1.5em;
+  }
+
+  .header-button {
+    outline:2px solid var(--white);
+    border-radius:8px;
+    color:var(--black);
+    font-weight:bold;
+    background-color:var(--white);
+  }
+  
+  
+  /*=====================================landing page========================= */
+
+  /* .landing-carousel {
+
+  } */
+  
+  /* .carousel {
+    width:99vw;
+    height:90vh;
+    overflow:hidden;
+  } */
+
+  /* .carousel-item {
+    object-fit:cover;
+  } */
+
+  /* .landing-image {
+
+  } */
+
+  .landing-carousel-caption {
+    background-color:var(--white-opacity);
+    color:var(--black);
+    border-radius:1em;
+    /* border:0.25em solid var(--black); */
+    text-shadow:var(--black) 1px 1px;
+  }
+
+  .user-verb {
+    color:var(--red);
+    text-shadow:var(--black) 2px 2px;
+  }
+
+  /* .landing-text {
+  } */
+  
+  
+  /* modal component */
+
 
  /* search page */
 

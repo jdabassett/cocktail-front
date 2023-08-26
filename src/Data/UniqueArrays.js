@@ -913,5 +913,7 @@ uniqueObject.imagesAndAttribution = [
   }
   ];
 
+uniqueObject.colorsUserVerb = ['#33cc33','#33cccc','#3366ff','#ff00ff','#ff5050','#ffff00','#ff3300','#99cc00','#00cc66','#0066cc','#6600ff','#cc3399',];
+
 export default uniqueObject;
 
