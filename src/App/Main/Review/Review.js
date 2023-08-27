@@ -13,99 +13,133 @@ export default function Review(props) {
   // console.log("review page",props.reviewCocktail);
   // console.log("review page",props.userCocktails);
   return (
-    <div className="review-container">
-      <Card style={{ width: "30rem" }}>
-        <Card.Img variant="top" src={viewCocktail.strDrinkThumb} />
-        <Card.Body>
-          <Card.Title className="reviewCardTitle">{`Name: ${viewCocktail.strDrink}`}</Card.Title>
+    <div 
+      className="review-container">
+      <Card 
+        className="card">
+        <div 
+          className="card-image-container">
+          <Card.Img 
+            variant="top" 
+            className="card-image"
+            src={viewCocktail.strDrinkThumb} />
+        </div>
+        <Card.Body
+          className="card-body">
           <div>
+             {viewCocktail.strDrink && 
+             <div className="card-body-div-nonli">
+                <h4 
+                  className="card-name-title card-title">Name:</h4>
+                  <p
+                    className="card-name-p card-p">{viewCocktail.strDrink}</p>
+              </div>}
             {/* if there is a glass add here... */}
             {viewCocktail.strGlass && (
-              <>
-                <h4 className="reviewGlass H4">Glass:</h4>
-                <ul>
-                  <li className="reviewGlassLi">{viewCocktail.strGlass}</li>
-                </ul>
-              </>
+              <div className="card-body-div-nonli">
+                <h4 
+                  className="card-glass-title card-title">Glass:</h4>
+              
+                  <p
+                    className="card-glass-p card-p">{viewCocktail.strGlass}</p>
+              </div>
             )}
             {/* if there is a category add here... */}
             {viewCocktail.strCategory && (
-              <>
-                <h4 className="reviewCategory H4">Category:</h4>
-                <ul>
-                  <li className="reviewCategoryLi">
+              <div className="card-body-div-nonli">
+                <h4 
+                  className="card-category-title card-title">Category:</h4>
+                  <p
+                    className="card-category-p  card-p">
                     {viewCocktail.strCategory}
-                  </li>
-                </ul>
-              </>
+                  </p>
+              </div>
             )}
             {/* if there are ingredients display... */}
-
-                <h4 className="reviewIngredients H4">Ingredients:</h4>
-                <ul>
+            {viewCocktail.arrayMeasuredIngredients && (
+            <div className="card-body-div-li">
+                <h4 
+                  className="card-ingredient-title card-title">Ingredients:</h4>
+                <ul
+                  className="card-ingredient-ul  card-ul">
                   {viewCocktail.arrayMeasuredIngredients.map((item, idx) => {
                     return (
-                      <li key={item.id} className="reviewIngredientsLi">
+                      <li 
+                        key={item.id} 
+                        className="card-ingredient-li card-li">
                         {`${item.unit?`${item.unit} `:""} ${item.ingredient}`}
                       </li>
                     );
                   })}
                 </ul>
-
+              </div>)}
             {/* if there are instructions display... */}
             {viewCocktail.arrayInstructions && (
-              <>
-                <h4 className="reviewInstructions H4">Instructions:</h4>
-                <ul>
+              <div className="card-body-div-li">
+                <h4 
+                  className="card-instruction-title card-title">Instructions:</h4>
+                <ul
+                  className="card-instruction-li  card-ul">
                   {viewCocktail.arrayInstructions.map((item, idx) => {
                     return (
-                      <li key={item.id} className="reviewInstructionLi">
+                      <li 
+                        key={item.id} 
+                        className="card-instruction-li card-li">
                         {item.instruction}
                       </li>
                     );
                   })}
                 </ul>
-              </>
+              </div>
             )}
             {/* if there are notes display here... */}
             {viewCocktail.strNotes && (
               <>
-                <h4 className="reviewNotes H4">Notes:</h4>
-                <ul>
-                  <li className="reviewNotesLi">{viewCocktail.strNotes}</li>
+                <h4 className="card-note-title card-title">Notes:</h4>
+                <ul
+                  className="card-note-ul card-ul">
+                  <li 
+                    className="card-note-li  card-li">{viewCocktail.strNotes}</li>
                 </ul>
               </>
             )}
           </div>
-          <OverlayTrigger
-            placement="top"
-            delay={{ show: 250, hide: 400 }}
-            overlay={
-              <Tooltip id="button-tooltip">
-                Click button to save cocktail to your personal records.
-              </Tooltip>
-            }
-          >
-            <Button
-              variant="primary"
-              onClick={() => props.submitReviewCocktail(viewCocktail)}
+          <div className="card-button-container">
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 400 }}
+              overlay={
+                <Tooltip 
+                  id="button-tooltip">
+                  Click button to save cocktail to your personal records.
+                </Tooltip>
+              }
             >
-              Save
-            </Button>
-          </OverlayTrigger>
-          <OverlayTrigger
-            placement="top"
-            delay={{ show: 250, hide: 400 }}
-            overlay={
-              <Tooltip id="button-tooltip">
-                Click button to edit record before anything else.
-              </Tooltip>
-            }
-          >
-            <Button variant="primary" onClick={() => navigate("/update")}>
-              Edit
-            </Button>
-          </OverlayTrigger>
+              <Button
+                variant="light"
+                className="dark-button save-button rounded-0"
+                onClick={() => props.submitReviewCocktail(viewCocktail)}
+              >
+                Save
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 400 }}
+              overlay={
+                <Tooltip id="button-tooltip">
+                  Click button to edit record before anything else.
+                </Tooltip>
+              }
+            >
+              <Button 
+                className="dark-button edit-button rounded-0"
+                variant="light" 
+                onClick={() => navigate("/update")}>
+                Edit
+              </Button>
+            </OverlayTrigger>
+          </div>
         </Card.Body>
       </Card>
     </div>

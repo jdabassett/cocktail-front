@@ -2,6 +2,7 @@ import React from "react";
 import Login from './Login/Login.js';
 import Main from "./Main/Main.js";
 import {useAuth0} from '@auth0/auth0-react';
+import Landing from './Main/Landing/Landing.js';
 
 
 
@@ -10,7 +11,12 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {isAuthenticated?<Main/>:<Login/>}
+      {isAuthenticated?
+        <Main/>:
+        <>
+          <Login/>
+          <Landing/>
+        </>}
     </div>
   );
 }
