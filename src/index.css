@@ -158,21 +158,30 @@
   /*=====================================landing page========================= */
 
   .landing-container {
-    max-height:90vh;
-    max-width:100vw;
-    overflow:hidden;
-    display:flex;
+    /* outline:4px solid blue; */
+    /* height:60vh;
+    width:100vw; */
+    /* overflow:hidden; */
+    /* display:flex;
     flex-direction:column;
     flex-wrap:nowrap;
     justify-content:center;
-    align-content:center;
+    align-content:center; */
   }
   
-  /* .landing-carousel {} */
+  .landing-carousel {
+    /* outline:3px solid red; */
+    height:90vh;
+    width:100vw;
+    overflow:hidden;
+  }
 
   /* .carousel-item {} */
 
-  /* .landing-image {} */
+  .landing-image {
+    height:90vh;
+    width:100vw;
+  }
 
   .landing-carousel-caption {
     background-color:var(--white-opacity);

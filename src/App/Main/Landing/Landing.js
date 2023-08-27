@@ -27,7 +27,7 @@ export default function Landing () {
       .sort((a, b) => 0.5 - Math.random())
       .map((object, idx) => {
         return (
-          <Carousel.Item className="carousel-item" key={idx} interval={`${500+(15000 * Math.random())}`}>
+          <Carousel.Item className="carousel-item" key={idx} interval={`${4000+(4000 * Math.random())}`}>
             <img
               className="landing-image"
               src={require(`../../../images/${object.image}`)}
@@ -45,9 +45,6 @@ export default function Landing () {
   return (
     <div className="landing-container">
       
-      {/* <div className="landing-title-container">
-      <h1 className="landing-title">i made this site for all you {generateLandingTitle(UniqueObject.uniqueUserVerbs)} cocktail lovers.</h1> <h1 className="landing-title">enjoy yourselves!</h1>
-      </div> */}
 
       <Carousel
           className="landing-carousel"
