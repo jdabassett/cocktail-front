@@ -11,7 +11,7 @@
   "strDrinkThumb": "https://www.thecocktaildb.com/images/media/drink/wbcvyo1535794478.jpg",
   "arrayMeasuredIngredients": [
     {
-      "unit": "",
+      "unit": "Here are my units",
       "ingredient": "Here are my ingredients",
       "id": "gySKriLDS7PnQafdm4heggkn"
     }

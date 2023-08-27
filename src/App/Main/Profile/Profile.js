@@ -50,7 +50,10 @@ export default function Profile(props) {
         localStateProfile &&
         Object.values(localStateProfile.searchType).includes(true)
       ) {
-        setStateProfile((prevState) => ({...localStateProfile,searchUserCocktails:props.userCocktails }));
+        setStateProfile((prevState) => ({
+          ...localStateProfile,
+          searchUserCocktails: props.userCocktails,
+        }));
       }
     } else if (type === "setLocal" && newState) {
       console.log("profile page: update profile local storage");
@@ -239,8 +242,15 @@ export default function Profile(props) {
           (cocktail) => cocktail.strDrink === stateProfile.selectedName[0]
         );
       } else {
-          props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
-     
+        props.dispatch({
+          type: "updateError",
+          payload: {
+            value: {
+              bool: true,
+              message: "Cannot filter your records with an empty search field.",
+            },
+          },
+        });
       }
     } else if (stateProfile.searchType.category) {
       if (stateProfile.selectedCategory[0]) {
@@ -249,7 +259,15 @@ export default function Profile(props) {
             cocktail.strCategory === stateProfile.selectedCategory[0]
         );
       } else {
-        props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
+        props.dispatch({
+          type: "updateError",
+          payload: {
+            value: {
+              bool: true,
+              message: "Cannot filter your records with an empty search field.",
+            },
+          },
+        });
       }
     } else if (stateProfile.searchType.ingredient) {
       if (stateProfile.selectedIngredient[0]) {
@@ -260,7 +278,15 @@ export default function Profile(props) {
             ).length > 0
         );
       } else {
-        props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
+        props.dispatch({
+          type: "updateError",
+          payload: {
+            value: {
+              bool: true,
+              message: "Cannot filter your records with an empty search field.",
+            },
+          },
+        });
       }
     } else if (stateProfile.searchType.glass) {
       if (stateProfile.selectedGlass[0]) {
@@ -268,7 +294,15 @@ export default function Profile(props) {
           (cocktail) => cocktail.strGlass === stateProfile.selectedGlass[0]
         );
       } else {
-        props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
+        props.dispatch({
+          type: "updateError",
+          payload: {
+            value: {
+              bool: true,
+              message: "Cannot filter your records with an empty search field.",
+            },
+          },
+        });
       }
     } else if (stateProfile.searchType.random) {
       if (stateProfile.selectedRandom[0]) {
@@ -280,9 +314,17 @@ export default function Profile(props) {
           searchUserCocktails = props.userCocktails;
         }
       } else {
-        props.dispatch({type:'updateError',payload:{value:{bool:true,message:"Cannot filter your records with an empty search field."}}});
+        props.dispatch({
+          type: "updateError",
+          payload: {
+            value: {
+              bool: true,
+              message: "Cannot filter your records with an empty search field.",
+            },
+          },
+        });
       }
-    } 
+    }
 
     setStateProfile((prevState) => ({
       ...prevState,
@@ -303,241 +345,410 @@ export default function Profile(props) {
   // console.log("profile rendered");
   return (
     <div className="profile-container">
-      <div className="profile-form">
-        <p>Search your records for the perfect cocktail!</p>
-        <Form>
-          <Form.Group>
-            {Object.entries(stateProfile.searchType)
-              .filter((pair) => pair[0] !== "id")
-              .map((pair, idx) => {
-                return (
-                  <Form.Check
-                    key={`form${idx}`}
-                    type="radio"
-                    id="default-radio"
-                    label={`${pair[0]}`}
-                    onChange={handlerSearchType}
-                    value={`${pair[0]}`}
-                    checked={pair[1]}
-                    inline
-                  />
-                );
-              })}
+      <Form className="search-form profile-form">
+        <h1 className="search-form-title profile-form-title">
+          Search your records for the perfect cocktail!
+        </h1>
+        <Form.Group className="search-form-group radio-group profile-form-group">
+          {Object.entries(stateProfile.searchType)
+            .filter((pair) => pair[0] !== "id")
+            .map((pair, idx) => {
+              return (
+                <Form.Check
+                  className="search-radio-buttons profile-radio-buttons"
+                  key={`form${idx}`}
+                  type="radio"
+                  id="default-radio"
+                  label={`${pair[0]}`}
+                  onChange={handlerSearchType}
+                  value={`${pair[0]}`}
+                  checked={pair[1]}
+                  inline
+                />
+              );
+            })}
+        </Form.Group>
+
+        {stateProfile.searchType.name && (
+          <Form.Group className="search-form-group name-group rounded-0 profile-form-group">
+            <Typeahead
+              className="typehead name-typehead"
+              placeholder="Cocktail name?"
+              id="name-search"
+              onChange={(selected) => {
+                setStateProfile((prevState) => {
+                  let newState = {
+                    ...prevState,
+                    selectedName: selected,
+                  };
+                  getOrSetLocalStorage("setLocal", newState);
+                  return newState;
+                });
+              }}
+              options={stateProfile.uniqueNames}
+              selected={stateProfile.selectedName}
+            />
           </Form.Group>
+        )}
 
-          {stateProfile.searchType.name && (
-            <Form.Group>
-              <Typeahead
-                placeholder="Cocktail name?"
-                id="name-search"
-                onChange={(selected) => {
-                  setStateProfile((prevState) => {
-                    let newState = {
-                      ...prevState,
-                      selectedName: selected,
-                    };
-                    getOrSetLocalStorage("setLocal", newState);
-                    return newState;
-                  });
-                }}
-                options={stateProfile.uniqueNames}
-                selected={stateProfile.selectedName}
-              />
-            </Form.Group>
-          )}
+        {stateProfile.searchType.category && (
+          <Form.Group className="search-form-group category-group rounded-0 profile-form-group">
+            <Typeahead
+              className="typehead category-typehead"
+              placeholder="Cocktail category?"
+              id="cocktail-search"
+              onChange={(selected) => {
+                setStateProfile((prevState) => {
+                  let newState = {
+                    ...prevState,
+                    selectedCategory: selected,
+                  };
+                  getOrSetLocalStorage("setLocal", newState);
+                  return newState;
+                });
+              }}
+              options={stateProfile.uniqueCategories}
+              selected={stateProfile.selectedCategory}
+            />
+          </Form.Group>
+        )}
 
-          {stateProfile.searchType.category && (
-            <Form.Group>
-              <Typeahead
-                placeholder="Cocktail category?"
-                id="cocktail-search"
-                onChange={(selected) => {
-                  setStateProfile((prevState) => {
-                    let newState = {
-                      ...prevState,
-                      selectedCategory: selected,
-                    };
-                    getOrSetLocalStorage("setLocal", newState);
-                    return newState;
-                  });
-                }}
-                options={stateProfile.uniqueCategories}
-                selected={stateProfile.selectedCategory}
-              />
-            </Form.Group>
-          )}
+        {stateProfile.searchType.ingredient && (
+          <Form className="search-form-group ingredient-group rounded-0">
+            <Typeahead
+              className="typehead ingredient-typehead"
+              placeholder="Cocktail ingredient?"
+              id="ingredient-search"
+              onChange={(selected) => {
+                setStateProfile((prevState) => {
+                  let newState = {
+                    ...prevState,
+                    selectedIngredient: selected,
+                  };
+                  getOrSetLocalStorage("setLocal", newState);
+                  return newState;
+                });
+              }}
+              options={stateProfile.uniqueIngredients}
+              selected={stateProfile.selectedIngredient}
+            />
+          </Form>
+        )}
 
-          {stateProfile.searchType.ingredient && (
-            <Form.Group>
-              <Typeahead
-                placeholder="Cocktail ingredient?"
-                id="ingredient-search"
-                onChange={(selected) => {
-                  setStateProfile((prevState) => {
-                    let newState = {
-                      ...prevState,
-                      selectedIngredient: selected,
-                    };
-                    getOrSetLocalStorage("setLocal", newState);
-                    return newState;
-                  });
-                }}
-                options={stateProfile.uniqueIngredients}
-                selected={stateProfile.selectedIngredient}
-              />
-            </Form.Group>
-          )}
+        {stateProfile.searchType.glass && (
+          <Form.Group className="search-form-group glass-group rounded-0 profile-form-group">
+            <Typeahead
+              className="typehead glass-typehead"
+              placeholder="Glass type?"
+              id="glass-search"
+              onChange={(selected) => {
+                setStateProfile((prevState) => {
+                  let newState = {
+                    ...prevState,
+                    selectedGlass: selected,
+                  };
+                  getOrSetLocalStorage("setLocal", newState);
+                  return newState;
+                });
+              }}
+              options={stateProfile.uniqueGlasses}
+              selected={stateProfile.selectedGlass}
+            />
+          </Form.Group>
+        )}
 
-          {stateProfile.searchType.glass && (
-            <Form.Group>
-              <Typeahead
-                placeholder="Glass type?"
-                id="glass-search"
-                onChange={(selected) => {
-                  setStateProfile((prevState) => {
-                    let newState = {
-                      ...prevState,
-                      selectedGlass: selected,
-                    };
-                    getOrSetLocalStorage("setLocal", newState);
-                    return newState;
-                  });
-                }}
-                options={stateProfile.uniqueGlasses}
-                selected={stateProfile.selectedGlass}
-              />
-            </Form.Group>
-          )}
+        {stateProfile.searchType.random && (
+          <Form.Group className="search-form-group glass-group rounded-0 profile-form-group">
+            <Typeahead
+              className="typehead random-typehead"
+              placeholder="How many?"
+              id="random-search"
+              onChange={(selected) => {
+                setStateProfile((prevState) => {
+                  let newState = {
+                    ...prevState,
+                    selectedRandom: selected,
+                  };
+                  getOrSetLocalStorage("setLocal", newState);
+                  return newState;
+                });
+              }}
+              options={uniqueObject.uniqueRandom}
+              selected={stateProfile.selectedRandom}
+            />
+          </Form.Group>
+        )}
+        {stateProfile.searchType.clear && (
+          <Form.Group className="search-form-group random-group rounded-0">
+            <Typeahead
+              className="typehead random-typehead"
+              placeholder=""
+              id="clear-search"
+              onChange={()=>{console.log('profile clear typeahead has been clicked')}}
+              options={[""]}
+            />
+          </Form.Group>
+        )}
+        <div className="search-button-container">
+          <OverlayTrigger
+            placement="top"
+            delay={{ show: 250, hide: 400 }}
+            overlay={
+              <Tooltip id="button-tooltip">
+                Click to find cocktails with the above search criteria from your
+                records.
+              </Tooltip>
+            }
+          >
+            <Button
+              variant="dark"
+              className="button search-buttons rounded-0"
+              onClick={handlerOnSubmit}
+            >
+              Refresh
+            </Button>
+          </OverlayTrigger>
+        </div>
+      </Form>
 
-          {stateProfile.searchType.random && (
-            <Form.Group>
-              <Typeahead
-                placeholder="How many?"
-                id="random-search"
-                onChange={(selected) => {
-                  setStateProfile((prevState) => {
-                    let newState = {
-                      ...prevState,
-                      selectedRandom: selected,
-                    };
-                    getOrSetLocalStorage("setLocal", newState);
-                    return newState;
-                  });
-                }}
-                options={uniqueObject.uniqueRandom}
-                selected={stateProfile.selectedRandom}
-              />
-            </Form.Group>
-          )}
-        </Form>
-        <OverlayTrigger
-          placement="top"
-          delay={{ show: 250, hide: 400 }}
-          overlay={
-            <Tooltip id="button-tooltip">
-              Click to find cocktails with the above search criteria from your
-              records.
-            </Tooltip>
-          }
-        >
-          <Button 
-            variant="dark"
-            className="button search-buttons rounded-0" 
-            onClick={handlerOnSubmit}>
-            Refresh
-          </Button>
-        </OverlayTrigger>
-      </div>
       <div className="user-cocktails-container">
         {stateProfile.searchUserCocktails.length ? (
           stateProfile.searchUserCocktails.map((cocktail) => {
             return (
-              <Card key={`card${cocktail._id}`} style={{ width: "30rem" }}>
-                <Card.Img key={`card-img${cocktail._id}`} variant="top" src={cocktail.strDrinkThumb} />
-                <Card.Body>
-                  <Card.Title key={`card-title${cocktail._id}`}>{cocktail.strDrink}</Card.Title>
-                  <Card.Text key={`card-text-glass${cocktail._id}`}>{`Glass: ${cocktail.strGlass}`}</Card.Text>
-                  <Card.Text key={`card-text-category${cocktail._id}`}>{`Category: ${cocktail.strCategory}`}</Card.Text>
+              <Card className="card profile-card" key={`card${cocktail._id}`}>
+                <div className="card-image-container profile-card-image-container">
+                  <Card.Img
+                    className="card-image profile-image"
+                    key={`card-img${cocktail._id}`}
+                    variant="top"
+                    src={cocktail.strDrinkThumb}
+                  />
+                </div>
+                <Card.Body className="card-body">
+                  <div>
+                    {cocktail.strDrink && (
+                      <div
+                        className="card-body-div-nonli"
+                        key={`card-title${cocktail._id}`}
+                      >
+                        <h4 className="card-name-title card-title">Name:</h4>
+                        <p className="card-name-p card-p">
+                          {cocktail.strDrink}
+                        </p>
+                      </div>
+                    )}
+                  
 
-                  <h4>Ingredients:</h4>
-                  <ul>
-                    {cocktail.arrayMeasuredIngredients.map((item, idx) => {
-                      return (
-                        <li key={`ingredients${item.id}${idx}`}>{`${
-                          item.unit ? `${item.unit} ` : ""
-                        }${item.ingredient}`}</li>
-                      );
-                    })}
-                    {/* {<p>cocktail.arrayMeasuredIngredients</p>} */}
-                  </ul>
-                  <h4>Instructions</h4>
-                  <ul>
-                    {cocktail.arrayInstructions.map((item, idx) => {
-                      return (
-                        <li
-                          key={`instructions${item.id}${idx}`}
-                        >{`${item.instruction}`}</li>
-                      );
-                    })}
-                    {/* {<p>cocktail.arrayInstructions</p>} */}
-                  </ul>
+                  {cocktail.strGlass && (
+                    <div className="card-body-div-nonli">
+                      <h4 className="card-glass-title card-title">Glass:</h4>
 
-                  <Card.Text>{`Notes: ${
-                    cocktail.strNotes ? cocktail.strNotes : ""
-                  }`}</Card.Text>
-                  <Button
-                    variant="dark"
-                    className="dark-button edit-button rounded-0"
-                    onClick={() => handlerOnEdit(cocktail)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="dark"
-                    className="dark-button delete-button rounded-0"
-                    onClick={() => {
-                      props.handlerOnDelete(cocktail);
-                      makeAndSetUniqueLists(props.userCocktails.filter(item=>item._id!==cocktail._id));
-                      setStateProfile((prevState) => ({
-                        ...prevState,
-                        searchUserCocktails:
-                          prevState.searchUserCocktails.filter(
+                      <p className="card-glass-p card-p">{cocktail.strGlass}</p>
+                    </div>
+                  )}
+
+                  {cocktail.strCategory && (
+                    <div className="card-body-div-nonli">
+                      <h4 className="card-category-title card-title">
+                        Category:
+                      </h4>
+                      <p className="card-category-p  card-p">
+                        {cocktail.strCategory}
+                      </p>
+                    </div>
+                  )}
+       
+
+                  {cocktail.arrayMeasuredIngredients && (
+                    <div className="card-body-div-li">
+                      <h4 className="card-ingredient-title card-title">
+                        Ingredients:
+                      </h4>
+                      <ul className="card-ingredient-ul  card-ul">
+                        {cocktail.arrayMeasuredIngredients.map((item, idx) => {
+                          return (
+                            <li
+                              key={item.id}
+                              className="card-ingredient-li card-li"
+                            >
+                              {`${item.unit ? `${item.unit} ` : ""} ${
+                                item.ingredient
+                              }`}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+
+                  {cocktail.arrayInstructions && (
+                    <div className="card-body-div-li">
+                      <h4 className="card-instruction-title card-title">
+                        Instructions:
+                      </h4>
+                      <ul className="card-instruction-li  card-ul">
+                        {cocktail.arrayInstructions.map((item, idx) => {
+                          return (
+                            <li
+                              key={item.id}
+                              className="card-instruction-li card-li"
+                            >
+                              {item.instruction}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+
+                  {cocktail.strNotes && (
+                    <>
+                      <h4 className="card-note-title card-title">Notes:</h4>
+                      <ul className="card-note-ul card-ul">
+                        <li className="card-note-li  card-li">
+                          {cocktail.strNotes}
+                        </li>
+                      </ul>
+                    </>
+                  )}
+                  </div>
+
+                  <div className="card-button-container">
+                    <Button
+                      variant="dark"
+                      className="dark-button edit-button rounded-0"
+                      onClick={() => handlerOnEdit(cocktail)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="dark"
+                      className="dark-button delete-button rounded-0"
+                      onClick={() => {
+                        props.handlerOnDelete(cocktail);
+                        makeAndSetUniqueLists(
+                          props.userCocktails.filter(
                             (item) => item._id !== cocktail._id
-                          ),
-                      }));
-                    }}
-                  >
-                    Delete
-                  </Button>
+                          )
+                        );
+                        setStateProfile((prevState) => ({
+                          ...prevState,
+                          searchUserCocktails:
+                            prevState.searchUserCocktails.filter(
+                              (item) => item._id !== cocktail._id
+                            ),
+                        }));
+                      }}
+                    >
+                      Delete
+                    </Button>
+
+                  </div>
                 </Card.Body>
               </Card>
             );
           })
         ) : (
-          <Card style={{ width: "30rem" }}>
-            <Card.Img variant="top" src={oneCocktail.strDrinkThumb} />
-            <Card.Body>
-              <Card.Title>{oneCocktail.strDrink}</Card.Title>
-              <Card.Text>{`Glass: ${oneCocktail.strGlass}`}</Card.Text>
-              <Card.Text>{`Category: ${oneCocktail.strCategory}`}</Card.Text>
-              <h4>Ingredients:</h4>
-              <ul>
-                {oneCocktail.arrayMeasuredIngredients.map((item, idx) => {
-                    return  <li key={`ingredients${item.id}`}>{`${
-                      item.unit ? `${item.unit} ` : ""
-                    }${item.ingredient}`}</li>})}
-              </ul>
-              <h4>Instructions</h4>
-              <ul>
-                {oneCocktail.arrayInstructions.map((item, idx) => {
-                  return (
-                    <li key={`instructions${item.id}`}>{`${item.instruction}`}</li>
-                  );
-                })}
-              </ul>
-              <Card.Text>{`Notes: ${oneCocktail.strNotes}`}</Card.Text>
-            </Card.Body>
-          </Card>
+          <Card className="card profile-card" key={`card${oneCocktail._id}`}>
+          <div className="profile-card-image-container card-image-container">
+            <Card.Img
+              className="card-image profile-image"
+              key={`card-img${oneCocktail._id}`}
+              variant="top"
+              src={oneCocktail.strDrinkThumb}
+            />
+          </div>
+          <Card.Body className="card-body">
+            <div>
+              {oneCocktail.strDrink && (
+                <div
+                  className="card-body-div-nonli"
+                  key={`card-title${oneCocktail._id}`}
+                >
+                  <h4 className="card-name-title card-title">Name:</h4>
+                  <p className="card-name-p card-p">
+                    {oneCocktail.strDrink}
+                  </p>
+                </div>
+              )}
+            
+
+            {oneCocktail.strGlass && (
+              <div className="card-body-div-nonli">
+                <h4 className="card-glass-title card-title">Glass:</h4>
+
+                <p className="card-glass-p card-p">{oneCocktail.strGlass}</p>
+              </div>
+            )}
+
+            {oneCocktail.strCategory && (
+              <div className="card-body-div-nonli">
+                <h4 className="card-category-title card-title">
+                  Category:
+                </h4>
+                <p className="card-category-p  card-p">
+                  {oneCocktail.strCategory}
+                </p>
+              </div>
+            )}
+ 
+
+            {oneCocktail.arrayMeasuredIngredients && (
+              <div className="card-body-div-li">
+                <h4 className="card-ingredient-title card-title">
+                  Ingredients:
+                </h4>
+                <ul className="card-ingredient-ul  card-ul">
+                  {oneCocktail.arrayMeasuredIngredients.map((item, idx) => {
+                    return (
+                      <li
+                        key={item.id}
+                        className="card-ingredient-li card-li"
+                      >
+                        {`${item.unit ? `${item.unit} ` : ""} ${
+                          item.ingredient
+                        }`}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {oneCocktail.arrayInstructions && (
+              <div className="card-body-div-li">
+                <h4 className="card-instruction-title card-title">
+                  Instructions:
+                </h4>
+                <ul className="card-instruction-li  card-ul">
+                  {oneCocktail.arrayInstructions.map((item, idx) => {
+                    return (
+                      <li
+                        key={item.id}
+                        className="card-instruction-li card-li"
+                      >
+                        {item.instruction}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {oneCocktail.strNotes && (
+              <>
+                <h4 className="card-note-title card-title">Notes:</h4>
+                <ul className="card-note-ul card-ul">
+                  <li className="card-note-li  card-li">
+                    {oneCocktail.strNotes}
+                  </li>
+                </ul>
+              </>
+            )}
+            </div>
+
+          </Card.Body>
+        </Card>
         )}
       </div>
     </div>

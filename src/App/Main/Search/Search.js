@@ -394,7 +394,7 @@ export default function Search(props) {
         {stateSearch.searchType.random && (
           <Form.Group className="search-form-group random-group rounded-0">
             <Typeahead
-              className="typehead random-typehead"
+              className="typehead random-typehead rounded-0"
               placeholder="How many?"
               id="random-search"
               onChange={(selected) => {
@@ -417,8 +417,9 @@ export default function Search(props) {
             <Typeahead
               className="typehead random-typehead"
               placeholder=""
-              id="clear-typehead"
-              options=""
+              id="clear-search-typeahead"
+              onChange={()=>{console.log('profile clear typeahead has been clicked')}}
+              options={[""]}
             />
           </Form.Group>
         )}
