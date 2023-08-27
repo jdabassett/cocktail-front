@@ -304,7 +304,7 @@ export default function Search(props) {
         </Form.Group>
 
         {stateSearch.searchType.name && (
-          <Form.Group className="search-form-group name-group">
+          <Form.Group className="search-form-group name-group rounded-0">
             <Typeahead
               className="typehead name-typehead"
               placeholder="Cocktail name?"
@@ -326,7 +326,7 @@ export default function Search(props) {
         )}
 
         {stateSearch.searchType.category && (
-          <Form.Group className="search-form-group category-group">
+          <Form.Group className="search-form-group category-group rounded-0">
             <Typeahead
               className="typehead category-typehead"
               placeholder="Cocktail category?"
@@ -348,7 +348,7 @@ export default function Search(props) {
         )}
 
         {stateSearch.searchType.ingredient && (
-          <Form.Group className="search-form-group ingredient-group">
+          <Form.Group className="search-form-group ingredient-group rounded-0">
             <Typeahead
               className="typehead ingredient-typehead"
               placeholder="Cocktail ingredient?"
@@ -370,7 +370,7 @@ export default function Search(props) {
         )}
 
         {stateSearch.searchType.glass && (
-          <Form.Group className="search-form-group glass-group">
+          <Form.Group className="search-form-group glass-group rounded-0">
             <Typeahead
               className="typehead glass-typehead"
               placeholder="Glass type?"
@@ -392,7 +392,7 @@ export default function Search(props) {
         )}
 
         {stateSearch.searchType.random && (
-          <Form.Group className="search-form-group random-group">
+          <Form.Group className="search-form-group random-group rounded-0">
             <Typeahead
               className="typehead random-typehead"
               placeholder="How many?"
@@ -409,6 +409,16 @@ export default function Search(props) {
               }}
               options={uniqueObject.uniqueRandom}
               selected={stateSearch.selectedRandom}
+            />
+          </Form.Group>
+        )}
+        {stateSearch.searchType.clear && (
+          <Form.Group className="search-form-group random-group rounded-0">
+            <Typeahead
+              className="typehead random-typehead"
+              placeholder=""
+              id="clear-typehead"
+              options=""
             />
           </Form.Group>
         )}

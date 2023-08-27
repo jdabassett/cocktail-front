@@ -16,94 +16,95 @@ export default function Review(props) {
     <div 
       className="review-container">
       <Card 
-        className="review-card">
+        className="card">
         <div 
-          className="review-card-image-container">
+          className="card-image-container">
           <Card.Img 
             variant="top" 
-            className="review-card-image"
+            className="card-image"
             src={viewCocktail.strDrinkThumb} />
         </div>
         <Card.Body
-          className="review-card-body">
-          <Card.Title 
-            className="review-card-title">{`Name: ${viewCocktail.strDrink}`}</Card.Title>
+          className="card-body">
           <div>
+             {viewCocktail.strDrink && 
+             <div className="card-body-div-nonli">
+                <h4 
+                  className="card-name-title card-title">Name:</h4>
+                  <p
+                    className="card-name-p card-p">{viewCocktail.strDrink}</p>
+              </div>}
             {/* if there is a glass add here... */}
             {viewCocktail.strGlass && (
-              <>
+              <div className="card-body-div-nonli">
                 <h4 
-                  className="review-card-glass-title">Glass:</h4>
-                <ul
-                  className="review-card-glass-ul">
-                  <li 
-                    className="review-card-glass-li">{viewCocktail.strGlass}</li>
-                </ul>
-              </>
+                  className="card-glass-title card-title">Glass:</h4>
+              
+                  <p
+                    className="card-glass-p card-p">{viewCocktail.strGlass}</p>
+              </div>
             )}
             {/* if there is a category add here... */}
             {viewCocktail.strCategory && (
-              <>
+              <div className="card-body-div-nonli">
                 <h4 
-                  className="review-card-category-title">Category:</h4>
-                <ul
-                  className="review-card-category-ul">
-                  <li 
-                    className="review-card-category-li">
+                  className="card-category-title card-title">Category:</h4>
+                  <p
+                    className="card-category-p  card-p">
                     {viewCocktail.strCategory}
-                  </li>
-                </ul>
-              </>
+                  </p>
+              </div>
             )}
             {/* if there are ingredients display... */}
-
+            {viewCocktail.arrayMeasuredIngredients && (
+            <div className="card-body-div-li">
                 <h4 
-                  className="review-card-ingredient-title">Ingredients:</h4>
+                  className="card-ingredient-title card-title">Ingredients:</h4>
                 <ul
-                  className="review-card-ingredient-ul">
+                  className="card-ingredient-ul  card-ul">
                   {viewCocktail.arrayMeasuredIngredients.map((item, idx) => {
                     return (
                       <li 
                         key={item.id} 
-                        className="review-card-ingredient-li">
+                        className="card-ingredient-li card-li">
                         {`${item.unit?`${item.unit} `:""} ${item.ingredient}`}
                       </li>
                     );
                   })}
                 </ul>
-
+              </div>)}
             {/* if there are instructions display... */}
             {viewCocktail.arrayInstructions && (
-              <>
+              <div className="card-body-div-li">
                 <h4 
-                  className="review-card-instruction-title">Instructions:</h4>
+                  className="card-instruction-title card-title">Instructions:</h4>
                 <ul
-                  className="review-card-instruction-li">
+                  className="card-instruction-li  card-ul">
                   {viewCocktail.arrayInstructions.map((item, idx) => {
                     return (
                       <li 
                         key={item.id} 
-                        className="review-card-instruction-li">
+                        className="card-instruction-li card-li">
                         {item.instruction}
                       </li>
                     );
                   })}
                 </ul>
-              </>
+              </div>
             )}
             {/* if there are notes display here... */}
             {viewCocktail.strNotes && (
               <>
-                <h4 className="review-card-note-title">Notes:</h4>
+                <h4 className="card-note-title card-title">Notes:</h4>
                 <ul
-                  className="review-card-note-ul">
+                  className="card-note-ul card-ul">
                   <li 
-                    className="review-card-note-li">{viewCocktail.strNotes}</li>
+                    className="card-note-li  card-li">{viewCocktail.strNotes}</li>
                 </ul>
               </>
             )}
           </div>
-          <div className="review-card-button-container">
+          <div className="card-button-container">
             <OverlayTrigger
               placement="top"
               delay={{ show: 250, hide: 400 }}

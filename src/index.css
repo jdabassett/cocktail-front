@@ -40,7 +40,7 @@
   }
 
   .save-button {
-    background-color:var(--green-dark) !important;
+    background-color:var(--green-light) !important;
   }
 
   .edit-button {
@@ -285,46 +285,215 @@
   flex-wrap:nowrap;
   align-items:center;
  }
-.review-card {
+.card {
   outline:0.5em solid var(--green-light);
   min-width:300px;
-  width:800px !important;
-  height:80vh;
+  width:800px;
+  /* height:80vh; */
   border-radius:0;
 }
 
-.review-card-image-container {
+.card-image-container {
   border-bottom:0.2em solid var(--green-light);
-  height:400px;
+  height:600px;
   overflow:hidden;
 }
-.review-card-image {
+.card-image {
   position:relative;
-  top:-40%;  
+  top:-20%;  
 }
-/* .review-card-body {} */
-/* .review-card-glass-title {} */
-/* .review-card-glass-ul {} */
-/* .review-card-glass-li {} */
-/* .review-card-category-title {} */
-/* .review-card-category-ul {} */
-/* .review-card-category-li {} */
-/* .review-card-ingredient-title {} */
-/* .review-card-ingredient-ul {} */
-/* .review-card-ingredient-li {} */
-/* .review-card-instruction-title {} */
-/* .review-card-instruction-ul {} */
-/* .review-card-instruction-li {} */
-/* .review-card-note-title {} */
-/* .review-card-note-ul {} */
-/* .review-card-note-li {} */
-.review-card-button-container {
+.card-body {
+  padding:2em;
+}
+
+.card-body-div-nonli {
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  /* align-items:center; */
+  /* border-bottom:0.1em solid var(--black); */
+  /* outline:2px solid red; */
+}
+.card-title {
+  font-size:1.25em;
+  text-align:left;
+  text-decoration:underline;
+  /* margin:0em 2em 0em 0em; */
+  /* outline:2px solid red; */
+}
+
+.card-p {
+  font-size:1.25em;
+  vertical-align:middle;
+  /* outline:2px solid red; */
+}
+
+.card-body-div-li {
+  /* outline:2px solid red; */
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  justify-content:space-between;
+}
+.card-ul {
+  list-style-type:none;
+  max-width:80%;
+}
+
+.card-li {
+  text-align:right;
+  font-size:0.9em;
+  /* outline:2px solid green; */
+}
+/* .card-glass-title {} */
+/* .card-glass-ul {} */
+/* .card-glass-li {} */
+/* .card-category-title {} */
+/* .card-category-ul {} */
+/* .card-category-li {} */
+/* .card-ingredient-title {} */
+/* .card-ingredient-ul {} */
+/* .card-ingredient-li {} */
+/* .card-instruction-title {} */
+/* .card-instruction-ul {} */
+/* .card-instruction-li {} */
+/* .card-note-title {} */
+/* .card-note-ul {} */
+/* .card-note-li {} */
+
+.card-button-container {
+  margin:2em 0em 0em 0em;
   display:flex;
   flex-direction:row;
   flex-wrap:nowrap;
   justify-content:space-between;
   align-content:center;
 }
+
+/* ======================================Update=================================== */
+
+.update-container {
+  padding:2em;
+  /* outline:3px solid red; */
+  display:flex;
+  flex-direction:column;
+  flex-wrap:nowrap;
+  align-items:center;
+ }
+
+ /* .card {} used in review */
+.update-card {
+  outline:0.5em solid var(--red) !important;
+}
+
+/* .card-image-container {} used in review */
+.update-card-image-container {
+  border-bottom:0.2em solid var(--red) !important;
+}
+
+/* .card-image {} used in review*/
+/* .update-card-image {} */
+
+/* .card-body {} used in review*/
+
+.form-group-container {
+  outline:2px solid blue;
+
+}
+.form-group {
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  outline:2px solid green;
+
+}
+.form-label {
+  font-size:1.25em;
+  font-weight:bold;
+  text-decoration:underline;
+  /* width:125px; */
+  align-self:center;
+}
+.form-control {
+  border:0.25em solid var(--black);
+  font-size:1em;
+  font-weight:300;
+}
+
+/* .update-name {} */
+/* .update-glass {} */
+/* .update-category {} */
+/* .update-instruction {} */
+/* .update-ingredient {} */
+/* .update-note {} */
+
+.form-list-title {
+  font-size:1.25em;
+  font-weight:bold;
+  text-decoration:underline;
+}
+.form-list-ul {
+  list-style-type:none;
+  margin:0em;
+  padding:0em;
+  display:flex;
+  flex-direction:column;
+  flex-wrap:nowrap;
+  /* justify-content:center; */
+  align-items:center;
+}
+.form-list-li {
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  align-items:center;
+}
+
+/* .update-form-list-ul-ingredient {} */
+.update-form-list-li-ingredient {
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  justify-content:left !important;
+}
+
+.li-circle{
+  align-self:left;
+}
+
+.form-circle {
+  font-size:2em;
+}
+/* .form-plus-circle {} */
+/* .form-minus-circle {} */
+.form-pluse-circle-final {
+  font-size:2em !important;
+}
+/* .measurement-group {} */
+.measurement-label {
+  text-decoration:none;
+}
+/* .measurement-control {} */
+/* .ingredient-group {} */
+/* .ingredient-control {} */
+
+/* .update-form-list-ul-instruction {} */
+/* .instruction-group {} */
+.instruction-label {
+  text-decoration:none;
+}
+/* .instruction-control {} */
+
+/* .note-container {} */
+/* .note-group {} */
+/* .note-label {} */
+/* .note-control {} */
+
+/* .card-button-container {} used in review */
+/* .save-button {} used in global*/
+/* .delete-button {} used in global */
+/* .light-button {} used in global */
 
  /* ======================================Profile================================= */
 
