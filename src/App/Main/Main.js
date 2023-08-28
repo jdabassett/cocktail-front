@@ -38,7 +38,7 @@ function reducer(stateMain, action) {
   }
 }
 
-function Main() {
+function Main(props) {
   //open tools
   let { getIdTokenClaims } = useAuth0();
   let navigate = useNavigate();
@@ -370,7 +370,7 @@ function Main() {
   // console.log("main", stateMain.reviewCocktail);
   // console.log("main", stateMain.searchResults);
   // console.log("main", stateMain.userCocktails);
-  console.log("main page:",stateMain.error);
+  // console.log("main page:",stateMain.error);
   return (
     <div className="main-container">
       {stateMain.error.bool && 
@@ -386,7 +386,11 @@ function Main() {
       />
 
       <Routes>
-        <Route exact path="/" element={<Landing />}></Route>
+        <Route exact path="/" element={
+          <Landing 
+            stateApp={props.stateApp}
+            updateModalState={props.updateModalState}
+          />}></Route>
 
         <Route
           exact

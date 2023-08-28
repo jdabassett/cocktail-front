@@ -33,7 +33,7 @@ export default function Profile(props) {
   });
 
   React.useEffect(() => {
-    console.log("profile page: on load");
+    // console.log("profile page: on load");
     getOrSetLocalStorage("setState", null);
     props.getUserCocktails();
     // setStateProfile(prevState=>({...prevState,searchUserCocktails:props.userCocktails}));
@@ -43,7 +43,7 @@ export default function Profile(props) {
 
   const getOrSetLocalStorage = (type, newState = null) => {
     if (type === "setState") {
-      console.log("profile page: update profile state from local storage");
+      // console.log("profile page: update profile state from local storage");
       let localStateProfile = JSON.parse(localStorage.getItem("stateProfile"));
       // console.log("profile page",localStateProfile);
       if (
@@ -56,7 +56,7 @@ export default function Profile(props) {
         }));
       }
     } else if (type === "setLocal" && newState) {
-      console.log("profile page: update profile local storage");
+      // console.log("profile page: update profile local storage");
       // console.log("profile page",stateProfile);
       localStorage.setItem("stateProfile", JSON.stringify(newState));
     }

@@ -202,6 +202,31 @@
   
   /* modal component */
 
+  /* .modal {
+
+  } */
+  .modal-body {
+    display:flex;
+    flex-direction:column;
+    flex-wrap:nowrap;
+    align-items:center;
+  }
+  .modal-title {
+    
+  }
+  .modal-link {
+    margin:0em 0em 0em 1em;
+  }
+  .artist-attribution-button {
+    font-size:2em;
+  }
+
+  .modal-image {
+    width:250px;
+    height:200px;
+
+  }
+
 
  /* ===================================search page============================ */
 
